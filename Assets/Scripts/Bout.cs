@@ -207,11 +207,18 @@ public class Bout : MonoBehaviour
         _withinDoubleTimeframe = false;
         if (points[Green] > points[Red])
         {
-            agentFencers[Green].AddReward(1);
+            agentFencers[Green].SetReward(1);
+            agentFencers[Red].SetReward(-1);
         }
         else if (points[Red] > points[Green])
         {
-            agentFencers[Red].AddReward(1);
+            agentFencers[Red].SetReward(1);
+            agentFencers[Green].SetReward(-1);
+        }
+        else
+        {
+            agentFencers[Red].SetReward(0);
+            agentFencers[Green].SetReward(0);
         }
         agentFencers[Green].EndEpisode();
         agentFencers[Red].EndEpisode();
