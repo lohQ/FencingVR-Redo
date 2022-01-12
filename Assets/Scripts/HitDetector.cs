@@ -42,7 +42,7 @@ public class HitDetector : MonoBehaviour
                 && collision.impulse.magnitude > impulseThreshold
                 && hitAngle < hitAngleThreshold)
             {
-                bout.RegisterHit(fencerColor);
+                bout.RegisterHit(fencerColor, contact.point, contact.normal);
                 break;
             }
         }

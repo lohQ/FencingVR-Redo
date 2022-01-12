@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using RootMotion.FinalIK;
@@ -9,10 +10,14 @@ public class IkTargetController : MonoBehaviour
     public Transform handIkTarget, handIkTargetParent;
     public Vector3 fencerForward, fencerRight;
 
+    public Transform epee, epeeFollow, epeeTip;
+    
     # region collision detection
     public List<Transform> raycastSources;
     public string weaponLayer;
     private int _ignoreWeaponLayerMask;
+    public string bodyLayer;
+    private int _ignoreSelfLayerMask;
     # endregion
 
     # region position control
@@ -31,6 +36,7 @@ public class IkTargetController : MonoBehaviour
     void Start()
     {
         _ignoreWeaponLayerMask = ~LayerMask.GetMask(weaponLayer);
+        _ignoreSelfLayerMask = ~(LayerMask.GetMask(bodyLayer) + LayerMask.GetMask(weaponLayer));
         _armLength = (hand.position - foreArm.position).magnitude + (foreArm.position - upperArm.position).magnitude;
         _initialLocalRotation = handIkTarget.localRotation;
     }
@@ -72,15 +78,41 @@ public class IkTargetController : MonoBehaviour
             _rotationToApply *= 2;
         }
     }
-    
-    void Update()
-    {
 
+    public bool IsPointingAtOpponent(float distance)
+    {
+        var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, distance, _ignoreSelfLayerMask);
+        foreach (var hit in hits)
+        {
+            if (hit.collider.CompareTag("Target Area"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
+    public float ikMissTolerance = 0.1f;
+    public float ikMissTeleportThreshold = 0.8f;
+    
     void AdjustHandIkToEpee()
     {
-        
+        // when some errors happen and epee left hand
+        var epeeFollowToEpee = epee.position - epeeFollow.position;
+        if (epeeFollowToEpee.magnitude > ikMissTeleportThreshold)
+        {
+            epee.position = epeeFollow.position;
+        }
+        else if (epeeFollowToEpee.magnitude > ikMissTolerance)
+        {
+            _moveVector += speed * Time.deltaTime * epeeFollowToEpee.normalized;
+            _moveVector *= (speed * Time.deltaTime) / _moveVector.magnitude;
+            Debug.DrawLine(epeeFollow.position, epeeFollow.position + _moveVector, Color.green, 5f);
+            // if (_moveVector.magnitude > epeeFollowToEpee.magnitude)
+            // {
+            //     _moveVector = epeeFollowToEpee;
+            // }
+        }
     }
 
     void FixedUpdate()
@@ -115,6 +147,7 @@ public class IkTargetController : MonoBehaviour
         // }
         # endregion
 
+        AdjustHandIkToEpee();
         moveVector = _moveVector;
         if (moveVector != Vector3.zero)
         {
@@ -128,7 +161,6 @@ public class IkTargetController : MonoBehaviour
             {
                 foreach (var source in raycastSources)
                 {
-                    // Debug.DrawLine(source.position, source.position + moveVector, Color.green);
                     var hits = Physics.RaycastAll(
                         source.position, moveVector, moveVector.magnitude * 1.1f, _ignoreWeaponLayerMask);
                     foreach (var hit in hits)

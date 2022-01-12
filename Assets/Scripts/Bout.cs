@@ -37,7 +37,7 @@ public class Bout : MonoBehaviour
     [HideInInspector]
     public bool withinRound;
     private float _doubleTouchRemainingTime;
-    private bool _withinDoubleTimeframe;
+    private int _withinDoubleTimeframeOf;   // if not within double timeframe, 0; else value will be Red/Green + 1
 
     private const int Red = (int) FencerColor.Red;
     private const int Green = (int) FencerColor.Green;
@@ -48,13 +48,13 @@ public class Bout : MonoBehaviour
         // agentFencers[Red].MaxStep = (int) (boutTime / Time.fixedDeltaTime);
 
         points = new int[2];
-
+        
         // StartCoroutine(StartRound());
     }
 
     private void Update()
     {
-        if (_withinDoubleTimeframe)
+        if (_withinDoubleTimeframeOf != 0)
         {
             if (_doubleTouchRemainingTime <= 0)
             {
@@ -75,9 +75,9 @@ public class Bout : MonoBehaviour
                 || redPos.z < pistePos.z - zHalfLength)
             {
                 // Debug.Log("redFencer is outside of the piste, green wins!");
-                // points[Green] += 1;
-                // scoreBoards[Green].SetText(points[Green] + "");
                 agentFencers[Red].AddReward(-1);
+                points[Green] += 1;
+                scoreBoards[Green].SetText(points[Green] + "");
                 StartCoroutine(EndRound());
                 return;
             }
@@ -87,9 +87,9 @@ public class Bout : MonoBehaviour
                 || greenPos.z < pistePos.z - zHalfLength)
             {
                 // Debug.Log("greenFencer is outside of the piste, red wins!");
-                // points[Red] += 1;
-                // scoreBoards[Red].SetText(points[Red] + "");
                 agentFencers[Green].AddReward(-1);
+                points[Red] += 1;
+                scoreBoards[Red].SetText(points[Red] + "");
                 StartCoroutine(EndRound());
                 return;
             }
@@ -104,10 +104,17 @@ public class Bout : MonoBehaviour
         }
     }
 
-    public void RegisterHit(FencerColor fencerColor)
+    public void RegisterHit(FencerColor fencerColor, Vector3 position, Vector3 normal)
     {
+        // detecting the same hit two times
+        if ((int)fencerColor == _withinDoubleTimeframeOf - 1)
+        {
+            return;
+        }
+
         points[(int)fencerColor] += 1;
         scoreBoards[(int)fencerColor].SetText(points[(int)fencerColor] + "");
+
         if (fencerColor == FencerColor.Green)
         {
             agentFencers[Green].AddReward(1);
@@ -119,13 +126,13 @@ public class Bout : MonoBehaviour
             agentFencers[Green].AddReward(-1);
         }
 
-        if (_withinDoubleTimeframe)
+        if (_withinDoubleTimeframeOf != 0)
         {
             StartCoroutine(EndRound());
         }
         else
         {
-            _withinDoubleTimeframe = true;
+            _withinDoubleTimeframeOf = (int)fencerColor + 1;
             _doubleTouchRemainingTime = DoubleTouchTime;
         }
     }
@@ -145,7 +152,8 @@ public class Bout : MonoBehaviour
             scoreBoards[Green].SetText(points[Green] + "");
             scoreBoards[Red].SetText(points[Red] + "");
             _boutRemainingTime = boutTime;
-            _withinDoubleTimeframe = false;
+            withinRound = false;
+            _withinDoubleTimeframeOf = 0;
             StartCoroutine(StartRound());
         }
     }
@@ -164,19 +172,42 @@ public class Bout : MonoBehaviour
         yield return redEnter;
         yield return greenEnter;
 
+        yield return new WaitForSeconds(0.1f);
+        if (Quaternion.Angle(fencers[Green].rotation, Quaternion.identity) < 0.1f)
+        {
+            Debug.Log("Detected incorrect start rotation! Manually exit en garde again");
+            var redExit = StartCoroutine(fencerControllers[Red].ExitEnGarde());
+            var greenExit = StartCoroutine(fencerControllers[Green].ExitEnGarde());
+            yield return redExit;
+            yield return greenExit;
+
+            Debug.Log("restart enter en garde");
+            fencers[Green].position = new Vector3(startPoints[Green].position.x, 0, startPoints[Green].position.z);
+            fencers[Green].rotation = Quaternion.identity;
+            fencers[Red].position = new Vector3(startPoints[Red].position.x, 0, startPoints[Red].position.z);
+            fencers[Red].rotation = Quaternion.Euler(0, 180, 0) * Quaternion.identity;
+
+            yield return new WaitForSeconds(0.1f);
+            redEnter = StartCoroutine(fencerControllers[Red].EnterEnGarde());
+            greenEnter = StartCoroutine(fencerControllers[Green].EnterEnGarde());
+            yield return redEnter;
+            yield return greenEnter;
+        }
+
         withinRound = true;
     }
     
     IEnumerator EndRound()
     {
         withinRound = false;
-        _withinDoubleTimeframe = false;
+        _withinDoubleTimeframeOf = 0;
 
         var redExit = StartCoroutine(fencerControllers[Red].ExitEnGarde());
         var greenExit = StartCoroutine(fencerControllers[Green].ExitEnGarde());
         yield return redExit;
         yield return greenExit;
 
+        yield return new WaitForSeconds(0.1f);
         if (_boutRemainingTime <= 0)
         {
             EndBout();
@@ -204,7 +235,7 @@ public class Bout : MonoBehaviour
     void EndBout()
     {
         withinRound = false;
-        _withinDoubleTimeframe = false;
+        _withinDoubleTimeframeOf = 0;
         if (points[Green] > points[Red])
         {
             agentFencers[Green].SetReward(1);

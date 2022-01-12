@@ -48,12 +48,35 @@ public class AgentFencer : Agent
     {
         bout.SignalStartRound();
     }
+
+    public KeyCode additionalKey = KeyCode.None;
     
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        if (!bout.withinRound) return;
-
         var discreteActionsOut = actionsOut.DiscreteActions;
+        if (!bout.withinRound)
+        {
+            discreteActionsOut[0] = 1;
+            discreteActionsOut[1] = 1;
+            discreteActionsOut[2] = 1;
+            discreteActionsOut[4] = 1;
+            discreteActionsOut[5] = 1;
+            discreteActionsOut[6] = 1;
+            discreteActionsOut[8] = 1;
+            return;
+        }
+        
+        if (additionalKey != KeyCode.None && !Input.GetKey(additionalKey))
+        {
+            discreteActionsOut[0] = 1;
+            discreteActionsOut[1] = 1;
+            discreteActionsOut[2] = 1;
+            discreteActionsOut[4] = 1;
+            discreteActionsOut[5] = 1;
+            discreteActionsOut[6] = 1;
+            discreteActionsOut[8] = 1;
+            return;
+        }
 
         // translate hand (x axis)
         if (Input.GetKey(KeyCode.A))
@@ -195,10 +218,22 @@ public class AgentFencer : Agent
         var discreteActions = actionBuffers.DiscreteActions;
         // Debug.Log("discreteActions 0, 1, 2, 3: " + discreteActions[0] + ", " + discreteActions[1] + ", " +  discreteActions[2] + ", " + discreteActions[3]);
         // Debug.Log("discreteActions 4, 5, 6, 7: " + discreteActions[4] + ", " + discreteActions[5] + ", " +  discreteActions[6] + ", " + discreteActions[7]);
-        // Debug.Log("discreteActions 8: " + discreteActions[8]);
+        if (ikTargetController.IsPointingAtOpponent(1f))
+        {
+            AddReward(0.01f);
+        }
+        if (ikTargetController.IsPointingAtOpponent(0.5f))
+        {
+            AddReward(0.01f);
+        }
+        if (ikTargetController.IsPointingAtOpponent(0.1f))
+        {
+            AddReward(0.1f);
+        }
+
         ikTargetController.SetMoveVector(discreteActions[0], discreteActions[1], discreteActions[2], discreteActions[3] > 0);
         ikTargetController.SetRotationToApply(discreteActions[4], discreteActions[5], discreteActions[6], discreteActions[7] > 0);
-        avatarController.SetNextStep(discreteActions[8]);
+        avatarController.SetNextStep((discreteActions[8] - 1));
     }
     
 }

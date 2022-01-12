@@ -72,12 +72,12 @@ public class AvatarController : MonoBehaviour
 
     public void SetNextStep(int forward)
     {
-        if ((forward - 1) > 0)
+        if (forward > 0)
         {
-            _animator.SetInteger(_forwardStepHash, (forward - 1));
-        } else if ((forward - 1) < 0)
+            _animator.SetInteger(_forwardStepHash, forward);
+        } else if (forward < 0)
         {
-            _animator.SetInteger(_backwardStepHash, -(forward - 1));
+            _animator.SetInteger(_backwardStepHash, -forward);
         }
     }
 
