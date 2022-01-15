@@ -6,30 +6,40 @@ using UnityEngine;
 
 public class IkTargetController : MonoBehaviour
 {
-    public Transform upperArm, foreArm, hand;
-    public Transform handIkTarget, handIkTargetParent;
-    public Vector3 fencerForward, fencerRight;
-
-    public Transform epee, epeeFollow, epeeTip;
+    [Header("Ik Targets and Sources")] 
+    public Transform upperArm;
+    public Transform foreArm; 
+    public Transform hand;
+    public Transform handIkTarget; 
+    public Transform handIkTargetParent;
+    public Transform head;
+    public Transform headIkAimTarget;
     
-    # region collision detection
+    [Header("Collision Detection")]
     public List<Transform> raycastSources;
     public string weaponLayer;
     private int _ignoreWeaponLayerMask;
     public string bodyLayer;
     private int _ignoreSelfLayerMask;
-    # endregion
 
-    # region position control
+    [Header("Position Control")]
     public float speed;
+    public Vector3 fencerForward, fencerRight;
+    public Transform epee, epeeFollow, epeeTip;
+    public float ikMissTolerance = 0.1f;
+    public float ikMissTeleportThreshold = 0.8f;
     private float _armLength;
-    # endregion
     
-    # region rotation control
+    [Header("Rotation Control")]
     public RotationLimit rotationLimit;
     public float rotationSpeed;     // by degrees
     private Quaternion _initialLocalRotation;
-    # endregion
+
+    [Header("Head Aim Control")]
+    public float headTargetMoveMaxDistance;
+    public float headTargetMoveSpeed;
+    private Vector3 _headTargetInitialPosition;
+    private Vector3 _headTargetMoveVector;
     
     public bool log;
 
@@ -39,6 +49,7 @@ public class IkTargetController : MonoBehaviour
         _ignoreSelfLayerMask = ~(LayerMask.GetMask(bodyLayer) + LayerMask.GetMask(weaponLayer));
         _armLength = (hand.position - foreArm.position).magnitude + (foreArm.position - upperArm.position).magnitude;
         _initialLocalRotation = handIkTarget.localRotation;
+        // useHandAsBasePosition = false;
     }
 
     public void Initialize()
@@ -46,6 +57,8 @@ public class IkTargetController : MonoBehaviour
         handIkTargetParent.position = hand.position;
         handIkTargetParent.rotation = foreArm.rotation;
         handIkTarget.localRotation = _initialLocalRotation;
+        _headTargetInitialPosition = head.position + head.forward;
+        headIkAimTarget.position = _headTargetInitialPosition;
     }
 
     private Vector3 _moveVector;
@@ -91,9 +104,6 @@ public class IkTargetController : MonoBehaviour
         }
         return false;
     }
-
-    public float ikMissTolerance = 0.1f;
-    public float ikMissTeleportThreshold = 0.8f;
     
     void AdjustHandIkToEpee()
     {
@@ -112,6 +122,21 @@ public class IkTargetController : MonoBehaviour
             // {
             //     _moveVector = epeeFollowToEpee;
             // }
+        }
+    }
+
+    // public bool useHandAsBasePosition;  // when there's lunge then use hand as base position, else use handIkTargetParent's position
+
+    public void SetHeadTargetMoveVector(int x, int y)
+    {
+        _headTargetMoveVector = Vector3.zero;
+        _headTargetMoveVector += x * fencerRight;
+        _headTargetMoveVector += y * Vector3.up;
+        _headTargetMoveVector = headTargetMoveSpeed * Time.deltaTime * _headTargetMoveVector.normalized;
+
+        if (((headIkAimTarget.position + _headTargetMoveVector) - _headTargetInitialPosition).magnitude > headTargetMoveMaxDistance)
+        {
+            _headTargetMoveVector = Vector3.zero;
         }
     }
 
@@ -149,6 +174,7 @@ public class IkTargetController : MonoBehaviour
 
         AdjustHandIkToEpee();
         moveVector = _moveVector;
+        // var basePosition = useHandAsBasePosition ? hand.position : handIkTargetParent.position;
         if (moveVector != Vector3.zero)
         {
             // moveVector = moveVector.normalized * speed * Time.deltaTime;
@@ -179,6 +205,10 @@ public class IkTargetController : MonoBehaviour
 
             _moveVector = Vector3.zero;
         }
+        // else
+        // {
+        //     handIkTargetParent.position = basePosition;
+        // }
         
         # endregion
         
@@ -243,6 +273,10 @@ public class IkTargetController : MonoBehaviour
         }
         
         # endregion
-    }
 
+        headIkAimTarget.position += _headTargetMoveVector;
+
+    }
+    
+    
 }

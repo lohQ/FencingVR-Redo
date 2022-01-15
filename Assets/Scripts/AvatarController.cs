@@ -13,7 +13,8 @@ public class AvatarController : MonoBehaviour
     private int _forwardStepHash;
     private int _backwardStepHash;
     private int _endedHash;
-    private bool _inEnGarde;
+    private int _lungeHash;
+    // private bool _inEnGarde;
 
     private bool _started = false;
 
@@ -23,6 +24,8 @@ public class AvatarController : MonoBehaviour
         _forwardStepHash = Animator.StringToHash("forward_step");
         _backwardStepHash = Animator.StringToHash("backward_step");
         _endedHash = Animator.StringToHash("end");
+        _lungeHash = Animator.StringToHash("lunge");
+        curStateInt = -1;
 
         var rigBuilder = GetComponent<RigBuilder>();
         _ikRig = rigBuilder.layers[0].rig;
@@ -37,7 +40,7 @@ public class AvatarController : MonoBehaviour
         {
             yield return null;
         }
-        _inEnGarde = true;
+        // _inEnGarde = true;
         _ikRig.weight = 0;
         _animator.SetBool(_endedHash, false);
         _animator.SetInteger(_forwardStepHash, 0);
@@ -58,7 +61,7 @@ public class AvatarController : MonoBehaviour
 
     public IEnumerator ExitEnGarde()
     {
-        _inEnGarde = false;
+        // _inEnGarde = false;
         _animator.SetBool(_endedHash, true);
         yield return null;
         
@@ -81,16 +84,33 @@ public class AvatarController : MonoBehaviour
         }
     }
 
-    public bool IsMoving()
+    public void Lunge()
+    {
+        _animator.SetBool(_lungeHash, true);
+    }
+
+    [HideInInspector]
+    public int curStateInt;    // 8 for step forward/backward, 9 for lunge (same as branch number)
+
+    public void SetCurStateInt()
     {
         var curState = _animator.GetCurrentAnimatorStateInfo(0);
         if (curState.IsName("Step Forward") || curState.IsName("Step Backward"))
         {
-            return true;
+            curStateInt = 8;
         }
-        return false;
+        else if (curState.IsName("Lunge and Recover"))
+        {
+            curStateInt = 9;
+        }
+        else
+        {
+            curStateInt = -1;
+        }
     }
 
+    public float rigWeightWhenLunge;
+    
     void Update()
     {
         # region keyboard input
@@ -128,6 +148,19 @@ public class AvatarController : MonoBehaviour
         //     {
         //         StartCoroutine(EnterEnGarde());
         //     }
+        // }
+
+        // var prevState = curStateInt;
+        SetCurStateInt();
+        // if (prevState != 9 && curStateInt == 9)
+        // {
+        //     
+        //     Debug.Log("set ikRig.weight to " + rigWeightWhenLunge);
+        //     _ikRig.weight = rigWeightWhenLunge;
+        // } else if (prevState == 9 && curStateInt != 9)
+        // {
+        //     Debug.Log("set ikRig.weight back to 1");
+        //     _ikRig.weight = 1;
         // }
 
     }
