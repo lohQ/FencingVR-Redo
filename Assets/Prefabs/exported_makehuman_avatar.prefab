@@ -650,7 +650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curStateInt: 0
-  rigWeightWhenLunge: 0.7
+  rigWeightWhenLunge: 0.5
 --- !u!114 &2135068309952798277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,6 +697,7 @@ MonoBehaviour:
   headTargetMoveMaxDistance: 0.4
   headTargetMoveSpeed: 0.5
   log: 0
+  useHandAsBasePosition: 0
 --- !u!54 &3409132596567696692
 Rigidbody:
   m_ObjectHideFlags: 0

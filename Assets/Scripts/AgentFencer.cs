@@ -5,22 +5,22 @@ using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 
-// TODO: adjust ikTarget position based on epee actual position!
-
 public class AgentFencer : Agent
 {
     public IkTargetController ikTargetController;
     public AvatarController avatarController;
-    public Bout bout;
+    // public Bout bout;
+    public PlayingField playingField;
     public FencerColor fencerColor;
 
-    public Transform piste, self, selfEpee, selfEpeeTip, oppEpee, oppEpeeTip, oppPosition;
+    public Transform piste, self, selfEpee, selfEpeeTip;
+    // public Transform oppEpee, oppEpeeTip, oppPosition;
 
     private bool _epeeCollided;
-    private bool _thisFrameEpeeCollided;
+    // private bool _thisFrameEpeeCollided;
     
     public KeyCode additionalKey = KeyCode.None;
-    public IkTargetController opponentIkTargetController;
+    // public IkTargetController opponentIkTargetController;
     public bool log;
 
     public void RegisterWeaponCollision()
@@ -36,32 +36,39 @@ public class AgentFencer : Agent
         sensor.AddObservation(selfEpee.localRotation);
         sensor.AddObservation(selfEpeeTip.position - selfPos);
         sensor.AddObservation(selfEpeeTip.position - selfEpee.position);
-        sensor.AddObservation(oppEpeeTip.position - selfPos);
-        sensor.AddObservation(oppEpeeTip.position - oppEpee.position);
-        sensor.AddObservation(oppPosition.position - selfPos);
+        
+        // change to adding more raycast sensors with stack
+        // sensor.AddObservation(oppEpeeTip.position - selfPos);
+        // sensor.AddObservation(oppEpeeTip.position - oppEpee.position);
+        // sensor.AddObservation(oppPosition.position - selfPos);
+
         sensor.AddObservation(_epeeCollided);
-        _thisFrameEpeeCollided = _epeeCollided;
+        // _thisFrameEpeeCollided = _epeeCollided;
         _epeeCollided = false;
-        sensor.AddObservation(bout.points[(int)fencerColor]);
-        if (fencerColor == FencerColor.Green)
-        {
-            sensor.AddObservation(bout.points[(int)FencerColor.Red]);
-        }
-        else
-        {
-            sensor.AddObservation(bout.points[(int)FencerColor.Green]);
-        }
+
+        // not applicable to non self-play
+        // sensor.AddObservation(bout.points[(int)fencerColor]);
+        // if (fencerColor == FencerColor.Green)
+        // {
+        //     sensor.AddObservation(bout.points[(int)FencerColor.Red]);
+        // }
+        // else
+        // {
+        //     sensor.AddObservation(bout.points[(int)FencerColor.Green]);
+        // }
     }
     
     public override void OnEpisodeBegin()
     {
-        bout.SignalStartRound();
+        StartCoroutine(avatarController.EnterEnGarde());
+        playingField.StartPlaying();
+        // bout.SignalStartRound();
     }
-
+    
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
-        if (!bout.withinRound)
+        if (avatarController.curStateInt <= 0)
         {
             discreteActionsOut[0] = 1;
             discreteActionsOut[1] = 1;
@@ -233,9 +240,10 @@ public class AgentFencer : Agent
 
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        if (bout.withinRound)
+        if (avatarController.curStateInt > 0)   // 0 and below is for non fencing moves
         {
-            if (avatarController.curStateInt != -1)
+            // if is already moving or lunging
+            if (avatarController.curStateInt == 8 || avatarController.curStateInt == 9)
             {
                 actionMask.SetActionEnabled(8, 0, false);
                 actionMask.SetActionEnabled(8, 2, false);
@@ -277,21 +285,28 @@ public class AgentFencer : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var discreteActions = actionBuffers.DiscreteActions;
-        if (ikTargetController.IsPointingAtOpponent(1f))
+        // if (ikTargetController.IsPointingAtTarget(1f))
+        // {
+        //     AddReward(0.01f);
+        // }
+        // if (ikTargetController.IsPointingAtTarget(0.1f))
+        // {
+        //     AddReward(0.1f);
+        // }
+        //
+        // if (_thisFrameEpeeCollided && !opponentIkTargetController.IsPointingAtTarget(1f))
+        // {
+        //     AddReward(0.1f);
+        // }
+        if (playingField.playMode == PlayingField.AgentPlayMode.Attack)
         {
-            AddReward(0.001f);
-        }
-        if (ikTargetController.IsPointingAtOpponent(0.1f))
+            AddReward(-1f / MaxStep);
+        } else if (playingField.playMode == PlayingField.AgentPlayMode.Defense)
         {
-            AddReward(0.01f);
+            AddReward(1f / MaxStep);
         }
 
-        if (_thisFrameEpeeCollided && !opponentIkTargetController.IsPointingAtOpponent(1f))
-        {
-            AddReward(0.01f);
-        }
-
-        // ikTargetController.useHandAsBasePosition = avatarController.curStateInt == 9;
+        ikTargetController.useHandAsBasePosition = avatarController.curStateInt == 9;
         ikTargetController.SetMoveVector(discreteActions[0], discreteActions[1], discreteActions[2], discreteActions[3] > 0);
         ikTargetController.SetRotationToApply(discreteActions[4], discreteActions[5], discreteActions[6], discreteActions[7] > 0);
         ikTargetController.SetHeadTargetMoveVector(discreteActions[10] - 1, discreteActions[11] - 1);
@@ -307,4 +322,21 @@ public class AgentFencer : Agent
         }
     }
     
+    public void RegisterHit(FencerColor color, Vector3 contactPoint, Vector3 contactNormal)
+    {
+        // TODO: get curriculum parameters
+        // TODO: initialization
+
+        if (color == fencerColor)
+        {
+            SetReward(1);
+            EndEpisode();
+        }
+        else
+        {
+            SetReward(-1);
+            EndEpisode();
+        }
+    }
+
 }

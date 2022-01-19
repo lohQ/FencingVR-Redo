@@ -49,7 +49,7 @@ public class IkTargetController : MonoBehaviour
         _ignoreSelfLayerMask = ~(LayerMask.GetMask(bodyLayer) + LayerMask.GetMask(weaponLayer));
         _armLength = (hand.position - foreArm.position).magnitude + (foreArm.position - upperArm.position).magnitude;
         _initialLocalRotation = handIkTarget.localRotation;
-        // useHandAsBasePosition = false;
+        useHandAsBasePosition = false;
     }
 
     public void Initialize()
@@ -92,7 +92,7 @@ public class IkTargetController : MonoBehaviour
         }
     }
 
-    public bool IsPointingAtOpponent(float distance)
+    public bool IsPointingAtTarget(float distance)
     {
         var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, distance, _ignoreSelfLayerMask);
         foreach (var hit in hits)
@@ -125,7 +125,7 @@ public class IkTargetController : MonoBehaviour
         }
     }
 
-    // public bool useHandAsBasePosition;  // when there's lunge then use hand as base position, else use handIkTargetParent's position
+    public bool useHandAsBasePosition;  // when there's lunge then use hand as base position, else use handIkTargetParent's position
 
     public void SetHeadTargetMoveVector(int x, int y)
     {
@@ -174,7 +174,7 @@ public class IkTargetController : MonoBehaviour
 
         AdjustHandIkToEpee();
         moveVector = _moveVector;
-        // var basePosition = useHandAsBasePosition ? hand.position : handIkTargetParent.position;
+        var basePosition = useHandAsBasePosition ? hand.position : handIkTargetParent.position;
         if (moveVector != Vector3.zero)
         {
             // moveVector = moveVector.normalized * speed * Time.deltaTime;
@@ -199,16 +199,16 @@ public class IkTargetController : MonoBehaviour
                         }
                     }
                 }
-                handIkTargetParent.position += moveVector;
+                handIkTargetParent.position = basePosition + moveVector;
                 if (log) Debug.Log("Add moveVector to _position, new handIkTargetParent.position: " + handIkTargetParent.position);
             }
 
             _moveVector = Vector3.zero;
         }
-        // else
-        // {
-        //     handIkTargetParent.position = basePosition;
-        // }
+        else
+        {
+            handIkTargetParent.position = basePosition;
+        }
         
         # endregion
         

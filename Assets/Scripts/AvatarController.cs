@@ -92,7 +92,7 @@ public class AvatarController : MonoBehaviour
     [HideInInspector]
     public int curStateInt;    // 8 for step forward/backward, 9 for lunge (same as branch number)
 
-    public void SetCurStateInt()
+    void SetCurStateInt()
     {
         var curState = _animator.GetCurrentAnimatorStateInfo(0);
         if (curState.IsName("Step Forward") || curState.IsName("Step Backward"))
@@ -102,6 +102,14 @@ public class AvatarController : MonoBehaviour
         else if (curState.IsName("Lunge and Recover"))
         {
             curStateInt = 9;
+        }
+        else if (curState.IsName("En Garde"))
+        {
+            curStateInt = 1;
+        }
+        else if (curState.IsName("Standing"))
+        {
+            curStateInt = 0;
         }
         else
         {
@@ -150,18 +158,15 @@ public class AvatarController : MonoBehaviour
         //     }
         // }
 
-        // var prevState = curStateInt;
+        var prevState = curStateInt;
         SetCurStateInt();
-        // if (prevState != 9 && curStateInt == 9)
-        // {
-        //     
-        //     Debug.Log("set ikRig.weight to " + rigWeightWhenLunge);
-        //     _ikRig.weight = rigWeightWhenLunge;
-        // } else if (prevState == 9 && curStateInt != 9)
-        // {
-        //     Debug.Log("set ikRig.weight back to 1");
-        //     _ikRig.weight = 1;
-        // }
+        if (prevState != 9 && curStateInt == 9)
+        {
+            _ikRig.weight = rigWeightWhenLunge;
+        } else if (prevState == 9 && curStateInt != 9)
+        {
+            _ikRig.weight = 1;
+        }
 
     }
 }

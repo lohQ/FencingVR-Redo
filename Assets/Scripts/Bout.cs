@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum FencerColor
 {
@@ -134,9 +135,11 @@ public class Bout : MonoBehaviour
     IEnumerator StartRound()
     {
         // used in every round to reset points, time, position, rotation, etc.
-        fencers[Green].position = new Vector3(startPoints[Green].position.x, 0, startPoints[Green].position.z);
+        var greenX = Random.Range(startPoints[Green].position.x - 0.1f, startPoints[Green].position.x + 0.1f);
+        fencers[Green].position = new Vector3(greenX, 0, startPoints[Green].position.z);
         fencers[Green].rotation = Quaternion.identity;
-        fencers[Red].position = new Vector3(startPoints[Red].position.x, 0, startPoints[Red].position.z);
+        var redX = Random.Range(startPoints[Red].position.x - 0.1f, startPoints[Red].position.x + 0.1f);
+        fencers[Red].position = new Vector3(redX, 0, startPoints[Red].position.z);
         fencers[Red].rotation = Quaternion.Euler(0, 180, 0) * Quaternion.identity;
 
         // yield return new WaitForSeconds(0.1f);
@@ -144,7 +147,6 @@ public class Bout : MonoBehaviour
         var greenEnter = StartCoroutine(fencerControllers[Green].EnterEnGarde());
         yield return redEnter;
         yield return greenEnter;
-
 
         yield return new WaitForSeconds(0.1f);
         if (Quaternion.Angle(fencers[Green].rotation, Quaternion.identity) < 0.1f)
