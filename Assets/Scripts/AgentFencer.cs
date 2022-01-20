@@ -61,27 +61,27 @@ public class AgentFencer : Agent
     public override void OnEpisodeBegin()
     {
         StartCoroutine(avatarController.EnterEnGarde());
-        playingField.StartPlaying();
+        playingField.EnvironmentReset();
         // bout.SignalStartRound();
     }
     
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
-        if (avatarController.curStateInt <= 0)
-        {
-            discreteActionsOut[0] = 1;
-            discreteActionsOut[1] = 1;
-            discreteActionsOut[2] = 1;
-            discreteActionsOut[4] = 1;
-            discreteActionsOut[5] = 1;
-            discreteActionsOut[6] = 1;
-            discreteActionsOut[8] = 1;
-            discreteActionsOut[9] = 0;
-            discreteActionsOut[10] = 1;
-            discreteActionsOut[11] = 1;
-            return;
-        }
+        // if (avatarController.curStateInt <= 0)
+        // {
+        //     discreteActionsOut[0] = 1;
+        //     discreteActionsOut[1] = 1;
+        //     discreteActionsOut[2] = 1;
+        //     discreteActionsOut[4] = 1;
+        //     discreteActionsOut[5] = 1;
+        //     discreteActionsOut[6] = 1;
+        //     discreteActionsOut[8] = 1;
+        //     discreteActionsOut[9] = 0;
+        //     discreteActionsOut[10] = 1;
+        //     discreteActionsOut[11] = 1;
+        //     return;
+        // }
         
         if (additionalKey != KeyCode.None && !Input.GetKey(additionalKey))
         {
@@ -97,7 +97,7 @@ public class AgentFencer : Agent
             discreteActionsOut[11] = 1;
             return;
         }
-
+        
         // translate hand (x axis)
         if (Input.GetKey(KeyCode.A))
         {
@@ -214,7 +214,8 @@ public class AgentFencer : Agent
         if (Input.GetKey(KeyCode.H))
         {
             discreteActionsOut[10] = 2;
-        } else if (Input.GetKey(KeyCode.F))
+        } 
+        else if (Input.GetKey(KeyCode.F))
         {
             discreteActionsOut[10] = 0;
         }
@@ -326,6 +327,7 @@ public class AgentFencer : Agent
     {
         // TODO: get curriculum parameters
         // TODO: initialization
+        Debug.Log("register hit");
 
         if (color == fencerColor)
         {

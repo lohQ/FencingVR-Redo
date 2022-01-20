@@ -54,18 +54,19 @@ public class PlayingField : MonoBehaviour
         epeeForThrow.transform.position = transform.position - Vector3.up;
     }
 
-    public void StartPlaying()
-    {
-        foreach (var t in _targets)
-        {
-            t.SetActive(false);
-        }
-
-        if (playMode == AgentPlayMode.Attack)
-        {
-            SetTargets();
-        }
-    }
+    // public void StartPlaying()
+    // {
+    //     fencer.position = enGardePoint.position;
+    //     foreach (var t in _targets)
+    //     {
+    //         t.SetActive(false);
+    //     }
+    //
+    //     if (playMode == AgentPlayMode.Attack)
+    //     {
+    //         SetTargets();
+    //     }
+    // }
 
     public void SetAttackModeParameters(float minRadius, float maxRadius, int minTargetCount, int maxTargetCount)
     {
@@ -207,9 +208,18 @@ public class PlayingField : MonoBehaviour
         Academy.Instance.OnEnvironmentReset += EnvironmentReset;
     }
 
-    void EnvironmentReset()
+    public void EnvironmentReset()
     {
         fencer.position = enGardePoint.position;
+        foreach (var t in _targets)
+        {
+            t.SetActive(false);
+        }
+
+        if (playMode == AgentPlayMode.Attack)
+        {
+            SetTargets();
+        }
     }
 
 }
