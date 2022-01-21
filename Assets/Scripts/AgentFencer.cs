@@ -280,17 +280,17 @@ public class AgentFencer : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var discreteActions = actionBuffers.DiscreteActions;
-        // var tipDistanceFromOpp = ikTargetController.TipDistanceFromOpponent();
-        // if (tipDistanceFromOpp > 0)
-        // {
-        //     var reward = Math.Max(1 - tipDistanceFromOpp, 0) * Math.Max(1 - tipDistanceFromOpp, 0) * 0.01f;
-        //     AddReward(reward);
-        // }
+        var tipDistanceFromOpp = ikTargetController.TipDistanceFromOpponent();
+        if (tipDistanceFromOpp > 0)
+        {
+            var reward = Math.Max(1 - tipDistanceFromOpp, 0) * Math.Max(1 - tipDistanceFromOpp, 0) * 0.01f;
+            AddReward(reward);
+        }
         
-        // if (_thisFrameEpeeCollided && opponentIkTargetController.TipDistanceFromOpponent() < 0)
-        // {
-        //     AddReward(0.01f);
-        // }
+        if (_thisFrameEpeeCollided && opponentIkTargetController.TipDistanceFromOpponent() < 0)
+        {
+            AddReward(0.01f);
+        }
 
         // ikTargetController.useHandAsBasePosition = avatarController.curStateInt == 9;
         ikTargetController.SetMoveVector(discreteActions[0], discreteActions[1], discreteActions[2], discreteActions[3] > 0);
