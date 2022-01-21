@@ -108,8 +108,6 @@ public class AvatarController : MonoBehaviour
             curStateInt = -1;
         }
     }
-
-    public float rigWeightWhenLunge;
     
     void Update()
     {

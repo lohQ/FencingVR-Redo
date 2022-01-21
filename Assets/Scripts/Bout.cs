@@ -41,6 +41,11 @@ public class Bout : MonoBehaviour
     private const int Red = (int) FencerColor.Red;
     private const int Green = (int) FencerColor.Green;
 
+    public float GetRemainingTime()
+    {
+        return _boutRemainingTime;
+    }
+    
     void Start()
     {
         points = new int[2];

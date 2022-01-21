@@ -92,17 +92,17 @@ public class IkTargetController : MonoBehaviour
         }
     }
 
-    public bool IsPointingAtOpponent(float distance)
+    public float TipDistanceFromOpponent()
     {
-        var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, distance, _ignoreSelfLayerMask);
+        var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, 1f, _ignoreSelfLayerMask);
         foreach (var hit in hits)
         {
             if (hit.collider.CompareTag("Target Area"))
             {
-                return true;
+                return hit.distance;
             }
         }
-        return false;
+        return -1;
     }
     
     void AdjustHandIkToEpee()

@@ -722,8 +722,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 28
-    NumStackedVectorObservations: 5
+    VectorObservationSize: 29
+    NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 030000000300000003000000030000000300000003000000030000000300000003000000020000000300000003000000
@@ -832,8 +832,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 28
-    NumStackedVectorObservations: 5
+    VectorObservationSize: 29
+    NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 030000000300000003000000030000000300000003000000030000000300000003000000020000000300000003000000
@@ -1837,8 +1837,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6649b7125254838bebf6a2c74e8450, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boutPoints: 3
-  boutTime: 120
+  boutPoints: 2
+  boutTime: 60
   startPoints:
   - {fileID: 384005778597605999}
   - {fileID: 384005779607887632}
