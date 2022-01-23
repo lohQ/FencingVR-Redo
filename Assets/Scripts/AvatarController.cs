@@ -6,6 +6,9 @@ using UnityEngine.Animations.Rigging;
 
 public class AvatarController : MonoBehaviour
 {
+    public float stepDistance;
+    public Vector3 fencerForward;
+    
     private Rig _ikRig;
     private IkTargetController _ikTargetController;
 
@@ -47,11 +50,6 @@ public class AvatarController : MonoBehaviour
         _animator.SetInteger(_backwardStepHash, 0);
         yield return null;
         
-        while (!_animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde"))
-        {
-            yield return null;
-        }
-
         // var coroutineEndTime = Time.time;
         // Debug.Log("for " + name + ", coroutine took time of " + $"{(coroutineEndTime - coroutineStartTime):0.00}");
         
@@ -75,12 +73,35 @@ public class AvatarController : MonoBehaviour
 
     public void SetNextStep(int forward)
     {
+        // var layerMask = LayerMask.GetMask(new[] {"Environment"});
         if (forward > 0)
         {
-            _animator.SetInteger(_forwardStepHash, forward);
+            // RaycastHit hitInfo;
+            // var hit = Physics.Raycast(new Ray(transform.position + Vector3.up, fencerForward), out hitInfo, stepDistance, layerMask);
+            // if (!hit)
+            // {
+                _animator.SetInteger(_forwardStepHash, forward);
+            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up + fencerForward * stepDistance, Color.green, 1f);
+            // }
+            // else
+            // {
+            //     Debug.Log("forward hit");
+            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up + fencerForward * stepDistance, Color.red, 1f);
+            // }
         } else if (forward < 0)
         {
-            _animator.SetInteger(_backwardStepHash, -forward);
+            // RaycastHit hitInfo;
+            // var hit = Physics.Raycast(new Ray(transform.position + Vector3.up, -fencerForward), out hitInfo, stepDistance, layerMask);
+            // if (!hit)
+            // {
+                _animator.SetInteger(_backwardStepHash, -forward);
+            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up - fencerForward * stepDistance, Color.green, 1f);
+            // }
+            // else
+            // {
+            //     Debug.Log("backward hit");
+            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up - fencerForward * stepDistance, Color.red, 1f);
+            // }
         }
     }
 

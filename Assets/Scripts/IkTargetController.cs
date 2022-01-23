@@ -27,6 +27,7 @@ public class IkTargetController : MonoBehaviour
     public Vector3 fencerForward, fencerRight;
     public Transform epee, epeeFollow, epeeTip;
     public float ikMissTolerance = 0.1f;
+    public float ikMissToleranceDegrees = 30f;
     public float ikMissTeleportThreshold = 0.8f;
     private float _armLength;
     
@@ -57,8 +58,10 @@ public class IkTargetController : MonoBehaviour
         handIkTargetParent.position = hand.position;
         handIkTargetParent.rotation = foreArm.rotation;
         handIkTarget.localRotation = _initialLocalRotation;
-        _headTargetInitialPosition = head.position + head.forward;
+        _headTargetInitialPosition = head.position + 100 * head.forward;     // scaled up
         headIkAimTarget.position = _headTargetInitialPosition;
+        epee.position = epeeFollow.position;
+        epee.rotation = epeeFollow.rotation;
     }
 
     private Vector3 _moveVector;
@@ -94,7 +97,8 @@ public class IkTargetController : MonoBehaviour
 
     public float TipDistanceFromOpponent()
     {
-        var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, 1f, _ignoreSelfLayerMask);
+        var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, 70f, _ignoreSelfLayerMask);
+        // Debug.DrawLine(epeeTip.position, epeeTip.position + 70 * epeeTip.forward, Color.green);
         foreach (var hit in hits)
         {
             if (hit.collider.CompareTag("Target Area"))
@@ -117,14 +121,22 @@ public class IkTargetController : MonoBehaviour
         {
             _moveVector += speed * Time.deltaTime * epeeFollowToEpee.normalized;
             _moveVector *= (speed * Time.deltaTime) / _moveVector.magnitude;
-            Debug.DrawLine(epeeFollow.position, epeeFollow.position + _moveVector, Color.green, 5f);
+            // Debug.DrawLine(epeeFollow.position, epeeFollow.position + _moveVector, Color.green, 5f);
             // if (_moveVector.magnitude > epeeFollowToEpee.magnitude)
             // {
             //     _moveVector = epeeFollowToEpee;
             // }
         }
-    }
 
+        var epeeFollowToEpeeRot = Vector3.Angle(epeeFollow.forward, epee.forward);
+        if (epeeFollowToEpeeRot > ikMissToleranceDegrees)
+        {
+            _rotationToApply = (Quaternion.RotateTowards(Quaternion.identity, Quaternion.FromToRotation(epeeFollow.forward, epee.forward), epeeFollowToEpeeRot / 3)
+                                * Quaternion.Euler(_rotationToApply) ).eulerAngles;
+            // Debug.Log("epeeFollowToEpeeRot: " + epeeFollowToEpeeRot + "; rotation to apply: " + _rotationToApply);
+        }
+    }
+    
     // public bool useHandAsBasePosition;  // when there's lunge then use hand as base position, else use handIkTargetParent's position
 
     public void SetHeadTargetMoveVector(int x, int y)

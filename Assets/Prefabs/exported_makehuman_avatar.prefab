@@ -226,7 +226,7 @@ MonoBehaviour:
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 15
   m_SphereCastRadius: 0
-  m_RayLength: 20
+  m_RayLength: 100
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -252,7 +252,7 @@ MonoBehaviour:
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 15
   m_SphereCastRadius: 0
-  m_RayLength: 20
+  m_RayLength: 100
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -278,7 +278,7 @@ MonoBehaviour:
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 15
   m_SphereCastRadius: 0
-  m_RayLength: 20
+  m_RayLength: 100
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 15
   m_SphereCastRadius: 0
-  m_RayLength: 20
+  m_RayLength: 100
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -650,7 +650,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curStateInt: 0
-  rigWeightWhenLunge: 0.7
 --- !u!114 &2135068309952798277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,6 +690,7 @@ MonoBehaviour:
   epeeFollow: {fileID: 0}
   epeeTip: {fileID: 0}
   ikMissTolerance: 0.1
+  ikMissToleranceDegrees: 20
   ikMissTeleportThreshold: 0.5
   rotationLimit: {fileID: 2135068309373027027}
   rotationSpeed: 120

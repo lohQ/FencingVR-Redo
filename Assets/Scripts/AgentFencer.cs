@@ -240,6 +240,7 @@ public class AgentFencer : Agent
         {
             if (avatarController.curStateInt != -1)
             {
+                if (log) Debug.Log("cur state int is not -1, it's " + avatarController.curStateInt + ". Action masked. ");
                 actionMask.SetActionEnabled(8, 0, false);
                 actionMask.SetActionEnabled(8, 2, false);
                 // actionMask.SetActionEnabled(9, 1, false);
@@ -247,6 +248,7 @@ public class AgentFencer : Agent
         }
         else
         {
+            if (log) Debug.Log("not within round. Actions masked. ");
             // ik hand
             actionMask.SetActionEnabled(0, 0, false);
             actionMask.SetActionEnabled(0, 2, false);
@@ -262,7 +264,7 @@ public class AgentFencer : Agent
             actionMask.SetActionEnabled(5, 2, false);
             actionMask.SetActionEnabled(6, 0, false);
             actionMask.SetActionEnabled(6, 2, false);
-            actionMask.SetActionEnabled(7, 0, false);
+            actionMask.SetActionEnabled(7, 1, false);   // fix
 
             // animation
             actionMask.SetActionEnabled(8, 0, false);
@@ -283,7 +285,7 @@ public class AgentFencer : Agent
         var tipDistanceFromOpp = ikTargetController.TipDistanceFromOpponent();
         if (tipDistanceFromOpp > 0)
         {
-            var reward = Math.Max(1 - tipDistanceFromOpp, 0) * Math.Max(1 - tipDistanceFromOpp, 0) * 0.01f;
+            var reward = Math.Max(70 - tipDistanceFromOpp, 0)/70 * Math.Max(70 - tipDistanceFromOpp, 0)/70 * 0.01f;
             AddReward(reward);
         }
         
@@ -291,13 +293,19 @@ public class AgentFencer : Agent
         {
             AddReward(0.01f);
         }
+        
+        AddReward(-1f/MaxStep);
 
         // ikTargetController.useHandAsBasePosition = avatarController.curStateInt == 9;
         ikTargetController.SetMoveVector(discreteActions[0], discreteActions[1], discreteActions[2], discreteActions[3] > 0);
         ikTargetController.SetRotationToApply(discreteActions[4], discreteActions[5], discreteActions[6], discreteActions[7] > 0);
         // ikTargetController.SetHeadTargetMoveVector(discreteActions[10] - 1, discreteActions[11] - 1);
 
-        // Debug.Log("discreteActions[9]: " + discreteActions[9]);
+        if (log) Debug.Log("discreteActions[0]: " + discreteActions[0]);
+        if (log) Debug.Log("discreteActions[1]: " + discreteActions[1]);
+        if (log) Debug.Log("discreteActions[2]: " + discreteActions[2]);
+        if (log) Debug.Log("discreteActions[3]: " + discreteActions[3]);
+        if (log) Debug.Log("discreteActions[8]: " + discreteActions[8]);
         // if (discreteActions[9] == 1)
         // {
         //     avatarController.Lunge();

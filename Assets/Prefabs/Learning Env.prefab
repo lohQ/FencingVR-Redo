@@ -726,8 +726,8 @@ MonoBehaviour:
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 030000000300000003000000030000000300000003000000030000000300000003000000020000000300000003000000
-    VectorActionSize: 030000000300000003000000030000000300000003000000030000000300000003000000020000000300000003000000
+      BranchSizes: 030000000300000003000000020000000300000003000000030000000200000003000000020000000300000003000000
+    VectorActionSize: 030000000300000003000000020000000300000003000000030000000200000003000000020000000300000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -836,8 +836,8 @@ MonoBehaviour:
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 030000000300000003000000030000000300000003000000030000000300000003000000020000000300000003000000
-    VectorActionSize: 030000000300000003000000030000000300000003000000030000000300000003000000020000000300000003000000
+      BranchSizes: 030000000300000003000000020000000300000003000000030000000200000003000000020000000300000003000000
+    VectorActionSize: 030000000300000003000000020000000300000003000000030000000200000003000000020000000300000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -1846,8 +1846,8 @@ MonoBehaviour:
   - {fileID: 384005779383268758}
   - {fileID: 384005780317160196}
   timerBoard: {fileID: 384005778586566833}
-  zHalfLength: 44
-  xHalfWidth: 12
+  zHalfLength: 440
+  xHalfWidth: 120
   fencers:
   - {fileID: 206877809695476442}
   - {fileID: 2269729640031652659}
@@ -2026,7 +2026,7 @@ Transform:
   m_GameObject: {fileID: 384005780127949771}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.3879997, z: 0.23443091}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 384005778974160391}
@@ -2298,7 +2298,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384005780323468747}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2559,6 +2559,11 @@ PrefabInstance:
       objectReference: {fileID: 384005779449420214}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
+      propertyPath: speed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
       propertyPath: epeeTip
       value: 
       objectReference: {fileID: 384005780313287366}
@@ -2591,6 +2596,26 @@ PrefabInstance:
         type: 3}
       propertyPath: fencerForward.z
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: ikMissTolerance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: headTargetMoveSpeed
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: ikMissTeleportThreshold
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: headTargetMoveMaxDistance
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
@@ -2766,6 +2791,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7115579222828048783, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: m_Weight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7197669571132224742, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
@@ -2990,6 +3020,11 @@ PrefabInstance:
       objectReference: {fileID: 384005778979538682}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
+      propertyPath: speed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
       propertyPath: epeeTip
       value: 
       objectReference: {fileID: 384005779293896396}
@@ -3017,6 +3052,26 @@ PrefabInstance:
         type: 3}
       propertyPath: fencerForward.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: ikMissTolerance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: headTargetMoveSpeed
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: ikMissTeleportThreshold
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: headTargetMoveMaxDistance
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
@@ -3058,6 +3113,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
+    - target: {fileID: 7115579222828048783, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: m_Weight
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce5ffae0115844b33bfda3714fae792c, type: 3}
 --- !u!4 &206877809695476442 stripped

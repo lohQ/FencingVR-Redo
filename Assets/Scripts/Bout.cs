@@ -37,6 +37,7 @@ public class Bout : MonoBehaviour
     private float _boutRemainingTime;
     private float _doubleTouchRemainingTime;
     private int _withinDoubleTimeframeOf;   // if not within double timeframe, 0; else value will be Red/Green + 1
+    private bool _redZMinusGreenZIsPositive;
 
     private const int Red = (int) FencerColor.Red;
     private const int Green = (int) FencerColor.Green;
@@ -52,6 +53,7 @@ public class Bout : MonoBehaviour
         _startSignal = 0;
         withinRound = false;
         _withinDoubleTimeframeOf = 0;
+        _redZMinusGreenZIsPositive = (fencers[Red].position.z - fencers[Green].position.z) > 0;
     }
 
     private void Update()
@@ -87,8 +89,14 @@ public class Bout : MonoBehaviour
                     scoreBoards[Red].SetText(points[Red] + "");
                     roundEnded = true;
                 }
-            }
 
+                if ((redPos.z - greenPos.z) > 0 != _redZMinusGreenZIsPositive)
+                {
+                    // fencers are back to back now, have to reset position
+                    roundEnded = true;
+                }
+            }
+            
             // if in double timeframe then also decrement the time
             if (!roundEnded && _withinDoubleTimeframeOf != 0)
             {

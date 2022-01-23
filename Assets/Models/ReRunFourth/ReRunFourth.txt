@@ -1,0 +1,3 @@
+Added rotation adjust to ik target.
+Added time step punishment
+Set play_against_latest_model_ratio to 0.8
