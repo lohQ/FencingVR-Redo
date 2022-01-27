@@ -649,6 +649,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b2821aa003047df89e18454237cc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stepDistance: 70
+  fencerForward: {x: 0, y: 0, z: -1}
   curStateInt: 0
 --- !u!114 &2135068309952798277
 MonoBehaviour:

@@ -65,30 +65,30 @@ public class Bout : MonoBehaviour
             // make sure both in piste
             if (!roundEnded)
             {
-                var pistePos = transform.position;
+                // var pistePos = transform.position;
                 var redPos = fencers[Red].position;
                 var greenPos = fencers[Green].position;
-
-                if (redPos.x > pistePos.x + xHalfWidth 
-                    || redPos.x < pistePos.x - xHalfWidth
-                    || redPos.z > pistePos.z + zHalfLength 
-                    || redPos.z < pistePos.z - zHalfLength)
-                {
-                    agentFencers[Red].AddReward(-1);
-                    points[Green] += 1;
-                    scoreBoards[Green].SetText(points[Green] + "");
-                    roundEnded = true;
-                }
-                if (greenPos.x > pistePos.x + xHalfWidth
-                    || greenPos.x < pistePos.x - xHalfWidth
-                    || greenPos.z > pistePos.z + zHalfLength
-                    || greenPos.z < pistePos.z - zHalfLength)
-                {
-                    agentFencers[Green].AddReward(-1);
-                    points[Red] += 1;
-                    scoreBoards[Red].SetText(points[Red] + "");
-                    roundEnded = true;
-                }
+                //
+                // if (redPos.x > pistePos.x + xHalfWidth 
+                //     || redPos.x < pistePos.x - xHalfWidth
+                //     || redPos.z > pistePos.z + zHalfLength 
+                //     || redPos.z < pistePos.z - zHalfLength)
+                // {
+                //     agentFencers[Red].AddReward(-1);
+                //     points[Green] += 1;
+                //     scoreBoards[Green].SetText(points[Green] + "");
+                //     roundEnded = true;
+                // }
+                // if (greenPos.x > pistePos.x + xHalfWidth
+                //     || greenPos.x < pistePos.x - xHalfWidth
+                //     || greenPos.z > pistePos.z + zHalfLength
+                //     || greenPos.z < pistePos.z - zHalfLength)
+                // {
+                //     agentFencers[Green].AddReward(-1);
+                //     points[Red] += 1;
+                //     scoreBoards[Red].SetText(points[Red] + "");
+                //     roundEnded = true;
+                // }
 
                 if ((redPos.z - greenPos.z) > 0 != _redZMinusGreenZIsPositive)
                 {
@@ -144,8 +144,14 @@ public class Bout : MonoBehaviour
         }
     }
     
+    // quick patch to incorrect start rotation issue
+    private bool _startingRound = false;
+    
     IEnumerator StartRound()
     {
+        if (_startingRound) yield break;
+
+        _startingRound = true;
         // used in every round to reset points, time, position, rotation, etc.
         fencers[Green].position = new Vector3(startPoints[Green].position.x, 0, startPoints[Green].position.z);
         fencers[Green].rotation = Quaternion.identity;
@@ -158,9 +164,8 @@ public class Bout : MonoBehaviour
         yield return redEnter;
         yield return greenEnter;
 
-
         yield return new WaitForSeconds(0.1f);
-        if (Quaternion.Angle(fencers[Green].rotation, Quaternion.identity) < 0.1f)
+        if (Quaternion.Angle(fencers[Green].rotation, Quaternion.identity) < 1f)
         {
             Debug.Log("Detected incorrect start rotation! Manually exit en garde again");
             var redExit = StartCoroutine(fencerControllers[Red].ExitEnGarde());
@@ -182,6 +187,7 @@ public class Bout : MonoBehaviour
         }
 
         withinRound = true;
+        _startingRound = false;
     }
     
     IEnumerator EndRound()

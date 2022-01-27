@@ -79,6 +79,7 @@ public class IkTargetController : MonoBehaviour
         {
             _moveVector *= 2;
         }
+
     }
     
     public void SetRotationToApply(int x, int y, int z, bool fast)

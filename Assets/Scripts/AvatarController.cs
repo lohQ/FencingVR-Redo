@@ -20,6 +20,7 @@ public class AvatarController : MonoBehaviour
     // private bool _inEnGarde;
 
     private bool _started = false;
+    private int _envLayerMask;
 
     void Start()
     {
@@ -28,6 +29,7 @@ public class AvatarController : MonoBehaviour
         _backwardStepHash = Animator.StringToHash("backward_step");
         _endedHash = Animator.StringToHash("end");
         _lungeHash = Animator.StringToHash("lunge");
+        _envLayerMask = LayerMask.GetMask(new[] {"Environment"});
         curStateInt = -1;
 
         var rigBuilder = GetComponent<RigBuilder>();
@@ -48,7 +50,11 @@ public class AvatarController : MonoBehaviour
         _animator.SetBool(_endedHash, false);
         _animator.SetInteger(_forwardStepHash, 0);
         _animator.SetInteger(_backwardStepHash, 0);
-        yield return null;
+        while (!_animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde"))
+        {
+            yield return null;
+        }
+        // yield return null;
         
         // var coroutineEndTime = Time.time;
         // Debug.Log("for " + name + ", coroutine took time of " + $"{(coroutineEndTime - coroutineStartTime):0.00}");
@@ -73,35 +79,22 @@ public class AvatarController : MonoBehaviour
 
     public void SetNextStep(int forward)
     {
-        // var layerMask = LayerMask.GetMask(new[] {"Environment"});
         if (forward > 0)
         {
-            // RaycastHit hitInfo;
-            // var hit = Physics.Raycast(new Ray(transform.position + Vector3.up, fencerForward), out hitInfo, stepDistance, layerMask);
-            // if (!hit)
-            // {
+            var hit = Physics.Raycast(
+                new Ray(transform.position + Vector3.up, fencerForward), stepDistance, _envLayerMask);
+            if (!hit)
+            {
                 _animator.SetInteger(_forwardStepHash, forward);
-            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up + fencerForward * stepDistance, Color.green, 1f);
-            // }
-            // else
-            // {
-            //     Debug.Log("forward hit");
-            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up + fencerForward * stepDistance, Color.red, 1f);
-            // }
+            }
         } else if (forward < 0)
         {
-            // RaycastHit hitInfo;
-            // var hit = Physics.Raycast(new Ray(transform.position + Vector3.up, -fencerForward), out hitInfo, stepDistance, layerMask);
-            // if (!hit)
-            // {
+            var hit = Physics.Raycast(
+                new Ray(transform.position + Vector3.up, -fencerForward), stepDistance, _envLayerMask);
+            if (!hit)
+            {
                 _animator.SetInteger(_backwardStepHash, -forward);
-            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up - fencerForward * stepDistance, Color.green, 1f);
-            // }
-            // else
-            // {
-            //     Debug.Log("backward hit");
-            //     Debug.DrawLine(transform.position + Vector3.up, transform.position + Vector3.up - fencerForward * stepDistance, Color.red, 1f);
-            // }
+            }
         }
     }
 

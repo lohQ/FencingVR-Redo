@@ -36,7 +36,7 @@ public class AgentFencer : Agent
         sensor.AddObservation(selfPos - piste.position);
         sensor.AddObservation(selfEpee.position - selfPos);
         sensor.AddObservation(selfEpee.localRotation);
-        sensor.AddObservation(selfEpeeTip.position - selfPos);
+        // sensor.AddObservation(selfEpeeTip.position - selfPos);   removed in 5.2 run
         sensor.AddObservation(selfEpeeTip.position - selfEpee.position);
         sensor.AddObservation(oppEpeeTip.position - selfPos);
         sensor.AddObservation(oppEpeeTip.position - oppEpee.position);
@@ -289,9 +289,11 @@ public class AgentFencer : Agent
             AddReward(reward);
         }
         
-        if (_thisFrameEpeeCollided && opponentIkTargetController.TipDistanceFromOpponent() < 0)
+        var oppTipDistanceFromSelf = opponentIkTargetController.TipDistanceFromOpponent();
+        if (oppTipDistanceFromSelf > 0)
         {
-            AddReward(0.01f);
+            var reward = Math.Max(70 - oppTipDistanceFromSelf, 0)/70 * Math.Max(70 - oppTipDistanceFromSelf, 0)/70 * 0.01f;
+            AddReward(-reward);
         }
         
         AddReward(-1f/MaxStep);
