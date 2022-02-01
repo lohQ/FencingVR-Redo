@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum FencerColor
 {
@@ -146,6 +147,9 @@ public class Bout : MonoBehaviour
     
     // quick patch to incorrect start rotation issue
     private bool _startingRound = false;
+
+    public float randomXScale = 10f;
+    public float randomZScale = 10f;
     
     IEnumerator StartRound()
     {
@@ -153,9 +157,15 @@ public class Bout : MonoBehaviour
 
         _startingRound = true;
         // used in every round to reset points, time, position, rotation, etc.
-        fencers[Green].position = new Vector3(startPoints[Green].position.x, 0, startPoints[Green].position.z);
+        fencers[Green].position = new Vector3(
+            Random.value * randomXScale + startPoints[Green].position.x, 
+            0, 
+            Random.value * randomZScale + startPoints[Green].position.z);
+        fencers[Red].position = new Vector3(
+            Random.value * randomXScale + startPoints[Red].position.x, 
+            0, 
+            Random.value * randomZScale + startPoints[Red].position.z);
         fencers[Green].rotation = Quaternion.identity;
-        fencers[Red].position = new Vector3(startPoints[Red].position.x, 0, startPoints[Red].position.z);
         fencers[Red].rotation = Quaternion.Euler(0, 180, 0) * Quaternion.identity;
 
         // yield return new WaitForSeconds(0.1f);

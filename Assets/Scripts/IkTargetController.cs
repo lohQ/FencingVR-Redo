@@ -67,7 +67,7 @@ public class IkTargetController : MonoBehaviour
     private Vector3 _moveVector;
     private Vector3 _rotationToApply;
     
-    public void SetMoveVector(int x, int y, int z, bool fast)
+    public void SetMoveVector(int x, int y, int z, float speedFactor)
     {
         // var moveVector = Vector3.zero;
         _moveVector = Vector3.zero;
@@ -75,11 +75,7 @@ public class IkTargetController : MonoBehaviour
         _moveVector += (y-1) * Vector3.up;
         _moveVector += (z-1) * fencerForward;
         _moveVector = _moveVector.normalized * speed * Time.deltaTime;
-        if (fast)
-        {
-            _moveVector *= 2;
-        }
-
+        _moveVector *= speedFactor;
     }
     
     public void SetRotationToApply(int x, int y, int z, bool fast)

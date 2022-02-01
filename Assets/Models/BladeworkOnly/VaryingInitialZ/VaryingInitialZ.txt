@@ -1,0 +1,4 @@
+- Randomize the initial z position
+- Clamp speed factor to be [0, 1]
+- DecisionRequestor 5 become 1
+- Remove position observation (26 -> 20)
