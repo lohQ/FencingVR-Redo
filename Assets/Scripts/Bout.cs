@@ -239,6 +239,7 @@ public class Bout : MonoBehaviour
     {
         // withinRound = false;
         // _withinDoubleTimeframeOf = 0;
+
         if (points[Green] > points[Red])
         {
             agentFencers[Green].SetReward(1);

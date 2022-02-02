@@ -438,7 +438,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384005778597605998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1, y: 0, z: -1.7}
+  m_LocalPosition: {x: -0.1, y: 0, z: -1.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -685,6 +685,7 @@ GameObject:
   - component: {fileID: 384005778917210261}
   - component: {fileID: 384005778917210260}
   - component: {fileID: 384005778917210282}
+  - component: {fileID: 3983714049904669265}
   m_Layer: 0
   m_Name: Red Fencer
   m_TagString: Untagged
@@ -725,9 +726,9 @@ MonoBehaviour:
     VectorObservationSize: 20
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 1
-      BranchSizes: 0300000003000000030000000300000003000000030000000200000003000000030000000300000002000000
-    VectorActionSize: 
+      m_NumContinuousActions: 0
+      BranchSizes: 0500000005000000050000000300000003000000030000000200000003000000030000000300000002000000
+    VectorActionSize: 0500000005000000050000000300000003000000030000000200000003000000030000000300000002000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -766,7 +767,7 @@ MonoBehaviour:
   oppEpee: {fileID: 384005778979538682}
   oppEpeeTip: {fileID: 384005779293896396}
   oppPosition: {fileID: 206877809695476442}
-  additionalKey: 122
+  additionalKey: 0
   opponentIkTargetController: {fileID: 384005779930361161}
   log: 0
 --- !u!114 &384005778917210282
@@ -783,6 +784,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
+--- !u!114 &3983714049904669265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384005778917210262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feaf4a1610e44fd5a6d516a290beef5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fencerColor: 1
+  fencerForward: {x: 0, y: 0, z: -1}
+  fencerRight: {x: -1, y: 0, z: 0}
+  handEffectorMaxVelocity: 5
+  handEffectorMaxAcceleration: 10
+  handEffectorRotationVelocity: 120
+  accelerationLevelCount: 5
+  ikMissTeleportThreshold: 0.3
+  ikMissTolerance: 0.1
+  ikMissToleranceDegrees: 20
+  headAimEffectorMoveVelocity: 0.5
+  headAimEffectorMaxDistanceFromOrigin: 0.5
 --- !u!1 &384005778974160390
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,6 +820,7 @@ GameObject:
   - component: {fileID: 384005778974160389}
   - component: {fileID: 384005778974160388}
   - component: {fileID: 384005778974160410}
+  - component: {fileID: 7390076845343913881}
   m_Layer: 0
   m_Name: Green Fencer
   m_TagString: Untagged
@@ -835,9 +861,9 @@ MonoBehaviour:
     VectorObservationSize: 20
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 1
-      BranchSizes: 0300000003000000030000000300000003000000030000000200000003000000030000000300000002000000
-    VectorActionSize: 
+      m_NumContinuousActions: 0
+      BranchSizes: 0500000005000000050000000300000003000000030000000200000003000000030000000300000002000000
+    VectorActionSize: 0500000005000000050000000300000003000000030000000200000003000000030000000300000002000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -893,6 +919,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
+--- !u!114 &7390076845343913881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384005778974160390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feaf4a1610e44fd5a6d516a290beef5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fencerColor: 0
+  fencerForward: {x: 0, y: 0, z: 1}
+  fencerRight: {x: 1, y: 0, z: 0}
+  handEffectorMaxVelocity: 5
+  handEffectorMaxAcceleration: 10
+  handEffectorRotationVelocity: 120
+  accelerationLevelCount: 5
+  ikMissTeleportThreshold: 0.3
+  ikMissTolerance: 0.1
+  ikMissToleranceDegrees: 20
+  headAimEffectorMoveVelocity: 0.5
+  headAimEffectorMaxDistanceFromOrigin: 0.5
 --- !u!1 &384005778979538662
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +1013,6 @@ MonoBehaviour:
   follow: {fileID: 384005778324799058}
   frequency: 50
   damping: 1
-  shouldFollow: 1
 --- !u!114 &384005778979538683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -976,15 +1025,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ecaf7a417474a16aecc9543a81a4a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  epeeTipTag: Epee Tip
-  targetAreaTag: Target Area
-  otherFencerBodyLayer: Player 2 Body Layer
-  otherFencerWeaponLayer: Player 2 Weapon Layer
+  bout: {fileID: 384005779985417544}
+  agentFencer: {fileID: 384005778974160388}
   impulseThreshold: 0.001
   hitAngleThreshold: 35
-  agentFencer: {fileID: 384005778974160388}
-  fencerColor: 0
-  bout: {fileID: 384005779985417544}
   log: 0
 --- !u!1 &384005779119833347
 GameObject:
@@ -1615,7 +1659,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384005779607887635}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 0, z: 1.7}
+  m_LocalPosition: {x: 0.1, y: 0, z: 1.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1837,8 +1881,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6649b7125254838bebf6a2c74e8450, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boutPoints: 3
-  boutTime: 90
+  boutPoints: 5
+  boutTime: 180
   startPoints:
   - {fileID: 384005778597605999}
   - {fileID: 384005779607887632}
@@ -2601,6 +2645,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
+      propertyPath: agentFencerSettings
+      value: 
+      objectReference: {fileID: 3983714049904669265}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
       propertyPath: headTargetMoveSpeed
       value: 50
       objectReference: {fileID: 0}
@@ -3012,6 +3061,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
+      propertyPath: log
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
       propertyPath: epee
       value: 
       objectReference: {fileID: 384005778979538682}
@@ -3050,6 +3104,11 @@ PrefabInstance:
       propertyPath: ikMissTolerance
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: agentFencerSettings
+      value: 
+      objectReference: {fileID: 7390076845343913881}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
       propertyPath: headTargetMoveSpeed

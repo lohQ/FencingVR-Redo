@@ -1,0 +1,22 @@
+Changes to Learning Env
+- Remove position observation (26 -> 20)
+- Randomize the initial z position
+- Change translation action to be setting the acceleration
+    - Remove speedFactor and have 5 action branches for hand translation acceleration
+// Feels difficult to use acceleration to rotate, ignored for now
+// HeadIK less important, so not changed to using acceleration also
+- One bout become 3 minutes, 5 points.
+// - Use fixed set of transforms as observations, instead of raycast
+
+ - DecisionRequestor period remains at 5
+
+
+Changes to Config
+- Reduce time_horizon to a quarter: from 1000 to 256    // reward about 2.5 seconds of actions before hitting
+- Multiply buffer_size by 4: from 10240 to 40960        // docs says larger buffer_size => more stable training
+- Reduce batch_size by half: from 512 to 256            // Number of experiences in each iteration of gradient descent. Should be similar to time_horizon?
+
+
+Refactoring
+- Added AgentFencerSettings and PhysicsEnvSettings
+    - Scaling is done using PhysicsEnvSettings.ScaleFactor, except for Piste

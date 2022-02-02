@@ -19,7 +19,6 @@ public class AgentFencer : Agent
     public Transform piste, self, selfEpee, selfEpeeTip, oppEpee, oppEpeeTip, oppPosition;
 
     private bool _epeeCollided;
-    private bool _thisFrameEpeeCollided;
     
     public KeyCode additionalKey = KeyCode.None;
     public IkTargetController opponentIkTargetController;
@@ -33,17 +32,14 @@ public class AgentFencer : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         var selfPos = self.position;
-        // sensor.AddObservation(selfPos - piste.position); varying initial z
         sensor.AddObservation(selfEpee.position - selfPos);
         sensor.AddObservation(selfEpee.localRotation);
-        // sensor.AddObservation(selfEpeeTip.position - selfPos);   removed in 5.2 run
         sensor.AddObservation(selfEpeeTip.position - selfEpee.position);
         sensor.AddObservation(oppEpeeTip.position - selfPos);
         sensor.AddObservation(oppEpeeTip.position - oppEpee.position);
-        // sensor.AddObservation(oppPosition.position - selfPos); varying initial z
         sensor.AddObservation(_epeeCollided);
-        _thisFrameEpeeCollided = _epeeCollided;
         _epeeCollided = false;
+        
         sensor.AddObservation(bout.points[(int)fencerColor]);
         sensor.AddObservation(bout.GetRemainingTime());
         if (fencerColor == FencerColor.Green)
@@ -64,15 +60,15 @@ public class AgentFencer : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
-        var continuousActionsOut = actionsOut.ContinuousActions;
+        // var continuousActionsOut = actionsOut.ContinuousActions;
 
-        continuousActionsOut[0] = 0.5f;
+        // continuousActionsOut[0] = 0.5f;
 
         if (additionalKey != KeyCode.None && !Input.GetKey(additionalKey))
         {
-            discreteActionsOut[0] = 1;
-            discreteActionsOut[1] = 1;
-            discreteActionsOut[2] = 1;
+            discreteActionsOut[0] = 2;
+            discreteActionsOut[1] = 2;
+            discreteActionsOut[2] = 2;
             discreteActionsOut[3] = 1;
             discreteActionsOut[4] = 1;
             discreteActionsOut[5] = 1;
@@ -92,17 +88,17 @@ public class AgentFencer : Agent
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            discreteActionsOut[0] = 2;
+            discreteActionsOut[0] = 4;
         }
         else
         {
-            discreteActionsOut[0] = 1;
+            discreteActionsOut[0] = 2;
         }
         
         // 1: translate hand (y axis)
         if (Input.GetKey(KeyCode.W))
         {
-            discreteActionsOut[1] = 2;
+            discreteActionsOut[1] = 4;
         }
         else if (Input.GetKey(KeyCode.S))
         {
@@ -110,13 +106,13 @@ public class AgentFencer : Agent
         }
         else
         {
-            discreteActionsOut[1] = 1;
+            discreteActionsOut[1] = 2;
         }
         
         // 2: translate hand (z axis)
         if (Input.GetKey(KeyCode.E))
         {
-            discreteActionsOut[2] = 2;
+            discreteActionsOut[2] = 4;
         }
         else if (Input.GetKey(KeyCode.Q))
         {
@@ -124,7 +120,7 @@ public class AgentFencer : Agent
         }
         else
         {
-            discreteActionsOut[2] = 1;
+            discreteActionsOut[2] = 2;
         }
         
         // 3: rotate hand (x axis)
@@ -242,11 +238,17 @@ public class AgentFencer : Agent
             if (log) Debug.Log("not within round. Actions masked. ");
             // ik hand
             actionMask.SetActionEnabled(0, 0, false);
-            actionMask.SetActionEnabled(0, 2, false);
+            actionMask.SetActionEnabled(0, 1, false);
+            actionMask.SetActionEnabled(0, 3, false);
+            actionMask.SetActionEnabled(0, 4, false);
             actionMask.SetActionEnabled(1, 0, false);
-            actionMask.SetActionEnabled(1, 2, false);
+            actionMask.SetActionEnabled(1, 1, false);
+            actionMask.SetActionEnabled(1, 3, false);
+            actionMask.SetActionEnabled(1, 4, false);
             actionMask.SetActionEnabled(2, 0, false);
-            actionMask.SetActionEnabled(2, 2, false);
+            actionMask.SetActionEnabled(2, 1, false);
+            actionMask.SetActionEnabled(2, 3, false);
+            actionMask.SetActionEnabled(2, 4, false);
 
             actionMask.SetActionEnabled(3, 0, false);
             actionMask.SetActionEnabled(3, 2, false);
@@ -272,7 +274,7 @@ public class AgentFencer : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var discreteActions = actionBuffers.DiscreteActions;
-        var speedFactor = Mathf.Clamp(actionBuffers.ContinuousActions[0], 0f, 1f);
+        // var speedFactor = Mathf.Clamp(actionBuffers.ContinuousActions[0], 0f, 1f);
         
         // var tipDistanceFromOpp = ikTargetController.TipDistanceFromOpponent();
         // if (tipDistanceFromOpp > 0)
@@ -290,9 +292,8 @@ public class AgentFencer : Agent
         //
         // AddReward(-1f/MaxStep);
 
-        // ikTargetController.useHandAsBasePosition = avatarController.curStateInt == 9;
-        ikTargetController.SetMoveVector(discreteActions[0], discreteActions[1], discreteActions[2], speedFactor);
-        ikTargetController.SetRotationToApply(discreteActions[3], discreteActions[4], discreteActions[5], discreteActions[6] > 0);
+        ikTargetController.SetMoveVector(discreteActions[0] - 2, discreteActions[1] - 2, discreteActions[2] - 2);
+        ikTargetController.SetRotationToApply(discreteActions[3] - 1, discreteActions[4] - 1, discreteActions[5] - 1, discreteActions[6] > 0);
         ikTargetController.SetHeadTargetMoveVector(discreteActions[7] - 1, discreteActions[8] - 1);
 
         // if (log) Debug.Log("discreteActions[0]: " + discreteActions[0]);

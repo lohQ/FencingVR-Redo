@@ -652,8 +652,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b2821aa003047df89e18454237cc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepDistance: 70
-  fencerForward: {x: 0, y: 0, z: -1}
+  stepDistance: 0.7
   curStateInt: 0
 --- !u!114 &2135068309952798277
 MonoBehaviour:
@@ -667,6 +666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78aa0642e51e14554b2b2046c4e3722c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agentFencerSettings: {fileID: 0}
   upperArm: {fileID: 1097165672132748099}
   foreArm: {fileID: 3927900859542769342}
   hand: {fileID: 7852067125703659230}
@@ -686,21 +686,10 @@ MonoBehaviour:
   - {fileID: 5291610812480718233}
   - {fileID: 7227230971403079916}
   - {fileID: 7852067125703659230}
-  weaponLayer: Player 1 Weapon Layer
-  bodyLayer: 
-  speed: 120
-  fencerForward: {x: 0, y: 0, z: 0}
-  fencerRight: {x: 0, y: 0, z: 0}
   epee: {fileID: 0}
   epeeFollow: {fileID: 0}
   epeeTip: {fileID: 0}
-  ikMissTolerance: 0.1
-  ikMissToleranceDegrees: 20
-  ikMissTeleportThreshold: 0.5
   rotationLimit: {fileID: 2135068309373027027}
-  rotationSpeed: 120
-  headTargetMoveMaxDistance: 0.4
-  headTargetMoveSpeed: 0.5
   log: 0
 --- !u!54 &3409132596567696692
 Rigidbody:

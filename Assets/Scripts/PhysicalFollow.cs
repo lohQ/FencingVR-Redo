@@ -14,9 +14,7 @@ public class PhysicalFollow : MonoBehaviour
     public float damping = 1f;
     private float _kp;
     private float _kd;
-
-    public bool shouldFollow = true;
-
+    
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -26,12 +24,9 @@ public class PhysicalFollow : MonoBehaviour
     
     void FixedUpdate()
     {
-        if (shouldFollow)
-        {
-            // Source: https://digitalopus.ca/site/pd-controllers/
-            MoveToPosition_BackwardPD(follow.position);
-            RotateToRotation_BackwardPD(follow.rotation);
-        }
+        // Source: https://digitalopus.ca/site/pd-controllers/
+        MoveToPosition_BackwardPD(follow.position);
+        RotateToRotation_BackwardPD(follow.rotation);
     }
 
     void MoveToPosition_BackwardPD(Vector3 pDes)

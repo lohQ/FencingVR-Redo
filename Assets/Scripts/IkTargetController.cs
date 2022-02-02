@@ -6,39 +6,43 @@ using UnityEngine;
 
 public class IkTargetController : MonoBehaviour
 {
+    public AgentFencerSettings agentFencerSettings;
+
     [Header("Ik Targets and Sources")] 
     public Transform upperArm;
-    public Transform foreArm; 
+    public Transform foreArm;
     public Transform hand;
-    public Transform handIkTarget; 
+    public Transform handIkTarget;
     public Transform handIkTargetParent;
     public Transform head;
     public Transform headIkAimTarget;
     
     [Header("Collision Detection")]
     public List<Transform> raycastSources;
-    public string weaponLayer;
     private int _ignoreWeaponLayerMask;
-    public string bodyLayer;
     private int _ignoreSelfLayerMask;
 
     [Header("Position Control")]
-    public float speed;
-    public Vector3 fencerForward, fencerRight;
-    public Transform epee, epeeFollow, epeeTip;
-    public float ikMissTolerance = 0.1f;
-    public float ikMissToleranceDegrees = 30f;
-    public float ikMissTeleportThreshold = 0.8f;
+    public Transform epee;
+    public Transform epeeFollow;
+    public Transform epeeTip;
     private float _armLength;
+    private float _scaledTeleportThreshold;
+    private float _scaledMissTolerance;
+    private float _ikMissToleranceDegrees;
+    private float _maxVelocity;
+    private float _maxAcceleration;
+    private Vector3 _curVelocity;
+    private Vector3 _curAcceleration;
     
     [Header("Rotation Control")]
     public RotationLimit rotationLimit;
-    public float rotationSpeed;     // by degrees
+    private float _rotationVelocity;
     private Quaternion _initialLocalRotation;
 
-    [Header("Head Aim Control")]
-    public float headTargetMoveMaxDistance;
-    public float headTargetMoveSpeed;
+    // [Header("Head Aim Control")]
+    private float _headTargetMoveMaxDistance;
+    private float _headTargetMoveSpeed;
     private Vector3 _headTargetInitialPosition;
     private Vector3 _headTargetMoveVector;
     
@@ -46,11 +50,26 @@ public class IkTargetController : MonoBehaviour
 
     void Start()
     {
-        _ignoreWeaponLayerMask = ~LayerMask.GetMask(weaponLayer);
-        _ignoreSelfLayerMask = ~(LayerMask.GetMask(bodyLayer) + LayerMask.GetMask(weaponLayer));
         _armLength = (hand.position - foreArm.position).magnitude + (foreArm.position - upperArm.position).magnitude;
         _initialLocalRotation = handIkTarget.localRotation;
-        // useHandAsBasePosition = false;
+
+        var weaponLayer = PhysicsEnvSettings.GetFencerWeaponLayer(agentFencerSettings.fencerColor);
+        var bodyLayer = PhysicsEnvSettings.GetFencerBodyLayer(agentFencerSettings.fencerColor);
+        _ignoreWeaponLayerMask = ~LayerMask.GetMask(weaponLayer);
+        _ignoreSelfLayerMask = ~(LayerMask.GetMask(bodyLayer) + LayerMask.GetMask(weaponLayer));
+
+        _scaledTeleportThreshold = agentFencerSettings.ikMissTeleportThreshold * PhysicsEnvSettings.ScaleFactor;
+        _scaledMissTolerance = agentFencerSettings.ikMissTolerance * PhysicsEnvSettings.ScaleFactor;
+        _ikMissToleranceDegrees = agentFencerSettings.ikMissToleranceDegrees;
+        
+        _maxVelocity = agentFencerSettings.handEffectorMaxVelocity * PhysicsEnvSettings.ScaleFactor;
+        _maxAcceleration = agentFencerSettings.handEffectorMaxAcceleration * PhysicsEnvSettings.ScaleFactor;
+        _rotationVelocity = agentFencerSettings.handEffectorRotationVelocity;
+        _headTargetMoveMaxDistance = agentFencerSettings.headAimEffectorMaxDistanceFromOrigin;
+        _headTargetMoveSpeed = agentFencerSettings.headAimEffectorMoveVelocity;
+        
+        _curVelocity = Vector3.zero;
+        _curAcceleration = Vector3.zero;
     }
 
     public void Initialize()
@@ -62,30 +81,46 @@ public class IkTargetController : MonoBehaviour
         headIkAimTarget.position = _headTargetInitialPosition;
         epee.position = epeeFollow.position;
         epee.rotation = epeeFollow.rotation;
+        _curVelocity = Vector3.zero;
+        _curAcceleration = Vector3.zero;
     }
 
-    private Vector3 _moveVector;
+    // private Vector3 _moveVector;
     private Vector3 _rotationToApply;
     
-    public void SetMoveVector(int x, int y, int z, float speedFactor)
+    public void SetMoveVector(int accX, int accY, int accZ)
     {
-        // var moveVector = Vector3.zero;
-        _moveVector = Vector3.zero;
-        _moveVector += (x-1) * fencerRight;
-        _moveVector += (y-1) * Vector3.up;
-        _moveVector += (z-1) * fencerForward;
-        _moveVector = _moveVector.normalized * speed * Time.deltaTime;
-        _moveVector *= speedFactor;
+        // _moveVector = Vector3.zero;
+        // _moveVector += (x-1) * agentFencerSettings.fencerRight;
+        // _moveVector += (y-1) * Vector3.up;
+        // _moveVector += (z-1) * agentFencerSettings.fencerForward;
+        // _moveVector = _moveVector.normalized * _speed * Time.deltaTime;
+        // _moveVector *= speedFactor;
+
+        var acceleration = (accX * agentFencerSettings.fencerRight 
+                               + accY * Vector3.up 
+                               + accZ * agentFencerSettings.fencerForward) 
+                           * _maxAcceleration / agentFencerSettings.accelerationLevelCount * Time.deltaTime;
+        var newVelocity = _curVelocity + acceleration;
+        if (newVelocity.magnitude > _maxVelocity)
+        {
+            newVelocity = newVelocity.normalized * _maxVelocity;
+        }
+        _curAcceleration = newVelocity - _curVelocity;
+        if (log && _curAcceleration.magnitude != 0)
+        {
+            Debug.Log("velocity: " + (_curVelocity + _curAcceleration));
+        }
     }
     
     public void SetRotationToApply(int x, int y, int z, bool fast)
     {
         // var moveVector = Vector3.zero;
         _rotationToApply = Vector3.zero;
-        _rotationToApply += (x-1) * Vector3.right;
-        _rotationToApply += (y-1) * Vector3.up;
-        _rotationToApply += (z-1) * Vector3.forward;
-        _rotationToApply = _rotationToApply * rotationSpeed * Time.deltaTime;
+        _rotationToApply += x * Vector3.right;
+        _rotationToApply += y * Vector3.up;
+        _rotationToApply += z * Vector3.forward;
+        _rotationToApply = _rotationToApply * _rotationVelocity * Time.deltaTime;
         if (fast)
         {
             _rotationToApply *= 2;
@@ -108,16 +143,29 @@ public class IkTargetController : MonoBehaviour
     
     void AdjustHandIkToEpee()
     {
-        // when some errors happen and epee left hand
         var epeeFollowToEpee = epee.position - epeeFollow.position;
-        if (epeeFollowToEpee.magnitude > ikMissTeleportThreshold)
+        if (epeeFollowToEpee.magnitude > _scaledTeleportThreshold)
         {
+            // when epee too far away, teleport epee to hand
             epee.position = epeeFollow.position;
+            if (log) Debug.Log("teleported epee");
         }
-        else if (epeeFollowToEpee.magnitude > ikMissTolerance)
+        else if (epeeFollowToEpee.magnitude > _scaledMissTolerance)
         {
-            _moveVector += speed * Time.deltaTime * epeeFollowToEpee.normalized;
-            _moveVector *= (speed * Time.deltaTime) / _moveVector.magnitude;
+            // when epee not too far away, move hand to epee
+            _curAcceleration += epeeFollowToEpee;
+            if (_curAcceleration.magnitude > _maxAcceleration)
+            {
+                _curAcceleration = _curAcceleration.normalized * _maxAcceleration;
+            }
+
+            if (log) Debug.Log("adjusted acceleration to " + _curAcceleration);
+            if (log) Debug.DrawLine(
+                    epeeFollow.position, epeeFollow.position + _curVelocity + _curAcceleration, 
+                    Color.green, 5f);
+
+            // _moveVector += _speed * Time.deltaTime * epeeFollowToEpee.normalized;
+            // _moveVector *= (_speed * Time.deltaTime) / _moveVector.magnitude;
             // Debug.DrawLine(epeeFollow.position, epeeFollow.position + _moveVector, Color.green, 5f);
             // if (_moveVector.magnitude > epeeFollowToEpee.magnitude)
             // {
@@ -126,7 +174,7 @@ public class IkTargetController : MonoBehaviour
         }
 
         var epeeFollowToEpeeRot = Vector3.Angle(epeeFollow.forward, epee.forward);
-        if (epeeFollowToEpeeRot > ikMissToleranceDegrees)
+        if (epeeFollowToEpeeRot > _ikMissToleranceDegrees)
         {
             _rotationToApply = (Quaternion.RotateTowards(Quaternion.identity, Quaternion.FromToRotation(epeeFollow.forward, epee.forward), epeeFollowToEpeeRot / 3)
                                 * Quaternion.Euler(_rotationToApply) ).eulerAngles;
@@ -134,16 +182,14 @@ public class IkTargetController : MonoBehaviour
         }
     }
     
-    // public bool useHandAsBasePosition;  // when there's lunge then use hand as base position, else use handIkTargetParent's position
-
     public void SetHeadTargetMoveVector(int x, int y)
     {
         _headTargetMoveVector = Vector3.zero;
-        _headTargetMoveVector += x * fencerRight;
+        _headTargetMoveVector += x * agentFencerSettings.fencerRight;
         _headTargetMoveVector += y * Vector3.up;
-        _headTargetMoveVector = headTargetMoveSpeed * Time.deltaTime * _headTargetMoveVector.normalized;
+        _headTargetMoveVector = _headTargetMoveSpeed * Time.deltaTime * _headTargetMoveVector.normalized;
 
-        if (((headIkAimTarget.position + _headTargetMoveVector) - _headTargetInitialPosition).magnitude > headTargetMoveMaxDistance)
+        if (((headIkAimTarget.position + _headTargetMoveVector) - _headTargetInitialPosition).magnitude > _headTargetMoveMaxDistance)
         {
             _headTargetMoveVector = Vector3.zero;
         }
@@ -153,44 +199,14 @@ public class IkTargetController : MonoBehaviour
     {
         # region position control
 
-        # region keyboard input
-        var moveVector = Vector3.zero;
-        // if (Input.GetKey(KeyCode.W))
-        // {
-        //     moveVector += Vector3.up;
-        // }
-        // else if (Input.GetKey(KeyCode.S))
-        // {
-        //     moveVector += -Vector3.up;
-        // }
-        // if (Input.GetKey(KeyCode.A))
-        // {
-        //     moveVector += -fencerRight;
-        // }
-        // else if (Input.GetKey(KeyCode.D))
-        // {
-        //     moveVector += fencerRight;
-        // }
-        // if (Input.GetKey(KeyCode.Q))
-        // {
-        //     moveVector += -fencerForward;
-        // }
-        // else if (Input.GetKey(KeyCode.E))
-        // {
-        //     moveVector += fencerForward;
-        // }
-        # endregion
-
         AdjustHandIkToEpee();
-        moveVector = _moveVector;
-        // var basePosition = useHandAsBasePosition ? hand.position : handIkTargetParent.position;
-        if (moveVector != Vector3.zero)
+        if (_curAcceleration != Vector3.zero)
         {
-            // moveVector = moveVector.normalized * speed * Time.deltaTime;
-            if (log) Debug.Log("moveVector this frame: " + moveVector);
+            var moveVector = (_curVelocity + _curAcceleration) * Time.deltaTime;
             if ((hand.position + moveVector - upperArm.position).magnitude > _armLength)
             {
                 if (log) Debug.Log("moving out of range, do nothing");
+                moveVector = Vector3.zero;
             }
             else
             {
@@ -208,50 +224,27 @@ public class IkTargetController : MonoBehaviour
                         }
                     }
                 }
-                handIkTargetParent.position += moveVector;
-                if (log) Debug.Log("Add moveVector to _position, new handIkTargetParent.position: " + handIkTargetParent.position);
             }
 
-            _moveVector = Vector3.zero;
+            if (moveVector == Vector3.zero)
+            {
+                _curVelocity = Vector3.zero;
+                if (log) Debug.Log("set curVelocity to zero");
+            }
+            else
+            {
+                handIkTargetParent.position += moveVector;
+                _curVelocity += _curAcceleration;
+                rotationLimit.Apply();
+            }
+            _curAcceleration = Vector3.zero;
         }
-        // else
-        // {
-        //     handIkTargetParent.position = basePosition;
-        // }
         
         # endregion
         
         # region rotation control
         
-        # region keyboard input
-        var rotationToApply = Vector3.zero;
-        // if (Input.GetKey(KeyCode.I))
-        // {
-        //     rotationToApply += rotationSpeed * Time.deltaTime * Vector3.right;
-        // }
-        // else if (Input.GetKey(KeyCode.K))
-        // {
-        //     rotationToApply += rotationSpeed * Time.deltaTime * -Vector3.right;
-        // }
-        // if (Input.GetKey(KeyCode.J))
-        // {
-        //     rotationToApply += rotationSpeed * Time.deltaTime * Vector3.up;
-        // }
-        // else if (Input.GetKey(KeyCode.L))
-        // {
-        //     rotationToApply += rotationSpeed * Time.deltaTime * -Vector3.up;
-        // }
-        // if (Input.GetKey(KeyCode.U))
-        // {
-        //     rotationToApply += rotationSpeed * Time.deltaTime * Vector3.forward;
-        // }
-        // else if (Input.GetKey(KeyCode.O))
-        // {
-        //     rotationToApply += rotationSpeed * Time.deltaTime * -Vector3.forward;
-        // }
-        # endregion
-
-        rotationToApply = _rotationToApply;
+        var rotationToApply = _rotationToApply;
         if (rotationToApply != Vector3.zero)
         {
             var handIkTargetPos = handIkTarget.position;

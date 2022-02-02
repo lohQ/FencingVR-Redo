@@ -7,7 +7,8 @@ using UnityEngine.Animations.Rigging;
 public class AvatarController : MonoBehaviour
 {
     public float stepDistance;
-    public Vector3 fencerForward;
+    private float _scaledStepDistance;
+    private Vector3 _fencerForward;
     
     private Rig _ikRig;
     private IkTargetController _ikTargetController;
@@ -29,12 +30,14 @@ public class AvatarController : MonoBehaviour
         _backwardStepHash = Animator.StringToHash("backward_step");
         _endedHash = Animator.StringToHash("end");
         _lungeHash = Animator.StringToHash("lunge");
-        _envLayerMask = LayerMask.GetMask(new[] {"Environment"});
+        _envLayerMask = LayerMask.GetMask(new[] {PhysicsEnvSettings.EnvironmentLayer});
         curStateInt = -1;
 
         var rigBuilder = GetComponent<RigBuilder>();
         _ikRig = rigBuilder.layers[0].rig;
         _ikTargetController = GetComponent<IkTargetController>();
+        _fencerForward = _ikTargetController.agentFencerSettings.fencerForward;
+        _scaledStepDistance = stepDistance * PhysicsEnvSettings.ScaleFactor;
         _started = true;
     }
 
@@ -82,7 +85,7 @@ public class AvatarController : MonoBehaviour
         if (forward > 0)
         {
             var hit = Physics.Raycast(
-                new Ray(transform.position + Vector3.up, fencerForward), stepDistance, _envLayerMask);
+                new Ray(transform.position + Vector3.up, _fencerForward), _scaledStepDistance, _envLayerMask);
             if (!hit)
             {
                 _animator.SetInteger(_forwardStepHash, forward);
@@ -90,7 +93,7 @@ public class AvatarController : MonoBehaviour
         } else if (forward < 0)
         {
             var hit = Physics.Raycast(
-                new Ray(transform.position + Vector3.up, -fencerForward), stepDistance, _envLayerMask);
+                new Ray(transform.position + Vector3.up, -_fencerForward), _scaledStepDistance, _envLayerMask);
             if (!hit)
             {
                 _animator.SetInteger(_backwardStepHash, -forward);
