@@ -20,7 +20,7 @@ public class IkTargetController : MonoBehaviour
     [Header("Collision Detection")]
     public List<Transform> raycastSources;
     private int _ignoreWeaponLayerMask;
-    private int _ignoreSelfLayerMask;
+    private int _oppLayerMask;
 
     [Header("Position Control")]
     public Transform epee;
@@ -37,7 +37,11 @@ public class IkTargetController : MonoBehaviour
     
     [Header("Rotation Control")]
     public RotationLimit rotationLimit;
-    private float _rotationVelocity;
+    private float _maxAngularVelocity;
+    private float _maxAngularAcceleration;
+    private Vector3 _curAngularVelocity;
+    private Vector3 _curAngularAcceleration;
+    // private float _rotationVelocity;
     private Quaternion _initialLocalRotation;
 
     // [Header("Head Aim Control")]
@@ -47,16 +51,18 @@ public class IkTargetController : MonoBehaviour
     private Vector3 _headTargetMoveVector;
     
     public bool log;
-
+    
     void Start()
     {
         _armLength = (hand.position - foreArm.position).magnitude + (foreArm.position - upperArm.position).magnitude;
         _initialLocalRotation = handIkTarget.localRotation;
 
         var weaponLayer = PhysicsEnvSettings.GetFencerWeaponLayer(agentFencerSettings.fencerColor);
-        var bodyLayer = PhysicsEnvSettings.GetFencerBodyLayer(agentFencerSettings.fencerColor);
+        var oppColor = PhysicsEnvSettings.GetOther(agentFencerSettings.fencerColor);
+        var oppBodyLayer = PhysicsEnvSettings.GetFencerBodyLayer(oppColor);
+        var oppWeaponLayer = PhysicsEnvSettings.GetFencerWeaponLayer(oppColor);
         _ignoreWeaponLayerMask = ~LayerMask.GetMask(weaponLayer);
-        _ignoreSelfLayerMask = ~(LayerMask.GetMask(bodyLayer) + LayerMask.GetMask(weaponLayer));
+        _oppLayerMask = LayerMask.GetMask(oppBodyLayer) + LayerMask.GetMask(oppWeaponLayer);
 
         _scaledTeleportThreshold = agentFencerSettings.ikMissTeleportThreshold * PhysicsEnvSettings.ScaleFactor;
         _scaledMissTolerance = agentFencerSettings.ikMissTolerance * PhysicsEnvSettings.ScaleFactor;
@@ -64,7 +70,10 @@ public class IkTargetController : MonoBehaviour
         
         _maxVelocity = agentFencerSettings.handEffectorMaxVelocity * PhysicsEnvSettings.ScaleFactor;
         _maxAcceleration = agentFencerSettings.handEffectorMaxAcceleration * PhysicsEnvSettings.ScaleFactor;
-        _rotationVelocity = agentFencerSettings.handEffectorRotationVelocity;
+        // _rotationVelocity = agentFencerSettings.handEffectorRotationVelocity;
+        _maxAngularVelocity = agentFencerSettings.handEffectorMaxAngularVelocity;
+        _maxAngularAcceleration = agentFencerSettings.handEffectorMaxAngularAcceleration;
+        
         _headTargetMoveMaxDistance = agentFencerSettings.headAimEffectorMaxDistanceFromOrigin;
         _headTargetMoveSpeed = agentFencerSettings.headAimEffectorMoveVelocity;
         
@@ -86,7 +95,7 @@ public class IkTargetController : MonoBehaviour
     }
 
     // private Vector3 _moveVector;
-    private Vector3 _rotationToApply;
+    // private Vector3 _rotationToApply;
     
     public void SetMoveVector(int accX, int accY, int accZ)
     {
@@ -107,29 +116,44 @@ public class IkTargetController : MonoBehaviour
             newVelocity = newVelocity.normalized * _maxVelocity;
         }
         _curAcceleration = newVelocity - _curVelocity;
-        if (log && _curAcceleration.magnitude != 0)
+        if (log && _curAcceleration.magnitude > 0)
         {
             Debug.Log("velocity: " + (_curVelocity + _curAcceleration));
         }
     }
     
-    public void SetRotationToApply(int x, int y, int z, bool fast)
+    public void SetRotationToApply(int accX, int accY, int accZ)
     {
-        // var moveVector = Vector3.zero;
-        _rotationToApply = Vector3.zero;
-        _rotationToApply += x * Vector3.right;
-        _rotationToApply += y * Vector3.up;
-        _rotationToApply += z * Vector3.forward;
-        _rotationToApply = _rotationToApply * _rotationVelocity * Time.deltaTime;
-        if (fast)
+        // _rotationToApply = Vector3.zero;
+        // _rotationToApply += x * Vector3.right;
+        // _rotationToApply += y * Vector3.up;
+        // _rotationToApply += z * Vector3.forward;
+        // _rotationToApply = _rotationToApply * _rotationVelocity * Time.deltaTime;
+        // if (fast)
+        // {
+        //     _rotationToApply *= 2;
+        // }
+        
+        var angularAcceleration = (accX * Vector3.right 
+                                   + accY * Vector3.up 
+                                   + accZ * Vector3.forward)
+            * _maxAngularAcceleration / agentFencerSettings.angAccelerationLevelCount * Time.deltaTime;
+        var newAngularVelocity = _curAngularVelocity + angularAcceleration;
+        if (newAngularVelocity.magnitude > _maxAngularVelocity)
         {
-            _rotationToApply *= 2;
+            newAngularVelocity = newAngularVelocity.normalized * _maxAngularVelocity;
         }
+        _curAngularAcceleration = newAngularVelocity - _curAngularVelocity;
+        // if (log && _curAngularAcceleration.magnitude > 0)
+        // {
+        //     Debug.Log("angular velocity: " + (_curAngularVelocity + _curAngularAcceleration));
+        // }
     }
 
     public float TipDistanceFromOpponent()
     {
-        var hits = Physics.RaycastAll(epeeTip.position, epeeTip.forward, 70f, _ignoreSelfLayerMask);
+        var hits = Physics.RaycastAll(
+            epeeTip.position, epeeTip.forward, 0.5f * PhysicsEnvSettings.ScaleFactor, _oppLayerMask);
         // Debug.DrawLine(epeeTip.position, epeeTip.position + 70 * epeeTip.forward, Color.green);
         foreach (var hit in hits)
         {
@@ -176,8 +200,9 @@ public class IkTargetController : MonoBehaviour
         var epeeFollowToEpeeRot = Vector3.Angle(epeeFollow.forward, epee.forward);
         if (epeeFollowToEpeeRot > _ikMissToleranceDegrees)
         {
-            _rotationToApply = (Quaternion.RotateTowards(Quaternion.identity, Quaternion.FromToRotation(epeeFollow.forward, epee.forward), epeeFollowToEpeeRot / 3)
-                                * Quaternion.Euler(_rotationToApply) ).eulerAngles;
+            _curAngularAcceleration = (Quaternion.RotateTowards(Quaternion.identity, Quaternion.FromToRotation(epeeFollow.forward, epee.forward), epeeFollowToEpeeRot / 3)
+                                       * Quaternion.Euler(_curAngularAcceleration) ).eulerAngles;
+            if (log) Debug.Log("adjusted angular acceleration to " + _curAngularAcceleration);
             // Debug.Log("epeeFollowToEpeeRot: " + epeeFollowToEpeeRot + "; rotation to apply: " + _rotationToApply);
         }
     }
@@ -235,7 +260,14 @@ public class IkTargetController : MonoBehaviour
             {
                 handIkTargetParent.position += moveVector;
                 _curVelocity += _curAcceleration;
+                
+                // if reached rotation limit, set velocity to zero
                 rotationLimit.Apply();
+                if (rotationLimit.Apply())
+                {
+                    if (log) Debug.Log("applied rotation limit");
+                    _curAngularVelocity = Vector3.zero;
+                }
             }
             _curAcceleration = Vector3.zero;
         }
@@ -244,34 +276,55 @@ public class IkTargetController : MonoBehaviour
         
         # region rotation control
         
-        var rotationToApply = _rotationToApply;
-        if (rotationToApply != Vector3.zero)
+        // var rotationToApply = _rotationToApply;
+        if (_curAngularAcceleration != Vector3.zero || _curAngularVelocity != Vector3.zero)
         {
+            var rotationToApply = (_curAngularVelocity + _curAngularAcceleration) * Time.deltaTime;
+            // if (log) Debug.Log("_curAngularAcceleration: " + _curAngularAcceleration);
+            if (log) Debug.Log("_curAngularVelocity: " + _curAngularVelocity);
+            if (log) Debug.Log("handIkTarget.localRotation: " + handIkTarget.localRotation.eulerAngles);
+
             var handIkTargetPos = handIkTarget.position;
             var willCollide = false;
-            Collider[] containingColliders = new Collider[3];
-            foreach (Transform source in raycastSources)
+
+            if (rotationToApply != Vector3.zero)
             {
-                var toSourceVector = source.position - handIkTargetPos;
-                var rotatedSourceVector = Quaternion.Euler(rotationToApply) * toSourceVector;
-                var containingColliderCount = Physics.OverlapSphereNonAlloc(
-                    handIkTargetPos + rotatedSourceVector, 0f, containingColliders, _ignoreWeaponLayerMask);
-                // Debug.DrawLine(source.position, handIkTargetPos + rotatedSourceVector, Color.green);
-                if (containingColliderCount > 0)
+                Collider[] containingColliders = new Collider[3];
+                foreach (Transform source in raycastSources)
                 {
-                    if (log) Debug.Log(source.name + " will be in collider if apply rotation. Do nothing. ");
-                    willCollide = true;
-                    break;
+                    var toSourceVector = source.position - handIkTargetPos;
+                    var rotatedSourceVector = Quaternion.Euler(rotationToApply) * toSourceVector;
+                    var containingColliderCount = Physics.OverlapSphereNonAlloc(
+                        handIkTargetPos + rotatedSourceVector, 0f, containingColliders, _ignoreWeaponLayerMask);
+                    // Debug.DrawLine(source.position, handIkTargetPos + rotatedSourceVector, Color.green);
+                    if (containingColliderCount > 0)
+                    {
+                        if (log) Debug.Log(source.name + " will be in collider if apply rotation. Do nothing. ");
+                        willCollide = true;
+                        break;
+                    }
                 }
             }
             
             if (!willCollide)
             {
                 handIkTarget.Rotate(rotationToApply);
-                rotationLimit.Apply();
+                _curAngularVelocity += _curAngularAcceleration;
+
+                // if reached rotation limit, set velocity to zero
+                if (rotationLimit.Apply())
+                {
+                    if (log) Debug.Log("applied rotation limit");
+                    _curAngularVelocity = Vector3.zero;
+                }
+            }
+            else
+            {
+                _curAngularVelocity = Vector3.zero;
+                if (log) Debug.Log("set curAngularVelocity to zero");
             }
 
-            _rotationToApply = Vector3.zero;
+            _curAngularAcceleration = Vector3.zero;
         }
         
         # endregion

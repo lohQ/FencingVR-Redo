@@ -6,7 +6,8 @@ Changes to Learning Env
 // Feels difficult to use acceleration to rotate, ignored for now
 // HeadIK less important, so not changed to using acceleration also
 - One bout become 3 minutes, 5 points.
-// - Use fixed set of transforms as observations, instead of raycast
+- Use fixed set of transforms as observations, instead of raycast. Removed headIk
+- Add selfTipDistanceFromOpp and oppTipDistanceFromSelf as observation
 
  - DecisionRequestor period remains at 5
 

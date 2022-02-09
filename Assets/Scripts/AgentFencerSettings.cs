@@ -8,10 +8,11 @@ public class AgentFencerSettings : MonoBehaviour
     [Header("Hand Ik Control")]
     public float handEffectorMaxVelocity = 5f;
     public float handEffectorMaxAcceleration = 10f;
-    public float handEffectorRotationVelocity = 120f;
-    // public float handEffectorMaxAngularVelocity = 120f;
-    // public float handEffectorMaxAngularAcceleration = 120f;
-    public int accelerationLevelCount = 5;  // should be same number as branch 0, 1, 2 size
+    // public float handEffectorRotationVelocity = 120f;
+    public float handEffectorMaxAngularVelocity = 120f;
+    public float handEffectorMaxAngularAcceleration = 180f;
+    public int accelerationLevelCount = 2;  // should be same number as branch 0, 1, 2 size
+    public int angAccelerationLevelCount = 2;  // should be same number as branch 3, 4, 5 size
 
     [Header("Hand IK Adjust")] 
     public float ikMissTeleportThreshold = 0.3f;

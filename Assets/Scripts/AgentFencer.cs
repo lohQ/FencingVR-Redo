@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -16,7 +17,8 @@ public class AgentFencer : Agent
     public Bout bout;
     public FencerColor fencerColor;
 
-    public Transform piste, self, selfEpee, selfEpeeTip, oppEpee, oppEpeeTip, oppPosition;
+    public Transform self, selfEpee, selfEpeeTip, oppEpee, oppEpeeTip;
+    public List<Transform> oppBodyTargets;
 
     private bool _epeeCollided;
     
@@ -32,13 +34,22 @@ public class AgentFencer : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         var selfPos = self.position;
-        sensor.AddObservation(selfEpee.position - selfPos);
+        var selfEpeePos = selfEpee.position;
+        sensor.AddObservation(selfEpeePos - selfPos);
         sensor.AddObservation(selfEpee.localRotation);
         sensor.AddObservation(selfEpeeTip.position - selfEpee.position);
         sensor.AddObservation(oppEpeeTip.position - selfPos);
         sensor.AddObservation(oppEpeeTip.position - oppEpee.position);
         sensor.AddObservation(_epeeCollided);
         _epeeCollided = false;
+        
+        foreach (var t in oppBodyTargets)
+        {
+            sensor.AddObservation(t.position - selfEpeePos);
+        }
+        
+        sensor.AddObservation(ikTargetController.TipDistanceFromOpponent());
+        sensor.AddObservation(opponentIkTargetController.TipDistanceFromOpponent());
         
         sensor.AddObservation(bout.points[(int)fencerColor]);
         sensor.AddObservation(bout.GetRemainingTime());
@@ -69,12 +80,12 @@ public class AgentFencer : Agent
             discreteActionsOut[0] = 2;
             discreteActionsOut[1] = 2;
             discreteActionsOut[2] = 2;
-            discreteActionsOut[3] = 1;
-            discreteActionsOut[4] = 1;
-            discreteActionsOut[5] = 1;
-            discreteActionsOut[6] = 1;
-            discreteActionsOut[7] = 1;
-            discreteActionsOut[8] = 1;
+            discreteActionsOut[3] = 2;
+            discreteActionsOut[4] = 2;
+            discreteActionsOut[5] = 2;
+            // discreteActionsOut[6] = 1;
+            // discreteActionsOut[7] = 1;
+            // discreteActionsOut[8] = 1;
             // discreteActionsOut[9] = 0;
             // discreteActionsOut[10] = 1;
             // discreteActionsOut[11] = 1;
@@ -126,7 +137,7 @@ public class AgentFencer : Agent
         // 3: rotate hand (x axis)
         if (Input.GetKey(KeyCode.I))
         {
-            discreteActionsOut[3] = 2;
+            discreteActionsOut[3] = 4;
         }
         else if (Input.GetKey(KeyCode.K))
         {
@@ -134,13 +145,13 @@ public class AgentFencer : Agent
         }
         else
         {
-            discreteActionsOut[3] = 1;
+            discreteActionsOut[3] = 2;
         }
         
         // 4: rotate hand (y axis)
         if (Input.GetKey(KeyCode.J))
         {
-            discreteActionsOut[4] = 2;
+            discreteActionsOut[4] = 4;
         }
         else if (Input.GetKey(KeyCode.L))
         {
@@ -148,7 +159,7 @@ public class AgentFencer : Agent
         }
         else
         {
-            discreteActionsOut[4] = 1;
+            discreteActionsOut[4] = 2;
         }
 
         // 5: rotate hand (z axis)
@@ -158,42 +169,42 @@ public class AgentFencer : Agent
         }
         else if (Input.GetKey(KeyCode.U))
         {
+            discreteActionsOut[5] = 4;
+        }
+        else
+        {
             discreteActionsOut[5] = 2;
         }
-        else
-        {
-            discreteActionsOut[5] = 1;
-        }
 
-        discreteActionsOut[6] = Input.GetKey(KeyCode.RightShift) ? 1 : 0;
+        // discreteActionsOut[6] = Input.GetKey(KeyCode.RightShift) ? 1 : 0;
 
         // 7: move head target (along x axis)
-        if (Input.GetKey(KeyCode.H))
-        {
-            discreteActionsOut[7] = 2;
-        } 
-        else if (Input.GetKey(KeyCode.F))
-        {
-            discreteActionsOut[7] = 0;
-        }
-        else
-        {
-            discreteActionsOut[7] = 1;
-        }
+        // if (Input.GetKey(KeyCode.H))
+        // {
+        //     discreteActionsOut[7] = 2;
+        // } 
+        // else if (Input.GetKey(KeyCode.F))
+        // {
+        //     discreteActionsOut[7] = 0;
+        // }
+        // else
+        // {
+        //     discreteActionsOut[7] = 1;
+        // }
         
         // 8: move head target (along y axis)
-        if (Input.GetKey(KeyCode.T))
-        {
-            discreteActionsOut[8] = 2;
-        } 
-        else if (Input.GetKey(KeyCode.G))
-        {
-            discreteActionsOut[8] = 0;
-        }
-        else
-        {
-            discreteActionsOut[8] = 1;
-        }
+        // if (Input.GetKey(KeyCode.T))
+        // {
+        //     discreteActionsOut[8] = 2;
+        // } 
+        // else if (Input.GetKey(KeyCode.G))
+        // {
+        //     discreteActionsOut[8] = 0;
+        // }
+        // else
+        // {
+        //     discreteActionsOut[8] = 1;
+        // }
         
         // step forward / backward
         // if (Input.GetKeyUp(KeyCode.UpArrow))
@@ -235,7 +246,7 @@ public class AgentFencer : Agent
         }
         else
         {
-            if (log) Debug.Log("not within round. Actions masked. ");
+            // if (log) Debug.Log("not within round. Actions masked. ");
             // ik hand
             actionMask.SetActionEnabled(0, 0, false);
             actionMask.SetActionEnabled(0, 1, false);
@@ -251,18 +262,23 @@ public class AgentFencer : Agent
             actionMask.SetActionEnabled(2, 4, false);
 
             actionMask.SetActionEnabled(3, 0, false);
-            actionMask.SetActionEnabled(3, 2, false);
+            actionMask.SetActionEnabled(3, 1, false);
+            actionMask.SetActionEnabled(3, 3, false);
+            actionMask.SetActionEnabled(3, 4, false);
             actionMask.SetActionEnabled(4, 0, false);
-            actionMask.SetActionEnabled(4, 2, false);
+            actionMask.SetActionEnabled(4, 1, false);
+            actionMask.SetActionEnabled(4, 3, false);
+            actionMask.SetActionEnabled(4, 4, false);
             actionMask.SetActionEnabled(5, 0, false);
-            actionMask.SetActionEnabled(5, 2, false);
-            actionMask.SetActionEnabled(6, 1, false);
+            actionMask.SetActionEnabled(5, 1, false);
+            actionMask.SetActionEnabled(5, 3, false);
+            actionMask.SetActionEnabled(5, 4, false);
 
             // ik head
-            actionMask.SetActionEnabled(7, 0, false);
-            actionMask.SetActionEnabled(7, 2, false);
-            actionMask.SetActionEnabled(8, 0, false);
-            actionMask.SetActionEnabled(8, 2, false);
+            // actionMask.SetActionEnabled(7, 0, false);
+            // actionMask.SetActionEnabled(7, 2, false);
+            // actionMask.SetActionEnabled(8, 0, false);
+            // actionMask.SetActionEnabled(8, 2, false);
 
             // animation
             // actionMask.SetActionEnabled(9, 0, false);
@@ -293,8 +309,7 @@ public class AgentFencer : Agent
         // AddReward(-1f/MaxStep);
 
         ikTargetController.SetMoveVector(discreteActions[0] - 2, discreteActions[1] - 2, discreteActions[2] - 2);
-        ikTargetController.SetRotationToApply(discreteActions[3] - 1, discreteActions[4] - 1, discreteActions[5] - 1, discreteActions[6] > 0);
-        ikTargetController.SetHeadTargetMoveVector(discreteActions[7] - 1, discreteActions[8] - 1);
+        ikTargetController.SetRotationToApply(discreteActions[3] - 2, discreteActions[4] - 2, discreteActions[5] - 2);
 
         // if (log) Debug.Log("discreteActions[0]: " + discreteActions[0]);
         // if (log) Debug.Log("discreteActions[1]: " + discreteActions[1]);
