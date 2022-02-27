@@ -53,7 +53,7 @@ ModelImporter:
     second: parry_riposte_6_recover
   - first:
       74: 2632853248958534217
-    second: parry_9
+    second: parry_4_recover
   - first:
       74: -6697639001056270709
     second: parry_riposte_4_recover
@@ -81,6 +81,9 @@ ModelImporter:
   - first:
       74: -4896083427948940660
     second: large_step_backward
+  - first:
+      74: -5252816984213320552
+    second: idle
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -113,7 +116,61 @@ ModelImporter:
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
       to improve retargeting quality.\n\t'calf_r' has translation animation that
       will be discarded.\n"
-    animationRetargetingWarnings: 
+    animationRetargetingWarnings: "\nRetargeting quality report for clip 'enter_en_garde':\n\tLeftLowerLeg
+      average position error 0.3 mm and maximum position error 2.3 mm at time 1:
+      0 (0.0%) Frame 30\n\tRightLowerLeg average position error 0.4 mm and maximum
+      position error 2.3 mm at time 1: 0 (0.0%) Frame 30\n\nRetargeting quality report
+      for clip 'regular_step_forward':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'parry_riposte_6':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'parry_4':\n\tRetargeting quality is good. No significant differences
+      with original animation were found.\n\nRetargeting quality report for clip
+      'parry_riposte_4':\n\tRetargeting quality is good. No significant differences
+      with original animation were found.\n\nRetargeting quality report for clip
+      'parry_8':\n\tRetargeting quality is good. No significant differences with
+      original animation were found.\n\nRetargeting quality report for clip 'parry_7':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'arm_extend':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'lunge':\n\tRightLowerArm average position error 0.4 mm and maximum
+      position error 1.5 mm at time 14:10 (57.1%) Frame 430\n\tRightHand average
+      position error 0.4 mm and maximum position error 1.7 mm at time 14:10 (57.1%)
+      Frame 430\n\nRetargeting quality report for clip 'point_hand_upper':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'point_hand_lower':\n\tRetargeting quality is good.
+      No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'small_step_forward':\n\tRetargeting quality is good.
+      No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'large_step_forward':\n\tRetargeting quality is good.
+      No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'exit_en_garde':\n\tLeftLowerLeg average position error
+      0.3 mm and maximum position error 2.0 mm at time 4:29 (98.2%) Frame 149\n\tRightLowerLeg
+      average position error 0.4 mm and maximum position error 2.2 mm at time 4:29
+      (98.2%) Frame 149\n\nRetargeting quality report for clip 'regular_step_backward':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'parry_riposte_6_recover':\n\tRetargeting quality is
+      good. No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'parry_9':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'parry_riposte_4_recover':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'parry_8_recover':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'parry_7_recover':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'arm_extend_recover':\n\tRetargeting quality is good. No significant
+      differences with original animation were found.\n\nRetargeting quality report
+      for clip 'lunge_recover':\n\tRetargeting quality is good. No significant differences
+      with original animation were found.\n\nRetargeting quality report for clip
+      'point_hand_upper_recover':\n\tRightHand average position error 0.1 mm and
+      maximum position error 1.1 mm at time 16:24 (33.3%) Frame 504\n\nRetargeting
+      quality report for clip 'point_hand_lower_recover':\n\tRetargeting quality
+      is good. No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'small_step_backward':\n\tRetargeting quality is good.
+      No significant differences with original animation were found.\n\nRetargeting
+      quality report for clip 'large_step_backward':\n\tRetargeting quality is good.
+      No significant differences with original animation were found.\n"
     animationDoRetargetingWarnings: 1
     importAnimatedCustomProperties: 0
     importConstraints: 0
@@ -139,13 +196,13 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -161,20 +218,20 @@ ModelImporter:
       firstFrame: 150
       lastFrame: 167
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -182,7 +239,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 150
     - serializedVersion: 16
       name: parry_riposte_6
       takeName: parry_riposte_6
@@ -364,20 +421,20 @@ ModelImporter:
       firstFrame: 410
       lastFrame: 445
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -385,7 +442,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 409.8
     - serializedVersion: 16
       name: point_hand_upper
       takeName: point_hand_upper
@@ -451,20 +508,20 @@ ModelImporter:
       firstFrame: 565
       lastFrame: 589
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -472,7 +529,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 564.9
     - serializedVersion: 16
       name: large_step_forward
       takeName: large_step_forward
@@ -480,20 +537,20 @@ ModelImporter:
       firstFrame: 613
       lastFrame: 645
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -501,28 +558,28 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 612.9
     - serializedVersion: 16
       name: exit_en_garde
       takeName: exit_en_garde
       internalID: 0
       firstFrame: 95
-      lastFrame: 150
+      lastFrame: 149
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -530,7 +587,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 94.8
     - serializedVersion: 16
       name: regular_step_backward
       takeName: regular_step_backward
@@ -538,20 +595,20 @@ ModelImporter:
       firstFrame: 167
       lastFrame: 188
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -559,7 +616,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 166.8
     - serializedVersion: 16
       name: parry_riposte_6_recover
       takeName: parry_riposte_6_recover
@@ -590,7 +647,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: parry_9
+      name: parry_4_recover
       takeName: parry_9
       internalID: 0
       firstFrame: 260
@@ -741,20 +798,20 @@ ModelImporter:
       firstFrame: 445
       lastFrame: 470
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -762,7 +819,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 444.9
     - serializedVersion: 16
       name: point_hand_upper_recover
       takeName: point_hand_upper_recover
@@ -828,20 +885,20 @@ ModelImporter:
       firstFrame: 589
       lastFrame: 613
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -849,7 +906,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 588.89996
     - serializedVersion: 16
       name: large_step_backward
       takeName: large_step_backward
@@ -857,14 +914,43 @@ ModelImporter:
       firstFrame: 645
       lastFrame: 673
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 60
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 645
+    - serializedVersion: 16
+      name: idle
+      takeName: enter_en_garde
+      internalID: 0
+      firstFrame: 94
+      lastFrame: 95
+      wrapMode: 0
+      orientationOffsetY: 60
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
@@ -878,7 +964,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 94.8
     isReadable: 0
   meshes:
     lODScreenPercentages: []

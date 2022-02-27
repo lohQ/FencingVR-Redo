@@ -686,6 +686,7 @@ GameObject:
   - component: {fileID: 384005778917210260}
   - component: {fileID: 384005778917210282}
   - component: {fileID: 3983714049904669265}
+  - component: {fileID: 7408561650025419486}
   m_Layer: 0
   m_Name: Red Fencer
   m_TagString: Untagged
@@ -723,12 +724,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 70
+    VectorObservationSize: 66
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 050000000500000005000000050000000500000005000000
-    VectorActionSize: 050000000500000005000000050000000500000005000000
+      BranchSizes: 0500000005000000050000000500000005000000050000000700000007000000
+    VectorActionSize: 0500000005000000050000000500000005000000050000000700000007000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -756,7 +757,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 6000
-  ikTargetController: {fileID: 1798355070094306464}
+  handController: {fileID: 4551179974602726533}
   avatarController: {fileID: 1798355070094306526}
   bout: {fileID: 384005779985417544}
   fencerColor: 1
@@ -783,7 +784,7 @@ MonoBehaviour:
   - {fileID: 1830752936113804111}
   - {fileID: 1234293507102406521}
   additionalKey: 0
-  opponentIkTargetController: {fileID: 384005779930361161}
+  opponentHandController: {fileID: 2488312746137705836}
   log: 0
 --- !u!114 &384005778917210282
 MonoBehaviour:
@@ -825,6 +826,21 @@ MonoBehaviour:
   ikMissToleranceDegrees: 20
   headAimEffectorMoveVelocity: 0.5
   headAimEffectorMaxDistanceFromOrigin: 0.5
+--- !u!114 &7408561650025419486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384005778917210262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: EpeeCollisionBufferSensor
+  m_ObservableSize: 6
+  m_MaxNumObservables: 3
 --- !u!1 &384005778974160390
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,6 +854,7 @@ GameObject:
   - component: {fileID: 384005778974160388}
   - component: {fileID: 384005778974160410}
   - component: {fileID: 7390076845343913881}
+  - component: {fileID: 3925581869032767785}
   m_Layer: 0
   m_Name: Green Fencer
   m_TagString: Untagged
@@ -853,7 +870,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384005778974160390}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6826296, y: 1.15, z: -2.244431}
+  m_LocalPosition: {x: 0.6826296, y: 1.15, z: -0.38}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -875,12 +892,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 70
+    VectorObservationSize: 66
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 050000000500000005000000050000000500000005000000
-    VectorActionSize: 050000000500000005000000050000000500000005000000
+      BranchSizes: 0500000005000000050000000500000005000000050000000700000007000000
+    VectorActionSize: 0500000005000000050000000500000005000000050000000700000007000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -908,7 +925,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 6000
-  ikTargetController: {fileID: 384005779930361161}
+  handController: {fileID: 2488312746137705836}
   avatarController: {fileID: 384005779930361143}
   bout: {fileID: 384005779985417544}
   fencerColor: 0
@@ -935,8 +952,8 @@ MonoBehaviour:
   - {fileID: 344927006369862310}
   - {fileID: 900823516392502928}
   additionalKey: 0
-  opponentIkTargetController: {fileID: 1798355070094306464}
-  log: 0
+  opponentHandController: {fileID: 4551179974602726533}
+  log: 1
 --- !u!114 &384005778974160410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -977,6 +994,21 @@ MonoBehaviour:
   ikMissToleranceDegrees: 20
   headAimEffectorMoveVelocity: 0.5
   headAimEffectorMaxDistanceFromOrigin: 0.5
+--- !u!114 &3925581869032767785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384005778974160390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: EpeeCollisionBufferSensor
+  m_ObservableSize: 6
+  m_MaxNumObservables: 3
 --- !u!1 &384005778979538662
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,7 +1036,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384005778979538662}
   m_LocalRotation: {x: 0.09497915, y: 0.06446667, z: -0.74745274, w: -0.6543222}
-  m_LocalPosition: {x: 0.19702783, y: -0.24285507, z: -1.0205482}
+  m_LocalPosition: {x: -0.59, y: -0.15, z: -0.78}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1045,8 +1077,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   follow: {fileID: 384005778324799058}
-  frequency: 50
+  frequency: 100
   damping: 1
+  torqueFrequency: 100
+  torqueDamping: 1
 --- !u!114 &384005778979538683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1060,7 +1094,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bout: {fileID: 384005779985417544}
-  agentFencer: {fileID: 384005778974160388}
+  handController: {fileID: 2488312746137705836}
   impulseThreshold: 0.001
   hitAngleThreshold: 35
   log: 0
@@ -2567,56 +2601,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.019959804
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.08535705
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.0130484905
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.59684443
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.18520288
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.49555612
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.60324204
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -54.98
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -39.899
-      objectReference: {fileID: 0}
-    - target: {fileID: 2135068309402619230, guid: ce5ffae0115844b33bfda3714fae792c,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -69.22
-      objectReference: {fileID: 0}
     - target: {fileID: 2135068309510611971, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
       propertyPath: m_Layer
@@ -2627,6 +2611,11 @@ PrefabInstance:
       propertyPath: hand
       value: 
       objectReference: {fileID: 7614573539081239611}
+    - target: {fileID: 2135068309952798267, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: agentFencerSettings
+      value: 
+      objectReference: {fileID: 3983714049904669265}
     - target: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
       propertyPath: log
@@ -2802,6 +2791,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: epee
+      value: 
+      objectReference: {fileID: 384005779449420214}
+    - target: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: epeeTip
+      value: 
+      objectReference: {fileID: 384005780313287366}
+    - target: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: agentFencerSettings
+      value: 
+      objectReference: {fileID: 3983714049904669265}
     - target: {fileID: 4471632744345719601, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
       propertyPath: m_Layer
@@ -2988,18 +2992,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 384005778799882981}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1798355070094306464 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
-    type: 3}
-  m_PrefabInstance: {fileID: 384005778799882981}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78aa0642e51e14554b2b2046c4e3722c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1798355070094306526 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2135068309952798267, guid: ce5ffae0115844b33bfda3714fae792c,
@@ -3066,6 +3058,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 384005778799882981}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4551179974602726533 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+    type: 3}
+  m_PrefabInstance: {fileID: 384005778799882981}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c0ba1be28a4ddb9591843c22eb4d6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4624639226444220750 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5006392994977020843, guid: ce5ffae0115844b33bfda3714fae792c,
@@ -3184,6 +3188,11 @@ PrefabInstance:
       propertyPath: fencerForward.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2135068309952798267, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: agentFencerSettings
+      value: 
+      objectReference: {fileID: 7390076845343913881}
     - target: {fileID: 2135068309952798276, guid: ce5ffae0115844b33bfda3714fae792c,
         type: 3}
       propertyPath: m_Enabled
@@ -3294,6 +3303,16 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
+    - target: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: epeeTip
+      value: 
+      objectReference: {fileID: 384005779293896396}
+    - target: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+        type: 3}
+      propertyPath: agentFencerSettings
+      value: 
+      objectReference: {fileID: 7390076845343913881}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce5ffae0115844b33bfda3714fae792c, type: 3}
 --- !u!4 &116458432093616205 stripped
@@ -3338,18 +3357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b2821aa003047df89e18454237cc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &384005779930361161 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2135068309952798277, guid: ce5ffae0115844b33bfda3714fae792c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1798355068829577996}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78aa0642e51e14554b2b2046c4e3722c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &900823516392502928 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1474177220342220188, guid: ce5ffae0115844b33bfda3714fae792c,
@@ -3368,6 +3375,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1798355068829577996}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2488312746137705836 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4214605273073020512, guid: ce5ffae0115844b33bfda3714fae792c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1798355068829577996}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c0ba1be28a4ddb9591843c22eb4d6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3060178164127275238 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3639724042734971882, guid: ce5ffae0115844b33bfda3714fae792c,
@@ -3511,6 +3530,11 @@ PrefabInstance:
       propertyPath: agentFencer
       value: 
       objectReference: {fileID: 384005778917210260}
+    - target: {fileID: 4688600074151865621, guid: 2d7f6d6367c75416fa139b9ae4283749,
+        type: 3}
+      propertyPath: handController
+      value: 
+      objectReference: {fileID: 4551179974602726533}
     - target: {fileID: 4688600074151865622, guid: 2d7f6d6367c75416fa139b9ae4283749,
         type: 3}
       propertyPath: follow

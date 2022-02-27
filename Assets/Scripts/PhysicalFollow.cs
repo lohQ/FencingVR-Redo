@@ -21,6 +21,7 @@ public class PhysicalFollow : MonoBehaviour
     public float damping = 1f;
     public float torqueFrequency = 50f;
     public float torqueDamping = 1f;
+    public float maxTorque = 100000;
     private float _kp;
     private float _kd;
     private float _tkp;
@@ -82,6 +83,10 @@ public class PhysicalFollow : MonoBehaviour
         pidv = Quaternion.Inverse(rotInertia2World) * pidv;
         pidv.Scale(_rb.inertiaTensor);
         pidv = rotInertia2World * pidv;
+        if (pidv.magnitude > maxTorque)
+        {
+            pidv *= maxTorque / pidv.magnitude;
+        }
         _rb.AddTorque(pidv);
     }
 

@@ -375,8 +375,8 @@ GameObject:
   - component: {fileID: 2135068309952798278}
   - component: {fileID: 2135068309952798276}
   - component: {fileID: 2135068309952798267}
-  - component: {fileID: 2135068309952798277}
   - component: {fileID: 3409132596567696692}
+  - component: {fileID: 4214605273073020512}
   m_Layer: 6
   m_Name: exported_makehuman_avatar
   m_TagString: Untagged
@@ -540,45 +540,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b2821aa003047df89e18454237cc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepDistance: 0.7
-  curStateInt: 0
---- !u!114 &2135068309952798277
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252036435870163820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78aa0642e51e14554b2b2046c4e3722c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   agentFencerSettings: {fileID: 0}
-  upperArm: {fileID: 1097165672132748099}
-  foreArm: {fileID: 3927900859542769342}
-  hand: {fileID: 7852067125703659230}
-  handIkTarget: {fileID: 2135068309373027028}
-  handIkTargetParent: {fileID: 2135068309510611968}
-  head: {fileID: 3639724042734971882}
-  headIkAimTarget: {fileID: 906604338959444799}
-  raycastSources:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 153314600198012918}
-  - {fileID: 56159508162745769}
-  - {fileID: 5524780861139858781}
-  - {fileID: 5291610812480718233}
-  - {fileID: 7227230971403079916}
-  - {fileID: 7852067125703659230}
-  epee: {fileID: 0}
-  epeeFollow: {fileID: 0}
-  epeeTip: {fileID: 0}
-  rotationLimit: {fileID: 2135068309373027027}
-  log: 0
+  handController: {fileID: 4214605273073020512}
+  stepDistances:
+  - 0.4
+  - 0.6
+  - 0.8
+  curStateInt: 0
 --- !u!54 &3409132596567696692
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -595,6 +563,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &4214605273073020512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252036435870163820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c0ba1be28a4ddb9591843c22eb4d6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentFencerSettings: {fileID: 0}
+  handEffector: {fileID: 2135068309373027028}
+  hand: {fileID: 7852067125703659230}
+  epee: {fileID: 0}
+  epeeTip: {fileID: 0}
+  tipDistThreshold: 0.5
+  handEffectorRotDiffThreshold: 20
+  handDeviationDistThreshold: 0.3
+  noStepForwardAngleThreshold: 30
 --- !u!1 &1634679247430077641
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,7 +765,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2135068309373027031}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b67934ef37a49f6af5a9ab7314cf0fb, type: 3}
   m_Name: 
@@ -812,14 +801,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2135068309402619217}
-  m_LocalRotation: {x: -0.28903106, y: 0.44535074, z: 0.83804274, w: 0.12573032}
-  m_LocalPosition: {x: 0.019959804, y: 0.08535705, z: 0.0130484905}
+  m_LocalRotation: {x: -0.14273295, y: 0.45359322, z: 0.8515337, w: 0.22084163}
+  m_LocalPosition: {x: 0.02700001, y: 0.082000114, z: 0.015000055}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2135068309373027028}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -54.997, y: -40.49, z: -175.33}
+  m_LocalEulerAnglesHint: {x: -56.672, y: -4.461, z: -206.671}
 --- !u!1 &2135068309510611971
 GameObject:
   m_ObjectHideFlags: 0

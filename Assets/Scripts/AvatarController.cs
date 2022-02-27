@@ -6,69 +6,57 @@ using UnityEngine.Animations.Rigging;
 
 public class AvatarController : MonoBehaviour
 {
-    public float stepDistance;
-    private float _scaledStepDistance;
-    private Vector3 _fencerForward;
+    // agent action:
+    // set step number to determine whether step forward/backward, small/normal/big, lunge
     
-    private Rig _ikRig;
-    private IkTargetController _ikTargetController;
-
+    private HandEffectorController _handEffectorController;
+    public float[] stepDistances = {0.4f, 0.6f, 0.8f};
+    private float[] _scaledStepDistances;
+    
     private Animator _animator;
-    private int _forwardStepHash;
-    private int _backwardStepHash;
+    private int _stepHash;
     private int _endedHash;
-    private int _lungeHash;
-    // private bool _inEnGarde;
 
-    private bool _started = false;
     private int _envLayerMask;
+    private bool _started = false;
 
     void Start()
     {
+        _handEffectorController = GetComponent<HandEffectorController>();
         _animator = GetComponent<Animator>();
-        _forwardStepHash = Animator.StringToHash("forward_step");
-        _backwardStepHash = Animator.StringToHash("backward_step");
-        _endedHash = Animator.StringToHash("end");
-        _lungeHash = Animator.StringToHash("lunge");
-        _envLayerMask = LayerMask.GetMask(new[] {PhysicsEnvSettings.EnvironmentLayer});
-        curStateInt = -1;
 
-        var rigBuilder = GetComponent<RigBuilder>();
-        _ikRig = rigBuilder.layers[0].rig;
-        _ikTargetController = GetComponent<IkTargetController>();
-        _fencerForward = _ikTargetController.agentFencerSettings.fencerForward;
-        _scaledStepDistance = stepDistance * PhysicsEnvSettings.ScaleFactor;
+        _stepHash = Animator.StringToHash("step");
+        _endedHash = Animator.StringToHash("end");
+        _envLayerMask = LayerMask.GetMask(new[] {PhysicsEnvSettings.EnvironmentLayer});
+
+        _scaledStepDistances = new float[stepDistances.Length];
+        for (int i = 0; i < stepDistances.Length; i++)
+        {
+            _scaledStepDistances[i] = stepDistances[i] * PhysicsEnvSettings.ScaleFactor;
+        }
         _started = true;
     }
 
     public IEnumerator EnterEnGarde()
     {
-        // var coroutineStartTime = Time.time;
         while (!_started)
         {
             yield return null;
         }
-        // _inEnGarde = true;
-        _ikRig.weight = 0;
+        
         _animator.SetBool(_endedHash, false);
-        _animator.SetInteger(_forwardStepHash, 0);
-        _animator.SetInteger(_backwardStepHash, 0);
+        _animator.SetInteger(_stepHash, 0);
         while (!_animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde"))
         {
             yield return null;
         }
-        // yield return null;
-        
-        // var coroutineEndTime = Time.time;
-        // Debug.Log("for " + name + ", coroutine took time of " + $"{(coroutineEndTime - coroutineStartTime):0.00}");
-        
-        _ikTargetController.Initialize();
-        _ikRig.weight = 1;
+        _handEffectorController.Initialize();
     }
 
     public IEnumerator ExitEnGarde()
     {
-        // _inEnGarde = false;
+        _handEffectorController.DisableIK();
+
         _animator.SetBool(_endedHash, true);
         yield return null;
         
@@ -76,107 +64,29 @@ public class AvatarController : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    // step range is [-3, 4]
+    public void SetNextStep(int step)
+    {
+        if (step == 0) return;
         
-        _ikRig.weight = 0;
-    }
-
-    public void SetNextStep(int forward)
-    {
-        if (forward > 0)
+        // prevent from stepping out of piste & set animation parameter
+        var index = step;
+        var direction = transform.forward;
+        if (step < 0)
         {
-            var hit = Physics.Raycast(
-                new Ray(transform.position + Vector3.up, _fencerForward), _scaledStepDistance, _envLayerMask);
-            if (!hit)
-            {
-                _animator.SetInteger(_forwardStepHash, forward);
-            }
-        } else if (forward < 0)
-        {
-            var hit = Physics.Raycast(
-                new Ray(transform.position + Vector3.up, -_fencerForward), _scaledStepDistance, _envLayerMask);
-            if (!hit)
-            {
-                _animator.SetInteger(_backwardStepHash, -forward);
-            }
+            index = -index;
+            direction = -direction;
         }
-    }
 
-    public void Lunge()
-    {
-        _animator.SetBool(_lungeHash, true);
-    }
-
-    [HideInInspector]
-    public int curStateInt;    // 8 for step forward/backward, 9 for lunge (same as branch number)
-
-    public void SetCurStateInt()
-    {
-        var curState = _animator.GetCurrentAnimatorStateInfo(0);
-        if (curState.IsName("Step Forward") || curState.IsName("Step Backward"))
+        if (step != 4)
         {
-            curStateInt = 8;
+            var origin = transform.position + Vector3.up;
+            var hit = Physics.Raycast(new Ray(origin, direction), _scaledStepDistances[index-1], _envLayerMask);
+            if (hit) return;
         }
-        else if (curState.IsName("Lunge and Recover"))
-        {
-            curStateInt = 9;
-        }
-        else
-        {
-            curStateInt = -1;
-        }
+        _animator.SetInteger(_stepHash, step);
     }
-    
-    void Update()
-    {
-        # region keyboard input
-        // if (Input.GetKeyUp(KeyCode.UpArrow))
-        // {
-        //     if (Input.GetKey(KeyCode.LeftShift))
-        //     {
-        //         _animator.SetInteger(_forwardStepHash, 3);
-        //     }
-        //     else
-        //     {
-        //         _animator.SetInteger(_forwardStepHash, 1);
-        //     }
-        // } else if (Input.GetKeyUp(KeyCode.DownArrow))
-        // {
-        //     if (Input.GetKey(KeyCode.LeftShift))
-        //     {
-        //         _animator.SetInteger(_backwardStepHash, 3);
-        //     }
-        //     else
-        //     {
-        //         _animator.SetInteger(_backwardStepHash, 1);
-        //     }
-        // }
-        # endregion
 
-        // if (Input.GetKeyUp(KeyCode.Return))
-        // {
-        //     var isEnded = _animator.GetBool(_endedHash);
-        //     if (!isEnded && _inEnGarde)
-        //     {
-        //         StartCoroutine(ExitEnGarde());
-        //     }
-        //     else if (isEnded && !_inEnGarde)
-        //     {
-        //         StartCoroutine(EnterEnGarde());
-        //     }
-        // }
-
-        // var prevState = curStateInt;
-        SetCurStateInt();
-        // if (prevState != 9 && curStateInt == 9)
-        // {
-        //     
-        //     Debug.Log("set ikRig.weight to " + rigWeightWhenLunge);
-        //     _ikRig.weight = rigWeightWhenLunge;
-        // } else if (prevState == 9 && curStateInt != 9)
-        // {
-        //     Debug.Log("set ikRig.weight back to 1");
-        //     _ikRig.weight = 1;
-        // }
-
-    }
 }

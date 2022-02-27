@@ -11,319 +11,119 @@ AvatarMask:
   m_Elements:
   - m_Path: 
     m_Weight: 1
-  - m_Path: UMA_Human_Male
+  - m_Path: defaultavatarMesh
     m_Weight: 0
-  - m_Path: UMA_Male_Rig
+  - m_Path: Game_engine
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global
+  - m_Path: Game_engine/Root
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position
+  - m_Path: Game_engine/Root/pelvis
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips
+  - m_Path: Game_engine/Root/pelvis/spine_01
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg/LeftGluteus
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg/LeftLeg
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg/LeftLeg/LeftFoot
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg/LeftLeg/LeftLegAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LeftUpLeg/LeftUpLegAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l/index_02_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/LowerBackAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/index_01_l/index_02_l/index_03_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/LowerBackAdjust/LowerBackBelly
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l/middle_02_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/middle_01_l/middle_02_l/middle_03_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftOuterBreast
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftOuterBreast/LeftInnerBreast
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l/pinky_02_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/pinky_01_l/pinky_02_l/pinky_03_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftArmAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l/ring_02_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/ring_01_l/ring_02_l/ring_03_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftForeArmAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftForeArmTwist
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l/thumb_02_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftForeArmTwist/LeftForeArmTwistAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_l/upperarm_l/lowerarm_l/hand_l/thumb_01_l/thumb_02_l/thumb_03_l
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2/LeftHandIndex3
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2/LeftHandMiddle3
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2/LeftHandPinky3
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2/LeftHandRing3
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2/LeftHandThumb3
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftShoulderAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/LeftShoulder/LeftTrapezius
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/HeadAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftCheek
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftCheek/LeftCheekAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEar
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEar/LeftEarAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye/LeftEyeAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye/LeftEyeGlobe
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye/LeftLowerLid
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye/LeftLowerLid/LeftLowerLidAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye/LeftUpperLid
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEye/LeftUpperLid/LeftUpperLidAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEyebrowLow
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEyebrowLow/LeftEyebrowLowAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEyebrowMiddle
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEyebrowMiddle/LeftEyebrowMiddleAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEyebrowUp
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftEyebrowUp/LeftEyebrowUpAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftLipsSuperiorMiddle
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftLipsSuperiorMiddle/LeftLipsSuperiorMiddleAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftLowCheek
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftLowCheek/LeftLowCheekAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftNose
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LeftNose/LeftNoseAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LipsSuperior
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/LipsSuperior/LipsSuperiorAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LeftLips
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LeftLips/LeftLipsAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LeftLipsInferior
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LeftLipsInferior/LeftLipsInferiorAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LeftLowMaxilar
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LeftLowMaxilar/LeftLowMaxilarAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LipsInferior
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/LipsInferior/LipsInferiorAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/MandibleAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/RightLips
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/RightLips/RightLipsAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/RightLipsInferior
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/RightLipsInferior/RightLipsInferiorAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/RightLowMaxilar
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/RightLowMaxilar/RightLowMaxilarAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/Tongue01
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/Mandible/Tongue01/Tongue02
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/NoseBase
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/NoseBase/NoseBaseAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/NoseMiddle
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/NoseMiddle/NoseMiddleAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/NoseTop
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/NoseTop/NoseTopAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightCheek
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightCheek/RightCheekAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEar
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEar/RightEarAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye/RightEyeAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye/RightEyeGlobe
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye/RightLowerLid
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye/RightLowerLid/RightLowerLidAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye/RightUpperLid
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEye/RightUpperLid/RightUpperLidAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEyebrowLow
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEyebrowLow/RightEyebrowLowAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEyebrowMiddle
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEyebrowMiddle/RightEyebrowMiddleAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEyebrowUp
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightEyebrowUp/RightEyebrowUpAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightLipsSuperiorMiddle
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightLipsSuperiorMiddle/RightLipsSuperiorMiddleAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightLowCheek
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightLowCheek/RightLowCheekAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightNose
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/RightNose/RightNoseAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/UpperLips
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/Head/UpperLips/UpperLipsAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Neck/NeckAdjust
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightOuterBreast
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightOuterBreast/RightInnerBreast
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder
-    m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r
     m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightArmAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r
     m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r
     m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightForeArmAdjust
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightForeArmTwist
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightForeArmTwist/RightForeArmTwistAdjust
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2/RightHandIndex3
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2/RightHandMiddle3
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2/RightHandPinky3
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2/RightHandRing3
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2/RightHandThumb3
-    m_Weight: 1
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightShoulderAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/RightShoulder/RightTrapezius
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r/index_02_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/Spine1/Spine1Adjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/index_01_r/index_02_r/index_03_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/LowerBack/Spine/SpineAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r/middle_02_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg/RightGluteus
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/middle_01_r/middle_02_r/middle_03_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg/RightLeg
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg/RightLeg/RightFoot
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r/pinky_02_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/pinky_01_r/pinky_02_r/pinky_03_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg/RightLeg/RightLegAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r
     m_Weight: 0
-  - m_Path: UMA_Male_Rig/Global/Position/Hips/RightUpLeg/RightUpLegAdjust
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r/ring_02_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/ring_01_r/ring_02_r/ring_03_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r/thumb_02_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/clavicle_r/upperarm_r/lowerarm_r/hand_r/thumb_01_r/thumb_02_r/thumb_03_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/neck_01
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/spine_01/spine_02/spine_03/neck_01/head
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_l
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_l/calf_l
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_l/calf_l/foot_l
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_l/calf_l/foot_l/ball_l
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_r/calf_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_r/calf_r/foot_r
+    m_Weight: 0
+  - m_Path: Game_engine/Root/pelvis/thigh_r/calf_r/foot_r/ball_r
+    m_Weight: 0
+  - m_Path: high-polyMesh
+    m_Weight: 0
+  - m_Path: male_casualsuit02Mesh
+    m_Weight: 0
+  - m_Path: shoes05Mesh
     m_Weight: 0

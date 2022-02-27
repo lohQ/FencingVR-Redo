@@ -12,229 +12,203 @@ using UnityEngine;
 
 public class AgentFencer : Agent
 {
-    public IkTargetController ikTargetController;
     public AvatarController avatarController;
-    public Bout bout;
+    public HandEffectorController handEffectorController;
+    [SerializeReference]
+    public GameController gameController;
     public FencerColor fencerColor;
 
-    public Transform self, selfEpee, selfEpeeTip, oppEpee, oppEpeeTip;
-    public List<Transform> oppBodyTargets;
-
-    private bool _epeeCollided;
+    public Transform self, selfEpee, selfEpeeTip;
+    // public Transform oppEpee, oppEpeeTip;
+    // public List<Transform> oppBodyTargets;
     
     public KeyCode additionalKey = KeyCode.None;
-    public IkTargetController opponentIkTargetController;
+    // public HandEffectorController opponentHandController;
     public bool log;
 
-    public void RegisterWeaponCollision()
+    private BufferSensorComponent _bufferSensor;
+    
+    void Start()
     {
-        _epeeCollided = true;
+        _bufferSensor = GetComponent<BufferSensorComponent>();
     }
     
     public override void CollectObservations(VectorSensor sensor)
     {
-        var selfPos = self.position;
+        // TODO: determine the observations later
+        // var selfPos = self.position;
         var selfEpeePos = selfEpee.position;
-        sensor.AddObservation(selfEpeePos - selfPos);
+        sensor.AddObservation(self.InverseTransformPoint(selfEpeePos)); // divide by arm length?
         sensor.AddObservation(selfEpee.localRotation);
-        sensor.AddObservation(selfEpeeTip.position - selfEpee.position);
-        sensor.AddObservation(oppEpeeTip.position - selfPos);
-        sensor.AddObservation(oppEpeeTip.position - oppEpee.position);
-        sensor.AddObservation(_epeeCollided);
-        _epeeCollided = false;
+        sensor.AddObservation(self.InverseTransformVector(selfEpeeTip.position - selfEpee.position));
+        // sensor.AddObservation(self.InverseTransformPoint(oppEpeeTip.position)); // divide by piste length?
+        // sensor.AddObservation(self.InverseTransformVector(oppEpeeTip.position - oppEpee.position));
+
+        // var selfEpeeTipPos = selfEpeeTip.position;
+        // foreach (var t in oppBodyTargets)
+        // {
+        //     sensor.AddObservation(self.InverseTransformVector(t.position - selfEpeeTipPos));
+        // }
         
-        foreach (var t in oppBodyTargets)
-        {
-            sensor.AddObservation(t.position - selfEpeePos);
-        }
-        
-        sensor.AddObservation(ikTargetController.TipDistanceFromOpponent());
-        sensor.AddObservation(opponentIkTargetController.TipDistanceFromOpponent());
-        
-        sensor.AddObservation(bout.points[(int)fencerColor]);
-        sensor.AddObservation(bout.GetRemainingTime());
-        if (fencerColor == FencerColor.Green)
-        {
-            sensor.AddObservation(bout.points[(int)FencerColor.Red]);
-        }
-        else
-        {
-            sensor.AddObservation(bout.points[(int)FencerColor.Green]);
-        }
+        // sensor.AddObservation(handController.TipDistanceFromOpponent());
+        // sensor.AddObservation(opponentHandController.TipDistanceFromOpponent());
+        //
+        // var collisionObservations = handController.GetCollisionFloats();
+        // for (int i = 0; i < collisionObservations.Length / 6; i++)
+        // {
+        //     _bufferSensor.AppendObservation(collisionObservations[(i * 6)..(i * 6 + 6)]);
+        // }
     }
     
     public override void OnEpisodeBegin()
     {
-        bout.SignalStartRound();
+        gameController.StartGame(this);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
-        // var continuousActionsOut = actionsOut.ContinuousActions;
-
-        // continuousActionsOut[0] = 0.5f;
 
         if (additionalKey != KeyCode.None && !Input.GetKey(additionalKey))
         {
-            discreteActionsOut[0] = 2;
-            discreteActionsOut[1] = 2;
-            discreteActionsOut[2] = 2;
-            discreteActionsOut[3] = 2;
-            discreteActionsOut[4] = 2;
-            discreteActionsOut[5] = 2;
-            // discreteActionsOut[6] = 1;
-            // discreteActionsOut[7] = 1;
-            // discreteActionsOut[8] = 1;
-            // discreteActionsOut[9] = 0;
-            // discreteActionsOut[10] = 1;
-            // discreteActionsOut[11] = 1;
+            discreteActionsOut[0] = 3;
+            discreteActionsOut[1] = 0;
+            discreteActionsOut[2] = 0;
+            discreteActionsOut[3] = 0;
             return;
         }
 
-        // 0: translate hand (x axis)
-        if (Input.GetKey(KeyCode.A))
+        // step forward / backward
+        if (Input.GetKeyUp(KeyCode.UpArrow))
         {
-            discreteActionsOut[0] = 0;
-        }
-        else if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.Alpha1))
+            {
+                discreteActionsOut[0] = 4;
+            } else if (Input.GetKey(KeyCode.Alpha3))
+            {
+                discreteActionsOut[0] = 6;
+            } else if (Input.GetKey(KeyCode.Alpha0))
+            {
+                discreteActionsOut[0] = 7;  // lunge
+            }
+            else
+            {
+                discreteActionsOut[0] = 5;
+            }
+        } 
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
         {
-            discreteActionsOut[0] = 4;
+            if (Input.GetKey(KeyCode.Alpha1))
+            {
+                discreteActionsOut[0] = 2;
+            } else if (Input.GetKey(KeyCode.Alpha3))
+            {
+                discreteActionsOut[0] = 0;
+            }
+            else
+            {
+                discreteActionsOut[0] = 1;
+            }
         }
         else
         {
-            discreteActionsOut[0] = 2;
+            discreteActionsOut[0] = 3;
         }
-        
-        // 1: translate hand (y axis)
-        if (Input.GetKey(KeyCode.W))
+
+        // move arm towards target
+        if (Input.GetKey(KeyCode.Space))
         {
-            discreteActionsOut[1] = 4;
+            if (Input.GetKey(KeyCode.Alpha1))
+            {
+                discreteActionsOut[1] = 1;
+            } else if (Input.GetKey(KeyCode.Alpha2))
+            {
+                discreteActionsOut[1] = 2;
+            } else if (Input.GetKey(KeyCode.Alpha3))
+            {
+                discreteActionsOut[1] = 3;
+            } else if (Input.GetKey(KeyCode.Alpha4))
+            {
+                discreteActionsOut[1] = 4;
+            } else if (Input.GetKey(KeyCode.Alpha5))
+            {
+                discreteActionsOut[1] = 5;
+            }
         }
-        else if (Input.GetKey(KeyCode.S))
+        else
         {
             discreteActionsOut[1] = 0;
         }
-        else
-        {
-            discreteActionsOut[1] = 2;
-        }
         
-        // 2: translate hand (z axis)
-        if (Input.GetKey(KeyCode.E))
+        // rotate arm to point at target
+        if (Input.GetKey(KeyCode.Backspace))
         {
-            discreteActionsOut[2] = 4;
+            if (Input.GetKey(KeyCode.Alpha1))
+            {
+                discreteActionsOut[2] = 1;
+            } else if (Input.GetKey(KeyCode.Alpha2))
+            {
+                discreteActionsOut[2] = 2;
+            } else if (Input.GetKey(KeyCode.Alpha3))
+            {
+                discreteActionsOut[2] = 3;
+            } else if (Input.GetKey(KeyCode.Alpha4))
+            {
+                discreteActionsOut[2] = 4;
+            } else if (Input.GetKey(KeyCode.Alpha5))
+            {
+                discreteActionsOut[2] = 5;
+            } else if (Input.GetKey(KeyCode.Alpha6))
+            {
+                discreteActionsOut[2] = 6;
+            } else if (Input.GetKey(KeyCode.Alpha7))
+            {
+                discreteActionsOut[2] = 7;
+            } else if (Input.GetKey(KeyCode.Alpha8))
+            {
+                discreteActionsOut[2] = 8;
+            }
+            else
+            {
+                discreteActionsOut[2] = 0;
+            }
         }
-        else if (Input.GetKey(KeyCode.Q))
+        else
         {
             discreteActionsOut[2] = 0;
         }
+
+        // hand pronation / suppination (palm facing up / down)
+        if (Input.GetKey(KeyCode.Backslash))
+        {
+            if (Input.GetKey(KeyCode.Alpha1))
+            {
+                discreteActionsOut[3] = 1;
+            } else if (Input.GetKey(KeyCode.Alpha2))
+            {
+                discreteActionsOut[3] = 2;
+            } else if (Input.GetKey(KeyCode.Alpha3))
+            {
+                discreteActionsOut[3] = 3;
+            } else if (Input.GetKey(KeyCode.Alpha4))
+            {
+                discreteActionsOut[3] = 4;
+            }
+            else
+            {
+                discreteActionsOut[3] = 0;
+            }
+        }
         else
-        {
-            discreteActionsOut[2] = 2;
-        }
-        
-        // 3: rotate hand (x axis)
-        if (Input.GetKey(KeyCode.I))
-        {
-            discreteActionsOut[3] = 4;
-        }
-        else if (Input.GetKey(KeyCode.K))
         {
             discreteActionsOut[3] = 0;
         }
-        else
-        {
-            discreteActionsOut[3] = 2;
-        }
-        
-        // 4: rotate hand (y axis)
-        if (Input.GetKey(KeyCode.J))
-        {
-            discreteActionsOut[4] = 4;
-        }
-        else if (Input.GetKey(KeyCode.L))
-        {
-            discreteActionsOut[4] = 0;
-        }
-        else
-        {
-            discreteActionsOut[4] = 2;
-        }
-
-        // 5: rotate hand (z axis)
-        if (Input.GetKey(KeyCode.O))
-        {
-            discreteActionsOut[5] = 0;
-        }
-        else if (Input.GetKey(KeyCode.U))
-        {
-            discreteActionsOut[5] = 4;
-        }
-        else
-        {
-            discreteActionsOut[5] = 2;
-        }
-
-        // discreteActionsOut[6] = Input.GetKey(KeyCode.RightShift) ? 1 : 0;
-
-        // 7: move head target (along x axis)
-        // if (Input.GetKey(KeyCode.H))
-        // {
-        //     discreteActionsOut[7] = 2;
-        // } 
-        // else if (Input.GetKey(KeyCode.F))
-        // {
-        //     discreteActionsOut[7] = 0;
-        // }
-        // else
-        // {
-        //     discreteActionsOut[7] = 1;
-        // }
-        
-        // 8: move head target (along y axis)
-        // if (Input.GetKey(KeyCode.T))
-        // {
-        //     discreteActionsOut[8] = 2;
-        // } 
-        // else if (Input.GetKey(KeyCode.G))
-        // {
-        //     discreteActionsOut[8] = 0;
-        // }
-        // else
-        // {
-        //     discreteActionsOut[8] = 1;
-        // }
-        
-        // step forward / backward
-        // if (Input.GetKeyUp(KeyCode.UpArrow))
-        // {
-        //     discreteActionsOut[9] = 2;
-        // } 
-        // else if (Input.GetKeyUp(KeyCode.DownArrow))
-        // {
-        //     discreteActionsOut[9] = 0;
-        // }
-        // else
-        // {
-        //     discreteActionsOut[9] = 1;
-        // }
-
-        // lunge
-        // if (Input.GetKeyUp(KeyCode.Return))
-        // {
-        //     discreteActionsOut[10] = 1;
-        // }
-        // else
-        // {
-        //     discreteActionsOut[10] = 0;
-        // }
         
     }
 
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        if (bout.withinRound)
+        if (gameController.Started())
         {
             // if (avatarController.curStateInt != -1)
             // {
@@ -246,84 +220,43 @@ public class AgentFencer : Agent
         }
         else
         {
-            // if (log) Debug.Log("not within round. Actions masked. ");
-            // ik hand
             actionMask.SetActionEnabled(0, 0, false);
             actionMask.SetActionEnabled(0, 1, false);
-            actionMask.SetActionEnabled(0, 3, false);
+            actionMask.SetActionEnabled(0, 2, false);
             actionMask.SetActionEnabled(0, 4, false);
-            actionMask.SetActionEnabled(1, 0, false);
+            actionMask.SetActionEnabled(0, 5, false);
+            actionMask.SetActionEnabled(0, 6, false);
+            actionMask.SetActionEnabled(0, 7, false);
+
             actionMask.SetActionEnabled(1, 1, false);
+            actionMask.SetActionEnabled(1, 2, false);
             actionMask.SetActionEnabled(1, 3, false);
             actionMask.SetActionEnabled(1, 4, false);
-            actionMask.SetActionEnabled(2, 0, false);
+            actionMask.SetActionEnabled(1, 5, false);
+
             actionMask.SetActionEnabled(2, 1, false);
+            actionMask.SetActionEnabled(2, 2, false);
             actionMask.SetActionEnabled(2, 3, false);
             actionMask.SetActionEnabled(2, 4, false);
+            actionMask.SetActionEnabled(2, 5, false);
+            actionMask.SetActionEnabled(2, 6, false);
+            actionMask.SetActionEnabled(2, 7, false);
+            actionMask.SetActionEnabled(2, 8, false);
 
-            actionMask.SetActionEnabled(3, 0, false);
             actionMask.SetActionEnabled(3, 1, false);
+            actionMask.SetActionEnabled(3, 2, false);
             actionMask.SetActionEnabled(3, 3, false);
             actionMask.SetActionEnabled(3, 4, false);
-            actionMask.SetActionEnabled(4, 0, false);
-            actionMask.SetActionEnabled(4, 1, false);
-            actionMask.SetActionEnabled(4, 3, false);
-            actionMask.SetActionEnabled(4, 4, false);
-            actionMask.SetActionEnabled(5, 0, false);
-            actionMask.SetActionEnabled(5, 1, false);
-            actionMask.SetActionEnabled(5, 3, false);
-            actionMask.SetActionEnabled(5, 4, false);
-
-            // ik head
-            // actionMask.SetActionEnabled(7, 0, false);
-            // actionMask.SetActionEnabled(7, 2, false);
-            // actionMask.SetActionEnabled(8, 0, false);
-            // actionMask.SetActionEnabled(8, 2, false);
-
-            // animation
-            // actionMask.SetActionEnabled(9, 0, false);
-            // actionMask.SetActionEnabled(9, 2, false);
-            // actionMask.SetActionEnabled(10, 1, false);
         }
     }
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var discreteActions = actionBuffers.DiscreteActions;
-        // var speedFactor = Mathf.Clamp(actionBuffers.ContinuousActions[0], 0f, 1f);
-        
-        // var tipDistanceFromOpp = ikTargetController.TipDistanceFromOpponent();
-        // if (tipDistanceFromOpp > 0)
-        // {
-        //     var reward = Math.Max(70 - tipDistanceFromOpp, 0)/70 * Math.Max(70 - tipDistanceFromOpp, 0)/70 * 0.01f;
-        //     AddReward(reward);
-        // }
-        //
-        // var oppTipDistanceFromSelf = opponentIkTargetController.TipDistanceFromOpponent();
-        // if (oppTipDistanceFromSelf > 0)
-        // {
-        //     var reward = Math.Max(70 - oppTipDistanceFromSelf, 0)/70 * Math.Max(70 - oppTipDistanceFromSelf, 0)/70 * 0.01f;
-        //     AddReward(-reward);
-        // }
-        //
-        // AddReward(-1f/MaxStep);
-
-        ikTargetController.SetMoveVector(discreteActions[0] - 2, discreteActions[1] - 2, discreteActions[2] - 2);
-        ikTargetController.SetRotationToApply(discreteActions[3] - 2, discreteActions[4] - 2, discreteActions[5] - 2);
-
-        // if (log) Debug.Log("discreteActions[0]: " + discreteActions[0]);
-        // if (log) Debug.Log("discreteActions[1]: " + discreteActions[1]);
-        // if (log) Debug.Log("discreteActions[2]: " + discreteActions[2]);
-        // if (log) Debug.Log("discreteActions[3]: " + discreteActions[3]);
-        // if (log) Debug.Log("discreteActions[8]: " + discreteActions[8]);
-        // if (discreteActions[10] == 1)
-        // {
-        //     avatarController.Lunge();
-        // }
-        // else
-        // {
-        //     avatarController.SetNextStep((discreteActions[9] - 1));
-        // }
+        avatarController.SetNextStep((discreteActions[0] - 3));
+        handEffectorController.SetMoveTarget(discreteActions[1]);
+        handEffectorController.SetPointTarget(discreteActions[2]);
+        handEffectorController.SetPalmTarget(discreteActions[3]);
     }
     
 }

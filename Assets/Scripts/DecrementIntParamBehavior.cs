@@ -5,6 +5,7 @@ using UnityEngine;
 public class DecrementIntParamBehavior : StateMachineBehaviour
 {
     public string parameterName;
+    public int decrement;
     private int _parameterHash;
     
     void Awake()
@@ -14,7 +15,7 @@ public class DecrementIntParamBehavior : StateMachineBehaviour
     
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.SetInteger(_parameterHash, animator.GetInteger(_parameterHash) - 1);
+        animator.SetInteger(_parameterHash, animator.GetInteger(_parameterHash) - decrement);
     }
 
 }

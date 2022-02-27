@@ -1,0 +1,15 @@
+Right hand's IK Rig is for adjusting hand position/rotation if collided. Base motion controlled by animation. 
+
+Every physics frame, check distance/angle between hand's position and it's supposed position to hold epee. 
+Place the hand effector at the midpoint. 
+The further the hand effector from hand, the heavier the IK rig weight. (exponential increase)
+
+If blade is collided from front, don't allow doing stepping forward/lunging (might cause the blade to snap to hand). 
+
+
+Normalize observation.
+
+
+Physics test scene?
+- systemize it?
+
