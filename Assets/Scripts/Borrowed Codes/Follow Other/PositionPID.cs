@@ -4,6 +4,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Playcraft
 {
@@ -24,7 +25,9 @@ namespace Playcraft
         [Tooltip("Integral gain")]
         public float iGain = 0.5f; 
         [Tooltip("Differential gain")]
-        public float dGain = 10; 
+        public float dGain = 10;
+
+        [FormerlySerializedAs("energyLevel")] public EnergyController energyController;
         
         /// Error accumulator
         Vector3 integrator = Vector3.zero; 
@@ -51,8 +54,14 @@ namespace Playcraft
             // Clamp the force to the max value available
             force = Vector3.ClampMagnitude(force, maxForce);
             
+            // Less energy -> less force to perform what is intended to do
+            var updatedForce = force * energyController.ForceMultiplier();
+            
             // Apply the force to accelerate the rigidbody
-            rb.AddForce(force);
+            rb.AddForce(updatedForce);
+            
+            // Decrease energy level after applying force
+            energyController.DoMove(updatedForce.magnitude / maxForce);
         }
     }
 }

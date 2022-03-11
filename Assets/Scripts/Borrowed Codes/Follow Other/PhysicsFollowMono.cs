@@ -9,7 +9,13 @@ namespace Playcraft
     {
         [SerializeField] PhysicsFollow process;
         void OnValidate() { process.OnValidate(); }
-        void Start() { process.Start(); }
+
+        void Start()
+        {
+            var energyLevel = GetComponent<EnergyController>();
+            process.energyController = energyLevel;
+            process.Start();
+        }
         void FixedUpdate() { process.FixedUpdate(); }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Playcraft
 {
@@ -29,8 +30,15 @@ namespace Playcraft
         [HideInInspector] public PositionPID position;
         [HideInInspector] public TorqueRotation rotation;
         [HideInInspector] public TorqueRotation secondRotation;
+        [FormerlySerializedAs("energyLevel")] [HideInInspector] public EnergyController energyController;
 
-        public void Start() { self.centerOfMass = centerOfMass; }
+        public void Start()
+        {
+            self.centerOfMass = centerOfMass;
+            position.energyController = energyController;
+            rotation.energyController = energyController;
+            secondRotation.energyController = energyController;
+        }
 
         public void FixedUpdate()
         {

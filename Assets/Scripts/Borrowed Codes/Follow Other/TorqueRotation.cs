@@ -4,6 +4,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Playcraft
 {
@@ -21,6 +22,8 @@ namespace Playcraft
         public enum FollowStyle { None, MatchTarget, AimAtTarget }
         public FollowStyle followStyle = FollowStyle.MatchTarget;
         public Axis alignAxis = Axis.Y;
+
+        [FormerlySerializedAs("energyLevel")] public EnergyController energyController;
         
         [HideInInspector] public float deltaAngle;
 
@@ -55,9 +58,14 @@ namespace Playcraft
      
             deltaAngle = Vector3.Angle(rotationAxis, referenceAxis);
             deltaAngle = Mathf.Sqrt(deltaAngle);
-             
-            rb.AddTorque(cross * deltaAngle * force, forceMode);
+
+            // Less energy -> less force to perform what is intended to do
+            var updatedForce = force * energyController.ForceMultiplier();
+            
+            rb.AddTorque(cross * deltaAngle * updatedForce, forceMode);
             rb.AddTorque(-rb.angularVelocity * damper, forceMode);
+            
+            energyController.DoRotate((deltaAngle * updatedForce)/force);
         }
     }
 }

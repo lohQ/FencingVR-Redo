@@ -29,7 +29,6 @@ public class TestPhysics : MonoBehaviour
     public float maxRotationAngle = 360;
     
     private Dictionary<Vector3, List<Vector3>> _passedThroughLines = new Dictionary<Vector3, List<Vector3>>();
-    private bool _isColliding;
     public bool debug;
     public bool loop;
 
@@ -106,8 +105,6 @@ public class TestPhysics : MonoBehaviour
                 _passedThroughLinesEnum = _passedThroughLines.GetEnumerator();
                 _curPair = _passedThroughLinesEnum.Current;
             }
-            Debug.Log($"_upNormalSeparationMax: {_upNormalSeparationMax}; _upNormalSeparationMin: {_upNormalSeparationMin}");
-            Debug.Log($"_downNormalSeparationMax: {_downNormalSeparationMax}; _downNormalSeparationMin: {_downNormalSeparationMin}");
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
@@ -201,90 +198,33 @@ public class TestPhysics : MonoBehaviour
             
         }
     }
-
-    // should only have one collision point with _isColliding
-    private float _upNormalSeparationMax = -1;
-    private float _upNormalSeparationMin = 1;
-    private float _downNormalSeparationMax = -1;
-    private float _downNormalSeparationMin = 1;
     
     private void OnCollisionEnter(Collision collision)
     {
-        _isColliding = true;
         Vector3 avgContactPoint = Vector3.zero;
         for (int i = 0; i < collision.contactCount; i++)
         {
             var contact = collision.GetContact(i);
             avgContactPoint += contact.point;
             Debug.DrawRay(contact.point, contact.normal, Color.blue);
-            if (contact.normal.y > 0)   // pointing up (rarely pass-through)
-            {
-                if (contact.separation > _upNormalSeparationMax)
-                {
-                    _upNormalSeparationMax = contact.separation;
-                }
-
-                if (contact.separation < _upNormalSeparationMin)
-                {
-                    _upNormalSeparationMin = contact.separation;
-                }
-            }
-            else    // often pass-through
-            {
-                if (contact.separation > _downNormalSeparationMax)
-                {
-                    _downNormalSeparationMax = contact.separation;
-                }
-
-                if (contact.separation < _downNormalSeparationMin)
-                {
-                    _downNormalSeparationMin = contact.separation;
-                }
-            }
         }
         Debug.DrawRay(avgContactPoint / collision.contactCount, collision.impulse * 10, Color.red);
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        _isColliding = true;
         Vector3 avgContactPoint = Vector3.zero;
         for (int i = 0; i < collision.contactCount; i++)
         {
             var contact = collision.GetContact(i);
             avgContactPoint += contact.point;
             Debug.DrawRay(contact.point, contact.normal, Color.blue);
-            if (contact.normal.y > 0)   // pointing up (rarely pass-through)
-            {
-                if (contact.separation > _upNormalSeparationMax)
-                {
-                    _upNormalSeparationMax = contact.separation;
-                }
-
-                if (contact.separation < _upNormalSeparationMin)
-                {
-                    _upNormalSeparationMin = contact.separation;
-                }
-            }
-            else    // often pass-through
-            {
-                if (contact.separation > _downNormalSeparationMax)
-                {
-                    _downNormalSeparationMax = contact.separation;
-                }
-
-                if (contact.separation < _downNormalSeparationMin)
-                {
-                    _downNormalSeparationMin = contact.separation;
-                }
-            }
         }
         Debug.DrawRay(avgContactPoint / collision.contactCount, collision.impulse * 10, Color.red);
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        _isColliding = false;
         for (int i = 0; i < collision.contactCount; i++)
         {
             var contact = collision.GetContact(i);
