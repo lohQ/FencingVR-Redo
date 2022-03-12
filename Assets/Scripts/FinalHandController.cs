@@ -12,22 +12,25 @@ public class FinalHandController : MonoBehaviour
     public List<Transform> pointToTargets;  // index 0 must be 'Center PointTo'
     public Transform moveTargetRoot;
     public Transform moveTarget;
-    public Transform worldPointToTarget;
+    public Transform externalPointToTarget;
+    public Transform internalPointToTarget;
 
     [Header("Control Target")]
     public Transform epeeTarget;
 
     [Header("Control Parameters")] 
+    public float rotationRadius;
     public float suppinationMax;
     public float suppinationMin;
-    public float rotationRadius;
     public float angularVelocity;
     public float recheckPerDegrees;
     public float maxRotationError;
     public float velocity;
     public float maxTranslationError;
-    public float moveTargetLocalDistance;
-    public Vector3 moveTargetLocalDistanceOffset;
+
+    [Header("Tweaked Parameters")]
+    public float moveTargetDistance;
+    public Vector3 moveTargetDistanceOffset;
 
     [Header("General")]
     public bool debug;
@@ -38,7 +41,6 @@ public class FinalHandController : MonoBehaviour
     private bool _moving;
     private Vector3 _prevEpeeTipPos;
     private int _supIndex;
-    private int _pointToIndex;
     private float _curRotationAngle;
 
     public bool rotatingByDefault;
@@ -51,15 +53,19 @@ public class FinalHandController : MonoBehaviour
         _rotating = false;
         _moving = false;
         _supIndex = 0;
-        _pointToIndex = 0;
         rotatingByDefault = true;
         movingByDefault = true;
+        InitializeRotationRadius();
+    }
 
+    private void InitializeRotationRadius()
+    {
         var centerLocalPos = pointToTargets[0].localPosition;
         var pointTosParent = pointToTargets[0].parent.parent;  // should be wrist clone
         var localMagnitude = centerLocalPos.magnitude;
         var localScale = pointTosParent.InverseTransformVector(Vector3.up).magnitude;
         var offsetAt45Deg = Mathf.Sqrt(rotationRadius * rotationRadius / 2);
+
         var upVector = rotationRadius * localScale * pointTosParent.up;
         var rightVector = rotationRadius * localScale * pointTosParent.right;
         var halfUpVector = offsetAt45Deg * localScale * pointTosParent.up;
@@ -72,9 +78,23 @@ public class FinalHandController : MonoBehaviour
         pointToTargets[6].localPosition = (centerLocalPos - halfRightVector + halfUpVector).normalized * localMagnitude;
         pointToTargets[7].localPosition = (centerLocalPos + upVector).normalized * localMagnitude;
         pointToTargets[8].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
+
+        // with this small radius will have less oscillation when doing wrist rotation
+        upVector /= 5;
+        rightVector /= 5;
+        halfUpVector /= 5;
+        halfRightVector /= 5;
+        pointToTargets[9].localPosition = (centerLocalPos + rightVector).normalized * localMagnitude;
+        pointToTargets[10].localPosition = (centerLocalPos + halfRightVector - halfUpVector).normalized * localMagnitude;
+        pointToTargets[11].localPosition = (centerLocalPos - upVector).normalized * localMagnitude;
+        pointToTargets[12].localPosition = (centerLocalPos - halfRightVector - halfUpVector).normalized * localMagnitude;
+        pointToTargets[13].localPosition = (centerLocalPos - rightVector).normalized * localMagnitude;
+        pointToTargets[14].localPosition = (centerLocalPos - halfRightVector + halfUpVector).normalized * localMagnitude;
+        pointToTargets[15].localPosition = (centerLocalPos + upVector).normalized * localMagnitude;
+        pointToTargets[16].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
     }
 
-    public float GetCurSuppination()
+    private float GetCurSuppination()
     {
         // rotating neutral to actual then compare z rotation, will get the same result as rotating actual to neutral then compare
         var neutralRotation = neutralAxes.rotation;
@@ -122,12 +142,10 @@ public class FinalHandController : MonoBehaviour
     
     private Quaternion GetSuppinationRotation(float newSuppinationValue)
     {
-        // var curSuppination = GetCurSuppination();
-        // var suppinationChange = newSuppinationValue - curSuppination;
         var neutralRotation = neutralAxes.rotation;
         var actualRotation = wristOnEpeeAxes.rotation;
 
-        // align neutral axes on actual axes
+        // align neutral axes on actual axes, get suppination angle
         var aligningRotation = Quaternion.FromToRotation(
             neutralRotation * Vector3.forward, 
             actualRotation * Vector3.forward);
@@ -137,43 +155,47 @@ public class FinalHandController : MonoBehaviour
             actualRotation * Vector3.right, 
             wristOnEpeeAxes.forward);
         
-        // not sure why but apparantly it only rotates half of the angle now...
-        // will result in some errors in final result but still acceptable
         if (newSuppinationValue - suppinationAngle < 0.01f && newSuppinationValue - suppinationAngle > -0.01f)
         {
             return Quaternion.identity;
         }
+        // not sure why but apparantly it only rotates half of the angle now...
+        // will result in some errors in final result but still acceptable
         var suppinationRotation = Quaternion.AngleAxis(
             (newSuppinationValue - suppinationAngle) * 2,
             wristOnEpeeAxes.forward);
         
         if (debug)
         {
-            Debug.DrawRay(neutralAxes.position, neutralRotation * Vector3.right * 50, Color.red, 5f);
-            Debug.DrawRay(neutralAxes.position, actualRotation * Vector3.right * 50, Color.red, 5f);
-            Debug.DrawRay(neutralAxes.position, alignedNeutralRotation * Vector3.right * 50, Color.magenta, 5f);
-            Debug.DrawRay(neutralAxes.position, suppinationRotation * actualRotation * Vector3.right * 50, Color.green, 5f);
+            var neutralAxesPos = neutralAxes.position;
+            Debug.DrawRay(neutralAxesPos, neutralRotation * Vector3.right * 50, Color.red);
+            Debug.DrawRay(neutralAxesPos, actualRotation * Vector3.right * 50, Color.red);
+            Debug.DrawRay(neutralAxesPos, alignedNeutralRotation * Vector3.right * 50, Color.magenta);
+            Debug.DrawRay(neutralAxesPos, suppinationRotation * actualRotation * Vector3.right * 50, Color.green);
 
-            var newSuppinationAngle = Vector3.SignedAngle(
-                alignedNeutralRotation * Vector3.right, 
-                suppinationRotation * actualRotation * Vector3.right, 
-                wristOnEpeeAxes.forward);
-            Debug.Log($"suppinationAngle: {suppinationAngle}, newSuppinationAngle: {newSuppinationAngle}");
+            // var newSuppinationAngle = Vector3.SignedAngle(
+            //     alignedNeutralRotation * Vector3.right, 
+            //     suppinationRotation * actualRotation * Vector3.right, 
+            //     wristOnEpeeAxes.forward);
+            // Debug.Log($"suppinationAngle: {suppinationAngle}, newSuppinationAngle: {newSuppinationAngle}");
         }
 
         return suppinationRotation;
     }
-
+    
     private Quaternion GetLookAtRotation(Vector3 targetPos, Quaternion suppinationRotation)
     {
-        // TODO: this overshoot too much. need to fix. 
-        
+        // as wristOnEpeeAxes' Z axis doesn't align with epee forward
+        // (makes sense, else rotating wrist won't change epee vector orientation, which is weird), 
+        // imagine there's a offset from current tip position to wristOnEpeeAxes' Z axis
+        // apply this offset on the target and rotate Z axis to look at the offset-ed target. 
+
         var wristPos = wristOnEpeeAxes.position;
         var rotatedEpeeTipVector = suppinationRotation * (epeeTip.position - wristPos);
 
         // calculate the epeeTip offset from wrist z axis
         var epeeTipDotWristForward = Vector3.Dot(
-            rotatedEpeeTipVector,   // change this just now. TODO: test difference
+            rotatedEpeeTipVector,               // (Doesn't matter whether rotated or not. Dot product will be the same)
             wristOnEpeeAxes.forward);
         var closestPointToEpeeTipFromZ = wristPos + epeeTipDotWristForward * wristOnEpeeAxes.forward;
         var rotatedEpeeTipOffset = (wristPos + rotatedEpeeTipVector) - closestPointToEpeeTipFromZ;
@@ -184,38 +206,26 @@ public class FinalHandController : MonoBehaviour
         var afterPointToRotation = Quaternion.LookRotation(
             offsetTargetPos - wristPos, 
             suppinationRotation * wristOnEpeeAxes.up);
-        // var pointToRotation0 = Quaternion.Inverse(suppinationRotation * wristOnEpeeAxes.rotation) * afterPointToRotation;
         var pointToRotation = Quaternion.FromToRotation(
             suppinationRotation * wristOnEpeeAxes.rotation * Vector3.forward, 
             afterPointToRotation * Vector3.forward);
 
         if (debug)
         {
-            debug = false;
-
-            // the latest debug lines
+            // wrist forward
             Debug.DrawLine(wristPos, closestPointToEpeeTipFromZ, Color.blue, 5f);
+            // rotated epee tip -> wrist forward
             Debug.DrawLine(closestPointToEpeeTipFromZ, wristPos + rotatedEpeeTipVector, Color.red, 5f);
-            Debug.DrawLine(targetPos, offsetTargetPos, Color.magenta, 5f);
+            // wrist -> new epee tip
             Debug.DrawRay(wristPos, pointToRotation * rotatedEpeeTipVector, Color.green, 5f);
+            // target -> new wrist forward
+            Debug.DrawLine(targetPos, offsetTargetPos, Color.magenta, 5f);
 
-            // these two lines should be parallel to each other, second line should end at targetPos
-            var afterRotationClosestPoint = wristPos +
-                                            (pointToRotation * (closestPointToEpeeTipFromZ - wristPos));
-            Debug.DrawLine(closestPointToEpeeTipFromZ, epeeTip.position, Color.green, 5f);
-            Debug.DrawLine(afterRotationClosestPoint, afterRotationClosestPoint + rotatedEpeeTipOffset, Color.yellow, 5f);
-            
+            debug = false;
             // ideally shouldn't have too big difference in suppination...
             var curSuppination = GetNewSuppination(suppinationRotation * wristOnEpeeAxes.rotation);
             var newSuppination = GetNewSuppination(pointToRotation * suppinationRotation * wristOnEpeeAxes.rotation);
             Debug.Log($"curSuppination: {curSuppination}, newSuppination: {newSuppination}");
-
-            // ideally should end up at targetPos
-            var finalEpeeTipVector = pointToRotation * rotatedEpeeTipVector;
-            Debug.DrawRay(wristPos, rotatedEpeeTipVector, Color.red, 5f);
-            Debug.DrawRay(wristPos, afterPointToRotation * Vector3.forward * 50, Color.blue, 5f);
-            Debug.DrawRay(wristPos, finalEpeeTipVector, Color.magenta, 5f);
-
             debug = true;
         }
 
@@ -224,90 +234,86 @@ public class FinalHandController : MonoBehaviour
     
     private IEnumerator ApplyWristRotation(Quaternion rotationToApply)
     {
-        // why doesn't this do the rotation completely?
-        // suspect: axis not changing along with wristRotation?
+        // rotate epeeTarget around wrist at a constant velocity
         
         rotationToApply.ToAngleAxis(out var angle, out var axis0);
         var angleRotated = 0f;
         
-        // // local space: so if hand moved and neutral axes changed, can follow accordingly
-        // but THIS DOESN'T WORK. NOT GONNA SOLVE THIS NOW.
-        // var axisInLocalSpace = neutralAxes.InverseTransformDirection(axis0.normalized);
-        // var axis = neutralAxes.TransformDirection(axisInLocalSpace);
         var axis = axis0;
 
         while (angleRotated < angle)
         {
-            if (angleRotated > recheckPerDegrees)
-            {
-                // maxAngle determines how frequent to re-check (and change) rotation direction
-                break;
-            }
+            // time to refresh rotationToApply! 
+            if (angleRotated > recheckPerDegrees) break;
 
             var angleToRotate = angularVelocity * Time.deltaTime;
             if (angleRotated + angleToRotate > angle)
             {
-                angleToRotate = angle - angleRotated;
+                angleToRotate = angle - angleRotated;   // oscillate enough already. Don't over-rotate when can cap
             }
             
             epeeTarget.RotateAround(wristOnEpeeAxes.position, axis, angleToRotate);
 
             if (debug)
             {
-                Debug.DrawLine(wristOnEpeeAxes.position - 30 * axis, wristOnEpeeAxes.position + 30 * axis, Color.green);
-                Debug.DrawRay(epeeTarget.position, epeeTarget.right * 50, Color.black, 0.5f);
-                Debug.DrawRay(wristOnEpeeAxes.position, wristOnEpeeAxes.right * 50, Color.blue, 0.5f);
+                Debug.DrawLine(wristOnEpeeAxes.position - 30 * axis, wristOnEpeeAxes.position + 30 * axis, Color.white);
             }
 
-            // axis = neutralAxes.TransformDirection(axisInLocalSpace);
             angleRotated += angleToRotate;
             yield return null;
         }
     }
 
-    public IEnumerator RotateToTarget()
+    private void MaintainInternalPointTo()
+    {
+        // internalPointToTarget will tend towards externalPointTo, while remaining inside the reach cone (the area circled by pointToTargets)
+        var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
+        var centerToInternalPointTo = internalPointToTarget.position - pointToTargets[0].position;
+        if (centerToInternalPointTo.magnitude > maxRadius)
+        {
+            internalPointToTarget.position = pointToTargets[0].position + 
+                                             (externalPointToTarget.position - pointToTargets[0].position).normalized * maxRadius;
+        }
+    }
+    
+    private IEnumerator RotateToTarget()
     {
         _rotating = true;
-        var suppination = TranslateSupIndexToSup(_supIndex);
+
+        float suppination;
+        if (_supIndex == 1)
+        {
+            suppination = suppinationMax;
+        }
+        if (_supIndex == -1)
+        {
+            suppination = suppinationMin;
+        }
+        else
+        {
+            suppination = 0;
+        }
+
+        if (rotateToWorldPoint)
+        {
+            SetWorldPointTo();
+        }
 
         var iteration = 0;
         var angle = 0f;
         do
         {
-            if (iteration == maxIteration)
-            {
-                break;
-            }
+            // So can rotate to another target even still haven't managed to reach this one
+            if (iteration == maxIteration) break;
 
             var supRot = GetSuppinationRotation(suppination);
-            Quaternion lookRot;
-            if (!rotateToWorldPoint)
-            {
-                lookRot = GetLookAtRotation(pointToTargets[_pointToIndex].position, supRot);
-            }
-            else
-            {
-                // cap the pointTo, make sure wrist won't rotate too weird
-                var pointTo = worldPointToTarget.position;
-                var centerFromRoot = pointToTargets[0].position - neutralAxes.position;
-                var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
-                var pointToFromRoot = (pointTo - neutralAxes.position).normalized * centerFromRoot.magnitude;
-                if ((pointToFromRoot - centerFromRoot).magnitude > maxRadius)
-                {
-                    pointTo = pointToTargets[0].position + (pointToFromRoot - centerFromRoot).normalized * maxRadius;
-                    Debug.DrawLine(centerFromRoot, pointTo, Color.blue, 5f);
-                }
-                Debug.DrawRay(neutralAxes.position, centerFromRoot, Color.yellow, 5f);
-                Debug.DrawRay(neutralAxes.position, pointTo, Color.green, 5f);
-                lookRot = GetLookAtRotation(pointTo, supRot);
-            }
+            Quaternion lookRot = GetLookAtRotation(
+                rotateToWorldPoint ? internalPointToTarget.position : pointToTargets[0].position, supRot);
             var rotationToApply = lookRot * supRot;
+
             rotationToApply.ToAngleAxis(out angle, out _);
-            _curRotationAngle = angle;  // later used to check if reached rotation target
-            if (angle < maxRotationError)
-            {
-                break;
-            }
+            _curRotationAngle = angle;      // later used to check if reached rotation target
+            if (angle < maxRotationError) break;
 
             if (debug) Debug.Log($"At iteration {iteration}");
             yield return StartCoroutine(ApplyWristRotation(rotationToApply));
@@ -317,11 +323,12 @@ public class FinalHandController : MonoBehaviour
 
         _rotating = false;
     }
-
-    public bool updateTranslationSourceDestInside;
     
-    public IEnumerator MoveToTarget()
+    private IEnumerator MoveToTarget()
     {
+        // Still have issues of can't reach target at one shot (usually when the distance a bit far)
+        // Not gonna solve this now. 
+        
         _moving = true;
         
         var actualEpee = wristOnEpeeAxes.parent.parent;
@@ -344,7 +351,7 @@ public class FinalHandController : MonoBehaviour
         {
             timeElapsed += Time.deltaTime;
             var t = timeElapsed / duration;
-            var progress = Mathf.Sqrt(t) * 1.5f;    // will reach end position with t = 4/9, so 'timeElapsed < duration / 2'
+            var progress = Mathf.Sqrt(t) * 1.5f;    // will reach end position at t = 4/9, so 'timeElapsed < duration / 2'
 
             // Slerp in local space (target pos will not change much even if the avatar move in world)
             // Then translate to world position
@@ -363,49 +370,52 @@ public class FinalHandController : MonoBehaviour
             Debug.DrawLine(moveTargetRoot.position, moveTargetRoot.TransformPoint(localTargetPos), Color.yellow);
             Debug.DrawRay(moveTargetRoot.TransformPoint(localWristStartPos), moveTargetRoot.TransformVector(localMoveVector), Color.green);
 
-            // MIGHT NOT NEED THIS. 
-            // Update the targetPos so wristRotation induced epee-to-wrist offset change is taken into account 
-            // Update the duration so the additional distance moved is taken into account
-            var curEpeeToWristOffset = wristOnEpeeAxes.position - actualEpee.position;
-            Debug.DrawRay(wristOnEpeeAxes.position, epeeToWristOffset, Color.blue);
-            Debug.DrawLine(wristOnEpeeAxes.position, actualEpee.position, Color.red);
-            var offsetDiff = curEpeeToWristOffset - epeeToWristOffset;
-            if (offsetDiff.magnitude > 0.01f)
-            {
-                var newLocalTargetPos = startLocalTargetPos + moveTargetRoot.InverseTransformVector(offsetDiff);
-                var originalRemainingVector = moveTargetRoot.TransformPoint(localTargetPos) - prevEpeeTargetPos;
-                var curRemainingVector = moveTargetRoot.TransformPoint(newLocalTargetPos) - prevEpeeTargetPos;
-                duration += (curRemainingVector - originalRemainingVector).magnitude / velocity;
-                Debug.DrawLine(moveTargetRoot.TransformPoint(localTargetPos), moveTargetRoot.TransformPoint(newLocalTargetPos), Color.magenta, 5f);
-                localTargetPos = newLocalTargetPos;
-            }
+            // // MIGHT NOT NEED THIS. 
+            // // Update the targetPos so wristRotation induced epee-to-wrist offset change is taken into account 
+            // // Update the duration so the additional distance moved is taken into account
+            // var curEpeeToWristOffset = wristOnEpeeAxes.position - actualEpee.position;
+            // Debug.DrawRay(wristOnEpeeAxes.position, epeeToWristOffset, Color.blue);
+            // Debug.DrawLine(wristOnEpeeAxes.position, actualEpee.position, Color.red);
+            // var offsetDiff = curEpeeToWristOffset - epeeToWristOffset;
+            // if (offsetDiff.magnitude > 0.01f)
+            // {
+            //     var newLocalTargetPos = startLocalTargetPos + moveTargetRoot.InverseTransformVector(offsetDiff);
+            //     var originalRemainingVector = moveTargetRoot.TransformPoint(localTargetPos) - prevEpeeTargetPos;
+            //     var curRemainingVector = moveTargetRoot.TransformPoint(newLocalTargetPos) - prevEpeeTargetPos;
+            //     duration += (curRemainingVector - originalRemainingVector).magnitude / velocity;
+            //     Debug.DrawLine(moveTargetRoot.TransformPoint(localTargetPos), moveTargetRoot.TransformPoint(newLocalTargetPos), Color.magenta, 5f);
+            //     localTargetPos = newLocalTargetPos;
+            // }
         }
 
         _moving = false;
     }
 
-    public float TranslateSupIndexToSup(int supIndex)
+    public void SetNextSuppination(int supIndex)
     {
-        if (supIndex == 1)
-        {
-            return suppinationMax;
-        }
-        if (supIndex == -1)
-        {
-            return suppinationMin;
-        } 
-        return 0;
-    }
-    
-    public void SetNextRotation(int supIndex, int pointToIndex)
-    {
-        // TODO: change from pointToIndex to upwards and rightwards
-        _pointToIndex = pointToIndex;
         _supIndex = supIndex;
+    }
+
+    public void SetWorldPointTo()
+    {
+        var pointTo = externalPointToTarget.position;
+
+        var centerFromRoot = pointToTargets[0].position - neutralAxes.position;
+        var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
+        var pointToFromRoot = (pointTo - neutralAxes.position).normalized * centerFromRoot.magnitude;
+        if ((pointToFromRoot - centerFromRoot).magnitude > maxRadius)
+        {
+            pointTo = pointToTargets[0].position + (pointToFromRoot - centerFromRoot).normalized * maxRadius;
+            Debug.DrawLine(centerFromRoot, pointTo, Color.blue, 1f);
+        }
+        Debug.DrawRay(neutralAxes.position, centerFromRoot, Color.yellow, 1f);
+        Debug.DrawRay(neutralAxes.position, pointTo, Color.green, 1f);
+        internalPointToTarget.position = pointTo;
     }
 
     public void SetMoveToTargetPosition(int forward, int rightward, int upward, bool extended)
     {
+        // TODO: change to world.up, world.right, world.forward
         // forward is -x, right is -z, up is -y
         // each int can be -1, 0, 1. forward can only be 0 or 1. 
         // there are 2 * 3 * 3 * 2 -2 = 34 combinations
@@ -413,17 +423,11 @@ public class FinalHandController : MonoBehaviour
         if (forward == 0 && rightward == 0 && upward == 0)
             return;
         
-        var distanceFromRoot = extended ? moveTargetLocalDistance : moveTargetLocalDistance / 4 * 3;
-        var newLocalPosition = new Vector3(-forward, -upward, -rightward) + moveTargetLocalDistanceOffset;
-        newLocalPosition = newLocalPosition.normalized * distanceFromRoot;
-        moveTarget.localPosition = newLocalPosition;
+        var distanceFromRoot = extended ? moveTargetDistance : moveTargetDistance / 4 * 3;
+        var moveToVector = new Vector3(rightward, upward, forward).normalized * distanceFromRoot + moveTargetDistanceOffset;
+        moveTarget.position = moveTargetRoot.position + moveToVector.normalized * distanceFromRoot;
     }
-
-    public bool Rotating()
-    {
-        return _rotating;
-    }
-
+    
     public bool ReachedRotationTarget(float errorTolerance)
     {
         return _curRotationAngle < errorTolerance;
@@ -436,9 +440,12 @@ public class FinalHandController : MonoBehaviour
 
     private void Update()
     {
+        MaintainInternalPointTo();
+        
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            GetCurSuppination();
+            var curSuppination = GetCurSuppination();
+            Debug.Log($"curSuppination: {curSuppination}");
         }
         
         # region direct input
@@ -519,6 +526,6 @@ public class FinalHandController : MonoBehaviour
             Gizmos.DrawWireSphere(pt.position, 3f);
         }
         
-        Gizmos.DrawWireSphere(moveTarget.position, 3f);
+        Gizmos.DrawWireCube(moveTarget.position, Vector3.one * 3);
     }
 }
