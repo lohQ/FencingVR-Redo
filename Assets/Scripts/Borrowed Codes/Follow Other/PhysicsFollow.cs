@@ -36,8 +36,6 @@ namespace Playcraft
         {
             self.centerOfMass = centerOfMass;
             position.energyController = energyController;
-            rotation.energyController = energyController;
-            secondRotation.energyController = energyController;
         }
 
         public void FixedUpdate()

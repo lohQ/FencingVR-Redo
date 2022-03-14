@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Playcraft;
 using UnityEngine;
 
 public class FinalHandController : MonoBehaviour
@@ -20,24 +19,24 @@ public class FinalHandController : MonoBehaviour
     public Transform epeeTarget;
 
     [Header("Control Parameters")] 
+    public float suppinationMax;
+    public float suppinationMin;
+    public float rotationRadius;
+    public bool rotateToWorldPoint;
+    public int maxIteration;
+
+    [Header("Tweaked (kinda static) Parameters")]
     public float angularVelocity;
     public float recheckPerDegrees;
     public float maxRotationError;
     public float velocity;
     public float maxTranslationError;
-    public bool rotateToWorldPoint;
-
-    [Header("Tweaked (kinda static) Parameters")]
-    public float suppinationMax;
-    public float suppinationMin;
-    public float rotationRadius;
     public float moveTargetDistance;
     public Vector3 moveTargetDistanceOffset;
 
     [Header("General")]
     public bool debug;
     public bool showEpeePath;
-    public int maxIteration;
     
     private bool _rotating;
     private bool _moving;

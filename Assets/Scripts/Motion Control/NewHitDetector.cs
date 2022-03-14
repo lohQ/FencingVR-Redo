@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class NewHitDetector : MonoBehaviour
 {
-    public MoveInAdvance moveInAdvance;
+    public FollowFootwork followFootwork;
 
     private void OnCollisionStay()
     {
-        moveInAdvance.RegisterCollision();
+        followFootwork.RegisterCollision();
     }
 }

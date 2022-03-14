@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// only used on force and not torque as reducing torque results in the epee swinging
+// so just a simple script to reduce the force applied when the energy level is lower, with UI display
+// not tested formally. But it should work. Let me go ahead and start working on Agent Fencer
+
 public class EnergyController : MonoBehaviour
 {
     // range: [0,1]
@@ -13,8 +17,8 @@ public class EnergyController : MonoBehaviour
     public float restorationRate = 0.2f;
     [Tooltip("How much energy to use for one second of translation")]
     public float translationUsageRate;
-    [Tooltip("How much energy to use for one second of rotation")]
-    public float rotationUsageRate;
+    // [Tooltip("How much energy to use for one second of rotation")]
+    // public float rotationUsageRate;
 
     public Image greenCircle;
     public float startFilling = 0.075f;
@@ -27,11 +31,7 @@ public class EnergyController : MonoBehaviour
 
     public float ForceMultiplier()
     {
-        if (value > 0.6f)
-        {
-            return 1;
-        }
-        return value / 0.6f;
+        return value;
     }
     
     public void DoMove(float forceRatio)
@@ -40,12 +40,6 @@ public class EnergyController : MonoBehaviour
         _usage += translationUsageRate * forceRatio * Time.deltaTime;
     }
 
-    public void DoRotate(float forceRatio)
-    {
-        // this force ratio is degreeDelta * [0,1], so it can be as big as the degreeDelta
-        _usage += rotationUsageRate * forceRatio * Time.deltaTime;
-    }
-    
     private void FixedUpdate()
     {
         value -= _usage;
@@ -60,9 +54,6 @@ public class EnergyController : MonoBehaviour
         greenCircle.fillAmount = startFilling + value * (endFilling - startFilling);
         displayTransform.position = displayPos.position;
         displayTransform.LookAt(displayPos.position + displayPos.forward);
-        Debug.DrawRay(displayPos.position, displayPos.forward, Color.blue);
-        Debug.DrawRay(displayPos.position, displayPos.right, Color.red);
-        Debug.DrawRay(displayPos.position, displayPos.up, Color.green);
     }
     
 }

@@ -17,9 +17,8 @@ public class BladeworkController : MonoBehaviour
     // the target position didn't change but the initial aim is not accurate?
     // i guess it is because the epee-to-wrist vector changes when the hand translate
     // tested most bladeworks and looks ok
-    // TODO: add in footwork animation
-    //modify the wrist rotation radius
-    // hopefully these could be done by noon?
+    // add in footwork animation
+    // modify the wrist rotation radius
     
     // add in collider
     // TODO: test hit
@@ -31,6 +30,7 @@ public class BladeworkController : MonoBehaviour
     private void Start()
     {
         _handController = GetComponent<FinalHandController>();
+        // do this after enter en garde
         _handController.SetMoveToTargetPosition(1, 0, 0, false);
         _handController.SetNextSuppination(0);
     }

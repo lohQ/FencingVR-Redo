@@ -5,8 +5,12 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class MoveInAdvance : MonoBehaviour
+// still doesn't really look good but at least it's better than without this script...
+// use fixedDeltaTime instead of deltaTime for better granularity
+
+public class FollowFootwork : MonoBehaviour
 {
+    [Serializable]
     public enum FootworkType
     {
         Lunge,
@@ -19,10 +23,18 @@ public class MoveInAdvance : MonoBehaviour
         LargeStepBackward
     }
 
+    [Serializable]
+    public struct FootworkKeyFrame
+    {
+        public FootworkType footworkType;
+        public MoveTargetRootKeyFrames keyFrameData;
+    }
+
     public Transform moveTarget;
     public Transform epeeTarget;
     public Transform wrist;
     public Transform wristOnEpee;
+    public FootworkKeyFrame[] footworkKeyFrames;
     public int keyFrameOffset;
 
     public float lungeRigWeight;
@@ -36,25 +48,31 @@ public class MoveInAdvance : MonoBehaviour
     
     private Transform _moveTargetRoot;
     private Transform _epee;
-    private Dictionary<FootworkType, List<Tuple<Vector3, Quaternion>>> _footworkKeyFrames;
     private Animator _animator;
     private Rig _ikRig;
     private FinalHandController _handController;
+    
+    private Dictionary<FootworkType, MoveTargetRootKeyFrames> _footworkKeyFrameDict;
     private int _animatorHashStep;
     private bool _inCor;
     private bool _collided;
 
     private void Start()
     {
-        _animator = GetComponent<Animator>();
         var rigBuilder = GetComponent<RigBuilder>();
         _ikRig = rigBuilder.layers[0].rig;
+        _animator = GetComponent<Animator>();
         _handController = GetComponent<FinalHandController>();
         _moveTargetRoot = moveTarget.parent;
         _epee = wristOnEpee.parent;
         _animatorHashStep = Animator.StringToHash("step");
-        _footworkKeyFrames = new Dictionary<FootworkType, List<Tuple<Vector3, Quaternion>>>();
         _collided = false;
+
+        _footworkKeyFrameDict = new Dictionary<FootworkType, MoveTargetRootKeyFrames>();
+        foreach (var pair in footworkKeyFrames)
+        {
+            _footworkKeyFrameDict[pair.footworkType] = pair.keyFrameData;
+        }
     }
     
     private FootworkType FootworkTypeFromStepValue(int step)
@@ -80,7 +98,7 @@ public class MoveInAdvance : MonoBehaviour
         }
     }
     
-    private String StateNameFromStepValue(int step)
+    private string StateNameFromStepValue(int step)
     {
         switch (step)
         {
@@ -108,7 +126,9 @@ public class MoveInAdvance : MonoBehaviour
         var stateName = StateNameFromStepValue(step);
         var footworkType = FootworkTypeFromStepValue(step);
 
-        _footworkKeyFrames[footworkType] = new List<Tuple<Vector3, Quaternion>>();
+        var keyFrameSO = _footworkKeyFrameDict[footworkType];
+        keyFrameSO.translationData = new List<Vector3>();
+        keyFrameSO.rotationData = new List<Quaternion>();
 
         var startMoveTargetRootPos = _moveTargetRoot.position;
         var startMoveTargetRootRot = _moveTargetRoot.rotation;
@@ -128,9 +148,8 @@ public class MoveInAdvance : MonoBehaviour
             || curTransition.IsName(exitTransitionName) 
             || curState.IsName(stateName))
         {
-            _footworkKeyFrames[footworkType].Add(new Tuple<Vector3, Quaternion>(
-                _moveTargetRoot.position - startMoveTargetRootPos, 
-                Quaternion.Inverse(startMoveTargetRootRot) * _moveTargetRoot.rotation));
+            keyFrameSO.translationData.Add(_moveTargetRoot.position - startMoveTargetRootPos);
+            keyFrameSO.rotationData.Add(Quaternion.Inverse(startMoveTargetRootRot) * _moveTargetRoot.rotation);
             yield return new WaitForFixedUpdate();
             curTransition = _animator.GetAnimatorTransitionInfo(0);
             curState = _animator.GetCurrentAnimatorStateInfo(0);
@@ -141,23 +160,25 @@ public class MoveInAdvance : MonoBehaviour
             yield return null;
         }
         
-        Debug.Log($"{stateName} has {_footworkKeyFrames[footworkType].Count} keyframes");
+        Debug.Log($"{stateName} has {keyFrameSO.translationData.Count} keyframes");
     }
     
     private IEnumerator FollowKeyFrames(FootworkType footworkType)
     {
         // operations on epeeTarget should be increment and not assignment so they can stack on top of one another!
-        var moveTargetFromRoot = moveTarget.position - _moveTargetRoot.position;
         var startRootPos = _moveTargetRoot.position;
-        var keyFrames = _footworkKeyFrames[footworkType];
+        var moveTargetFromRoot = moveTarget.position - startRootPos;
+        var translationData = _footworkKeyFrameDict[footworkType].translationData;
+        var rotationData = _footworkKeyFrameDict[footworkType].rotationData;
 
         var prevTargetPos = epeeTarget.position;
-        for (int i = keyFrameOffset; i < keyFrames.Count - keyFrameOffset; i++)
+        for (int i = keyFrameOffset; i < translationData.Count - keyFrameOffset; i++)
         {
-            var rootPos = startRootPos + keyFrames[i].Item1;
-            var targetPos = rootPos + keyFrames[i].Item2 * moveTargetFromRoot;
+            var rootPos = startRootPos + translationData[i];
+            var targetPos = rootPos + rotationData[i] * moveTargetFromRoot;
             var diff = targetPos - prevTargetPos;
             Debug.DrawRay(epeeTarget.position, diff, Color.red, 5f);
+
             epeeTarget.position += diff.normalized * Mathf.Min(diff.magnitude, _handController.velocity);
             prevTargetPos = targetPos;
             yield return new WaitForFixedUpdate();
@@ -225,7 +246,7 @@ public class MoveInAdvance : MonoBehaviour
         }
     }
 
-    private IEnumerator FollowFootwork(int step)
+    private IEnumerator DoFollowFootwork(int step)
     {
         _inCor = true;
 
@@ -240,7 +261,7 @@ public class MoveInAdvance : MonoBehaviour
 
         if (footworkType == FootworkType.Lunge)
         {
-            // for now won't be able to move/rotate the wrist while lunging
+            // for now won't be able to move/rotate the wrist while lunging! At most react to collision
             _handController.DisableControl();
             yield return StartCoroutine(FollowAnim());
             _handController.EnableControl();
@@ -278,43 +299,14 @@ public class MoveInAdvance : MonoBehaviour
         var step = _animator.GetInteger(_animatorHashStep);
         if (step != 0)
         {
-            StartCoroutine(FollowFootwork(step));
+            StartCoroutine(DoFollowFootwork(step));
         }
         
-        if (Input.GetKeyUp(KeyCode.A))
-        {
-            StartCoroutine(SaveAllKeyFrames());
-        }
-        
-        if (Input.GetKeyUp(KeyCode.P))
-        {
-            var transitionInfo = _animator.GetAnimatorTransitionInfo(0);
-            var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            var potentialTransitions = new String[]
-            {
-                $"{stateNamePrefix}{entry} -> {stateNamePrefix}Lunge",
-                $"{stateNamePrefix}Lunge -> {stateNamePrefix}Lunge Recover",
-                $"{stateNamePrefix}Lunge Recover -> {exit}",
-            };
-            var potentialStates = new String[]
-            {
-                "Lunge", "Lunge Recover", $"{stateNamePrefix}Lunge", $"{stateNamePrefix}Lunge Recover"
-            };
-            foreach (var trans in potentialTransitions)
-            {
-                if (transitionInfo.IsName(trans))
-                {
-                    Debug.Log($"transition is {trans}");
-                }
-            }
-            foreach (var state in potentialStates)
-            {
-                if (stateInfo.IsName(state))
-                {
-                    Debug.Log($"state is {state}");
-                }
-            }
-        }
+        // // use this to re-save the scriptableObjects
+        // if (Input.GetKeyUp(KeyCode.A))
+        // {
+        //     StartCoroutine(SaveAllKeyFrames());
+        // }
     }
 
     public void RegisterCollision()
