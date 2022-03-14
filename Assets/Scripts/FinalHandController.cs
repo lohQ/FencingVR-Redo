@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Playcraft;
 using UnityEngine;
 
 public class FinalHandController : MonoBehaviour
@@ -12,23 +13,24 @@ public class FinalHandController : MonoBehaviour
     public List<Transform> pointToTargets;  // index 0 must be 'Center PointTo'
     public Transform moveTargetRoot;
     public Transform moveTarget;
-    public Transform externalPointToTarget;
     public Transform internalPointToTarget;
 
     [Header("Control Target")]
+    public Transform externalPointToTarget; // actually is controlled by BladeworkController
     public Transform epeeTarget;
 
     [Header("Control Parameters")] 
-    public float rotationRadius;
-    public float suppinationMax;
-    public float suppinationMin;
     public float angularVelocity;
     public float recheckPerDegrees;
     public float maxRotationError;
     public float velocity;
     public float maxTranslationError;
+    public bool rotateToWorldPoint;
 
-    [Header("Tweaked Parameters")]
+    [Header("Tweaked (kinda static) Parameters")]
+    public float suppinationMax;
+    public float suppinationMin;
+    public float rotationRadius;
     public float moveTargetDistance;
     public Vector3 moveTargetDistanceOffset;
 
@@ -42,26 +44,21 @@ public class FinalHandController : MonoBehaviour
     private Vector3 _prevEpeeTipPos;
     private int _supIndex;
     private float _curRotationAngle;
-
-    public bool rotatingByDefault;
-    public bool movingByDefault;
-    public bool rotateToWorldPoint;
-
+    
     private void Start()
     {
         _prevEpeeTipPos = epeeTip.position;
         _rotating = false;
         _moving = false;
         _supIndex = 0;
-        rotatingByDefault = true;
-        movingByDefault = true;
         InitializeRotationRadius();
+        _enabled = true;
     }
 
     private void InitializeRotationRadius()
     {
         var centerLocalPos = pointToTargets[0].localPosition;
-        var pointTosParent = pointToTargets[0].parent.parent;  // should be wrist clone
+        var pointTosParent = pointToTargets[0].parent.parent;  // wrist clone
         var localMagnitude = centerLocalPos.magnitude;
         var localScale = pointTosParent.InverseTransformVector(Vector3.up).magnitude;
         var offsetAt45Deg = Mathf.Sqrt(rotationRadius * rotationRadius / 2);
@@ -93,31 +90,7 @@ public class FinalHandController : MonoBehaviour
         pointToTargets[15].localPosition = (centerLocalPos + upVector).normalized * localMagnitude;
         pointToTargets[16].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
     }
-
-    private float GetCurSuppination()
-    {
-        // rotating neutral to actual then compare z rotation, will get the same result as rotating actual to neutral then compare
-        var neutralRotation = neutralAxes.rotation;
-        var actualRotation = wristOnEpeeAxes.rotation;
-        
-        var aligningRotation = Quaternion.FromToRotation(
-            actualRotation * Vector3.forward, 
-            neutralRotation * Vector3.forward);
-        var alignedActualRotation = aligningRotation * actualRotation;
-        var angle = Vector3.SignedAngle(
-            neutralRotation * Vector3.right, 
-            alignedActualRotation * Vector3.right, 
-            neutralAxes.forward);
-
-        if (debug)
-        {
-            Debug.DrawRay(neutralAxes.position, neutralRotation * Vector3.right * 50, Color.red, 1f);
-            Debug.DrawRay(neutralAxes.position, alignedActualRotation * Vector3.right * 50, Color.magenta, 1f);
-        }
-
-        return angle;
-    }
-
+    
     private float GetNewSuppination(Quaternion newWristRotation)
     {
         var neutralRotation = neutralAxes.rotation;
@@ -275,7 +248,7 @@ public class FinalHandController : MonoBehaviour
                                              (externalPointToTarget.position - pointToTargets[0].position).normalized * maxRadius;
         }
     }
-    
+
     private IEnumerator RotateToTarget()
     {
         _rotating = true;
@@ -391,6 +364,10 @@ public class FinalHandController : MonoBehaviour
         _moving = false;
     }
 
+    
+    
+    // ----- below is exposed to BladeworkController ----- //
+    
     public void SetNextSuppination(int supIndex)
     {
         _supIndex = supIndex;
@@ -415,8 +392,6 @@ public class FinalHandController : MonoBehaviour
 
     public void SetMoveToTargetPosition(int forward, int rightward, int upward, bool extended)
     {
-        // TODO: change to world.up, world.right, world.forward
-        // forward is -x, right is -z, up is -y
         // each int can be -1, 0, 1. forward can only be 0 or 1. 
         // there are 2 * 3 * 3 * 2 -2 = 34 combinations
 
@@ -438,16 +413,26 @@ public class FinalHandController : MonoBehaviour
         return (epeeTarget.position - moveTarget.position).magnitude <= maxTranslationError;
     }
 
+    // ----- above is exposed to BladeworkController ----- //
+
+    private bool _enabled;
+    
+    public void DisableControl()
+    {
+        _enabled = false;
+    }
+
+    public void EnableControl()
+    {
+        _enabled = true;
+    }
+    
     private void Update()
     {
+        if (!_enabled) return;
+        
         MaintainInternalPointTo();
-        
-        if (Input.GetKeyUp(KeyCode.Alpha1))
-        {
-            var curSuppination = GetCurSuppination();
-            Debug.Log($"curSuppination: {curSuppination}");
-        }
-        
+
         # region direct input
         // float suppination = 0f;
         // if (Input.GetKey(KeyCode.Alpha2))
@@ -500,16 +485,15 @@ public class FinalHandController : MonoBehaviour
         // }
         # endregion
 
-        if (rotatingByDefault && !_rotating)
+        if (!_rotating)
         {
             StartCoroutine(RotateToTarget());
         }
 
-        if (movingByDefault && !_moving)
+        if (!_moving)
         {
             StartCoroutine(MoveToTarget());
         }
-
 
         if (showEpeePath)
         {

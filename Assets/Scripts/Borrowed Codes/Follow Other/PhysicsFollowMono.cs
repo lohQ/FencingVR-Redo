@@ -7,7 +7,7 @@ namespace Playcraft
     /// and more reliable translational collision detection than Articulation Bodies.
     public class PhysicsFollowMono : MonoBehaviour
     {
-        [SerializeField] PhysicsFollow process;
+        [SerializeField] public PhysicsFollow process;
         void OnValidate() { process.OnValidate(); }
 
         void Start()
@@ -17,5 +17,6 @@ namespace Playcraft
             process.Start();
         }
         void FixedUpdate() { process.FixedUpdate(); }
+        
     }
 }

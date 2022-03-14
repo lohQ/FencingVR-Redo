@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BladeworkController : MonoBehaviour
 {
+    public bool debug;
     private FinalHandController _handController;
     private bool _inRotCor;
     private bool _inMoveCor;
@@ -13,14 +14,14 @@ public class BladeworkController : MonoBehaviour
     // add more PointTo targets
     // seems like some part of the excessive oscilation is because of the energy level thing...?
     // TODO: debug why MoveToTarget doesn't move in one shot but requires two run?
-    // the target position didn't change but the initial aim is not accurate :(
+    // the target position didn't change but the initial aim is not accurate?
     // i guess it is because the epee-to-wrist vector changes when the hand translate
-    // TODO: test all the bladeworks
+    // tested most bladeworks and looks ok
     // TODO: add in footwork animation
-    // TODO: modify the wrist rotation radius
+    //modify the wrist rotation radius
     // hopefully these could be done by noon?
     
-    // TODO: add in collider
+    // add in collider
     // TODO: test hit
     // TODO: reuse/create game env
     // TODO: create agent fencer
@@ -32,12 +33,11 @@ public class BladeworkController : MonoBehaviour
         _handController = GetComponent<FinalHandController>();
         _handController.SetMoveToTargetPosition(1, 0, 0, false);
         _handController.SetNextSuppination(0);
-        _inRotCor = false;
     }
     
     private IEnumerator BackToIdle()
     {
-        Debug.Log("Start back to idle");
+        if (debug) Debug.Log("Start back to idle");
         _inRotCor = true;
         _inMoveCor = true;
 
@@ -50,24 +50,24 @@ public class BladeworkController : MonoBehaviour
 
         _inRotCor = false;
         _inMoveCor = false;
-        Debug.Log("End back to idle");
+        if (debug) Debug.Log("End back to idle");
     }
     
     private IEnumerator ExtendArm()
     {
-        Debug.Log($"Start extend arm");
+        if (debug) Debug.Log($"Start extend arm");
         _inMoveCor = true;
 
-        _handController.SetMoveToTargetPosition(1, 0, 0, true);
+        _handController.SetMoveToTargetPosition(1, 0, 1, true);
         yield return new WaitWhile(() => !_handController.ReachedMoveTarget());
 
         _inMoveCor = false;
-        Debug.Log($"End extend arm");
+        if (debug) Debug.Log($"End extend arm");
     }
     
     private IEnumerator RotateWrist(bool clockwise)
     {
-        Debug.Log($"Start rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
+        if (debug) Debug.Log($"Start rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
         _inRotCor = true;
 
         var initialPointToWorld = _handController.rotateToWorldPoint;
@@ -123,23 +123,23 @@ public class BladeworkController : MonoBehaviour
 
         _handController.rotateToWorldPoint = initialPointToWorld;
         _inRotCor = false;
-        Debug.Log($"End rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
+        if (debug) Debug.Log($"End rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
     }
 
     private IEnumerator Parry(int parryNum)
     {
-        Debug.Log($"Start parry {parryNum}");
+        if (debug) Debug.Log($"Start parry {parryNum}");
         _inRotCor = true;
         _inMoveCor = true;
 
         switch (parryNum)
         {
             case 4:
-                _handController.SetMoveToTargetPosition(1, -1, 0, true);
+                _handController.SetMoveToTargetPosition(1, -1, 0, false);
                 _handController.SetNextSuppination(1);
                 break;
             case 6:
-                _handController.SetMoveToTargetPosition(1, 1, 0, true);
+                _handController.SetMoveToTargetPosition(1, 1, 0, false);
                 _handController.SetNextSuppination(-1);
                 break;
             case 7:
@@ -161,7 +161,7 @@ public class BladeworkController : MonoBehaviour
 
         _inRotCor = false;
         _inMoveCor = false;
-        Debug.Log($"End parry {parryNum}");
+        if (debug) Debug.Log($"End parry {parryNum}");
     }
     
     // used for now only
@@ -210,7 +210,7 @@ public class BladeworkController : MonoBehaviour
                     StartCoroutine(Parry(parry));
                 }
             }
-            else
+            else if (debug) 
             {
                 Debug.Log($"GetKeyUp(KeyCode.Backslash), do nothing as _inMoveCor is {_inMoveCor} and _inRotCor is {_inRotCor}");
             }
@@ -222,7 +222,7 @@ public class BladeworkController : MonoBehaviour
             {
                 StartCoroutine(Input.GetKey(KeyCode.LeftShift) ? BackToIdle() : ExtendArm());
             }
-            else
+            else if (debug)
             {
                 Debug.Log($"GetKeyUp(KeyCode.Return), do nothing as _inMoveCor is {_inMoveCor} and _inRotCor is {_inRotCor}");
             }
