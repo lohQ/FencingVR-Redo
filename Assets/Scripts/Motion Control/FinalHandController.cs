@@ -7,8 +7,9 @@ public class FinalHandController : MonoBehaviour
 {
     [Header("References")]
     public Transform neutralAxes;
-    public Transform wristOnEpeeAxes;
+    public Transform targetWristOnEpeeAxes;
     public Transform epeeTip;
+    public Transform targetEpeeTip;
     public List<Transform> pointToTargets;  // index 0 must be 'Center PointTo'
     public Transform moveTargetRoot;
     public Transform moveTarget;
@@ -22,7 +23,6 @@ public class FinalHandController : MonoBehaviour
     public float suppinationMax;
     public float suppinationMin;
     public float rotationRadius;
-    public bool rotateToWorldPoint;
     public int maxIteration;
 
     [Header("Tweaked (kinda static) Parameters")]
@@ -76,10 +76,10 @@ public class FinalHandController : MonoBehaviour
         pointToTargets[8].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
 
         // with this small radius will have less oscillation when doing wrist rotation
-        upVector /= 5;
-        rightVector /= 5;
-        halfUpVector /= 5;
-        halfRightVector /= 5;
+        upVector /= 2;
+        rightVector /= 2;
+        halfUpVector /= 2;
+        halfRightVector /= 2;
         pointToTargets[9].localPosition = (centerLocalPos + rightVector).normalized * localMagnitude;
         pointToTargets[10].localPosition = (centerLocalPos + halfRightVector - halfUpVector).normalized * localMagnitude;
         pointToTargets[11].localPosition = (centerLocalPos - upVector).normalized * localMagnitude;
@@ -111,21 +111,21 @@ public class FinalHandController : MonoBehaviour
 
         return angle;
     }
-    
+
     private Quaternion GetSuppinationRotation(float newSuppinationValue)
     {
         var neutralRotation = neutralAxes.rotation;
-        var actualRotation = wristOnEpeeAxes.rotation;
+        var currentRotation = targetWristOnEpeeAxes.rotation;
 
         // align neutral axes on actual axes, get suppination angle
         var aligningRotation = Quaternion.FromToRotation(
             neutralRotation * Vector3.forward, 
-            actualRotation * Vector3.forward);
+            currentRotation * Vector3.forward);
         var alignedNeutralRotation = aligningRotation * neutralRotation;
         var suppinationAngle = Vector3.SignedAngle(
             alignedNeutralRotation * Vector3.right, 
-            actualRotation * Vector3.right, 
-            wristOnEpeeAxes.forward);
+            currentRotation * Vector3.right, 
+            targetWristOnEpeeAxes.forward);
         
         if (newSuppinationValue - suppinationAngle < 0.01f && newSuppinationValue - suppinationAngle > -0.01f)
         {
@@ -135,15 +135,15 @@ public class FinalHandController : MonoBehaviour
         // will result in some errors in final result but still acceptable
         var suppinationRotation = Quaternion.AngleAxis(
             (newSuppinationValue - suppinationAngle) * 2,
-            wristOnEpeeAxes.forward);
+            targetWristOnEpeeAxes.forward);
         
         if (debug)
         {
             var neutralAxesPos = neutralAxes.position;
             Debug.DrawRay(neutralAxesPos, neutralRotation * Vector3.right * 50, Color.red);
-            Debug.DrawRay(neutralAxesPos, actualRotation * Vector3.right * 50, Color.red);
+            Debug.DrawRay(neutralAxesPos, currentRotation * Vector3.right * 50, Color.red);
             Debug.DrawRay(neutralAxesPos, alignedNeutralRotation * Vector3.right * 50, Color.magenta);
-            Debug.DrawRay(neutralAxesPos, suppinationRotation * actualRotation * Vector3.right * 50, Color.green);
+            Debug.DrawRay(neutralAxesPos, suppinationRotation * currentRotation * Vector3.right * 50, Color.green);
 
             // var newSuppinationAngle = Vector3.SignedAngle(
             //     alignedNeutralRotation * Vector3.right, 
@@ -159,17 +159,17 @@ public class FinalHandController : MonoBehaviour
     {
         // as wristOnEpeeAxes' Z axis doesn't align with epee forward
         // (makes sense, else rotating wrist won't change epee vector orientation, which is weird), 
-        // imagine there's a offset from current tip position to wristOnEpeeAxes' Z axis
+        // there's a offset from current tip position to wristOnEpeeAxes' Z axis
         // apply this offset on the target and rotate Z axis to look at the offset-ed target. 
 
-        var wristPos = wristOnEpeeAxes.position;
-        var rotatedEpeeTipVector = suppinationRotation * (epeeTip.position - wristPos);
+        var wristPos = targetWristOnEpeeAxes.position;
+        var rotatedEpeeTipVector = suppinationRotation * (targetEpeeTip.position - wristPos);
 
         // calculate the epeeTip offset from wrist z axis
         var epeeTipDotWristForward = Vector3.Dot(
             rotatedEpeeTipVector,               // (Doesn't matter whether rotated or not. Dot product will be the same)
-            wristOnEpeeAxes.forward);
-        var closestPointToEpeeTipFromZ = wristPos + epeeTipDotWristForward * wristOnEpeeAxes.forward;
+            targetWristOnEpeeAxes.forward);
+        var closestPointToEpeeTipFromZ = wristPos + epeeTipDotWristForward * targetWristOnEpeeAxes.forward;
         var rotatedEpeeTipOffset = (wristPos + rotatedEpeeTipVector) - closestPointToEpeeTipFromZ;
 
         // apply the offset on targetPos, this is where the forward axis should look at
@@ -177,9 +177,9 @@ public class FinalHandController : MonoBehaviour
         
         var afterPointToRotation = Quaternion.LookRotation(
             offsetTargetPos - wristPos, 
-            suppinationRotation * wristOnEpeeAxes.up);
+            suppinationRotation * targetWristOnEpeeAxes.up);
         var pointToRotation = Quaternion.FromToRotation(
-            suppinationRotation * wristOnEpeeAxes.rotation * Vector3.forward, 
+            suppinationRotation * targetWristOnEpeeAxes.rotation * Vector3.forward, 
             afterPointToRotation * Vector3.forward);
 
         if (debug)
@@ -195,8 +195,8 @@ public class FinalHandController : MonoBehaviour
 
             debug = false;
             // ideally shouldn't have too big difference in suppination...
-            var curSuppination = GetNewSuppination(suppinationRotation * wristOnEpeeAxes.rotation);
-            var newSuppination = GetNewSuppination(pointToRotation * suppinationRotation * wristOnEpeeAxes.rotation);
+            var curSuppination = GetNewSuppination(suppinationRotation * targetWristOnEpeeAxes.rotation);
+            var newSuppination = GetNewSuppination(pointToRotation * suppinationRotation * targetWristOnEpeeAxes.rotation);
             Debug.Log($"curSuppination: {curSuppination}, newSuppination: {newSuppination}");
             debug = true;
         }
@@ -224,11 +224,11 @@ public class FinalHandController : MonoBehaviour
                 angleToRotate = angle - angleRotated;   // oscillate enough already. Don't over-rotate when can cap
             }
             
-            epeeTarget.RotateAround(wristOnEpeeAxes.position, axis, angleToRotate);
+            epeeTarget.RotateAround(targetWristOnEpeeAxes.position, axis, angleToRotate);
 
             if (debug)
             {
-                Debug.DrawLine(wristOnEpeeAxes.position - 30 * axis, wristOnEpeeAxes.position + 30 * axis, Color.white);
+                Debug.DrawLine(targetWristOnEpeeAxes.position - 30 * axis, targetWristOnEpeeAxes.position + 30 * axis, Color.white);
             }
 
             angleRotated += angleToRotate;
@@ -236,17 +236,17 @@ public class FinalHandController : MonoBehaviour
         }
     }
 
-    private void MaintainInternalPointTo()
-    {
-        // internalPointToTarget will tend towards externalPointTo, while remaining inside the reach cone (the area circled by pointToTargets)
-        var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
-        var centerToInternalPointTo = internalPointToTarget.position - pointToTargets[0].position;
-        if (centerToInternalPointTo.magnitude > maxRadius)
-        {
-            internalPointToTarget.position = pointToTargets[0].position + 
-                                             (externalPointToTarget.position - pointToTargets[0].position).normalized * maxRadius;
-        }
-    }
+    // private void MaintainInternalPointTo()
+    // {
+    //     // internalPointToTarget will tend towards externalPointTo, while remaining inside the reach cone (the area circled by pointToTargets)
+    //     var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
+    //     var centerToInternalPointTo = internalPointToTarget.position - pointToTargets[0].position;
+    //     if (centerToInternalPointTo.magnitude > maxRadius)
+    //     {
+    //         internalPointToTarget.position = pointToTargets[0].position + 
+    //                                          (externalPointToTarget.position - pointToTargets[0].position).normalized * maxRadius;
+    //     }
+    // }
 
     private IEnumerator RotateToTarget()
     {
@@ -256,19 +256,14 @@ public class FinalHandController : MonoBehaviour
         if (_supIndex == 1)
         {
             suppination = suppinationMax;
-        }
-        if (_supIndex == -1)
+        } 
+        else if (_supIndex == -1)
         {
             suppination = suppinationMin;
         }
         else
         {
             suppination = 0;
-        }
-
-        if (rotateToWorldPoint)
-        {
-            SetWorldPointTo();
         }
 
         var iteration = 0;
@@ -279,15 +274,13 @@ public class FinalHandController : MonoBehaviour
             if (iteration == maxIteration) break;
 
             var supRot = GetSuppinationRotation(suppination);
-            Quaternion lookRot = GetLookAtRotation(
-                rotateToWorldPoint ? internalPointToTarget.position : pointToTargets[0].position, supRot);
+            Quaternion lookRot = GetLookAtRotation(internalPointToTarget.position, supRot);
             var rotationToApply = lookRot * supRot;
 
             rotationToApply.ToAngleAxis(out angle, out _);
             _curRotationAngle = angle;      // later used to check if reached rotation target
             if (angle < maxRotationError) break;
 
-            if (debug) Debug.Log($"At iteration {iteration}");
             yield return StartCoroutine(ApplyWristRotation(rotationToApply));
             iteration += 1;
         } 
@@ -295,6 +288,8 @@ public class FinalHandController : MonoBehaviour
 
         _rotating = false;
     }
+
+    // public float maxEpeeToSpineDistance;
     
     private IEnumerator MoveToTarget()
     {
@@ -303,9 +298,15 @@ public class FinalHandController : MonoBehaviour
         
         _moving = true;
         
-        var actualEpee = wristOnEpeeAxes.parent.parent;
+        // var actualEpee = wristOnEpeeAxes.parent.parent;
         var startEpeeTargetPos = epeeTarget.position;
-        var epeeToWristOffset = wristOnEpeeAxes.position - actualEpee.position;     // this will change when moving
+        var epeeToSpine = startEpeeTargetPos - moveTargetRoot.position; // by right should use wristToSpine but anyway this should work
+        if (epeeToSpine.magnitude > moveTargetDistance)
+        {
+            startEpeeTargetPos =
+                moveTargetRoot.position + epeeToSpine * (moveTargetDistance / epeeToSpine.magnitude);
+        }
+        var epeeToWristOffset = targetWristOnEpeeAxes.position - epeeTarget.position;   // this will change when moving
 
         // first get localMoveVector (do Slerp in local space so won't change even if moved globally)
         var startLocalTargetPos = moveTargetRoot.InverseTransformPoint(moveTarget.position);
@@ -316,7 +317,7 @@ public class FinalHandController : MonoBehaviour
         var moveVector = moveTargetRoot.TransformVector(localMoveVector);       // this will change when moving
         var duration = moveVector.magnitude / velocity;                     // this will change when moving
         
-        var prevEpeeTargetPos = epeeTarget.position;
+        var prevEpeeTargetPos = startEpeeTargetPos;
         var localTargetPos = startLocalTargetPos;
         var timeElapsed = 0f;
         while (timeElapsed < duration / 2)
@@ -336,6 +337,7 @@ public class FinalHandController : MonoBehaviour
             var toMove = newEpeePosition - prevEpeeTargetPos;
             epeeTarget.position += toMove;
             prevEpeeTargetPos += toMove;
+            
             yield return null;
 
             Debug.DrawLine(moveTargetRoot.position, moveTargetRoot.TransformPoint(localWristStartPos), Color.yellow);
@@ -372,7 +374,7 @@ public class FinalHandController : MonoBehaviour
         _supIndex = supIndex;
     }
 
-    public void SetWorldPointTo()
+    private void SetWorldPointTo()
     {
         var pointTo = externalPointToTarget.position;
 
@@ -414,6 +416,10 @@ public class FinalHandController : MonoBehaviour
 
     // ----- above is exposed to BladeworkController ----- //
 
+    
+    
+    // ----- below is exposed to FollowFootwork ----- //
+    
     private bool _enabled;
     
     public void DisableControl()
@@ -426,11 +432,20 @@ public class FinalHandController : MonoBehaviour
         _enabled = true;
     }
     
+    // ----- above is exposed to FollowFootwork ----- //
+
+    
+    
     private void Update()
     {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log($"angle to rotate: {_curRotationAngle}, distance to move: {(epeeTarget.position - moveTarget.position).magnitude}");
+        }
+        
         if (!_enabled) return;
         
-        MaintainInternalPointTo();
+        SetWorldPointTo();
 
         # region direct input
         // float suppination = 0f;

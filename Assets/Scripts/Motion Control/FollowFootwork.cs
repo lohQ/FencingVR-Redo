@@ -56,6 +56,7 @@ public class FollowFootwork : MonoBehaviour
     private int _animatorHashStep;
     private bool _inCor;
     private bool _collided;
+    private bool _bladeworkDisabled;
 
     private void Start()
     {
@@ -67,6 +68,7 @@ public class FollowFootwork : MonoBehaviour
         _epee = wristOnEpee.parent;
         _animatorHashStep = Animator.StringToHash("step");
         _collided = false;
+        _bladeworkDisabled = false;
 
         _footworkKeyFrameDict = new Dictionary<FootworkType, MoveTargetRootKeyFrames>();
         foreach (var pair in footworkKeyFrames)
@@ -249,6 +251,7 @@ public class FollowFootwork : MonoBehaviour
     private IEnumerator DoFollowFootwork(int step)
     {
         _inCor = true;
+        Debug.Log("Enter DoFollowFootwork");
 
         var stateName = StateNameFromStepValue(step);
         var footworkType = FootworkTypeFromStepValue(step);
@@ -258,19 +261,30 @@ public class FollowFootwork : MonoBehaviour
         {
             yield return null;
         }
+        Debug.Log($"Enter transition {transitionName}");
 
         if (footworkType == FootworkType.Lunge)
         {
             // for now won't be able to move/rotate the wrist while lunging! At most react to collision
             _handController.DisableControl();
+            _bladeworkDisabled = true;
             yield return StartCoroutine(FollowAnim());
             _handController.EnableControl();
+            _bladeworkDisabled = false;
 
             stateName = "Lunge Recover";
         }
         else
         {
-            yield return StartCoroutine(FollowKeyFrames(footworkType));
+            if (footworkType != FootworkType.SmallStepForward && footworkType != FootworkType.SmallStepBackward)
+            {
+                yield return StartCoroutine(FollowKeyFrames(footworkType));
+            }
+
+            transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
+                yield return new WaitWhile(
+                    () => !_animator.GetAnimatorTransitionInfo(0).IsName(transitionName));
+                Debug.Log($"Enter transition {transitionName}");
         }
 
         transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
@@ -278,7 +292,9 @@ public class FollowFootwork : MonoBehaviour
         {
             yield return null;
         }
+        Debug.Log($"Exit transition {transitionName}");
 
+        Debug.Log("Exit DoFollowFootwork");
         _inCor = false;
     }
 
@@ -302,15 +318,20 @@ public class FollowFootwork : MonoBehaviour
             StartCoroutine(DoFollowFootwork(step));
         }
         
-        // // use this to re-save the scriptableObjects
-        // if (Input.GetKeyUp(KeyCode.A))
-        // {
-        //     StartCoroutine(SaveAllKeyFrames());
-        // }
+        // use this to re-save the scriptableObjects
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            StartCoroutine(SaveAllKeyFrames());
+        }
     }
 
     public void RegisterCollision()
     {
         _collided = true;
+    }
+
+    public bool BladeworkDisabled()
+    {
+        return _bladeworkDisabled;
     }
 }

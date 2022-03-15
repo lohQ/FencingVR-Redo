@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BladeworkController : MonoBehaviour
 {
+    public List<Transform> worldPointToTargets;     // maybe 5: hand, arm, chest, thigh, foot
     public bool debug;
     private FinalHandController _handController;
     private bool _inRotCor;
@@ -30,9 +32,7 @@ public class BladeworkController : MonoBehaviour
     private void Start()
     {
         _handController = GetComponent<FinalHandController>();
-        // do this after enter en garde
-        _handController.SetMoveToTargetPosition(1, 0, 0, false);
-        _handController.SetNextSuppination(0);
+        worldPointToTargets = new List<Transform>();
     }
     
     private IEnumerator BackToIdle()
@@ -58,7 +58,7 @@ public class BladeworkController : MonoBehaviour
         if (debug) Debug.Log($"Start extend arm");
         _inMoveCor = true;
 
-        _handController.SetMoveToTargetPosition(1, 0, 1, true);
+        _handController.SetMoveToTargetPosition(1, 0, 0, true);
         yield return new WaitWhile(() => !_handController.ReachedMoveTarget());
 
         _inMoveCor = false;
@@ -70,58 +70,29 @@ public class BladeworkController : MonoBehaviour
         if (debug) Debug.Log($"Start rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
         _inRotCor = true;
 
-        var initialPointToWorld = _handController.rotateToWorldPoint;
-        _handController.rotateToWorldPoint = true;
-        
         var pointTarget = _handController.externalPointToTarget;
         var refPointTargets = _handController.pointToTargets;
-        var moveVelocity = _handController.velocity * 5;    // this is wrist velocity but just use first la
-        
-        if (clockwise)
-        {
-            var paths = new []{0, 10, 11, 12, 0};
-            for (int i = 0; i < paths.Length - 1; i++)
-            {
-                var start = refPointTargets[i];
-                var end = refPointTargets[i + 1];
-                var startPos = start.position;
-                var endPos = end.position;
-                pointTarget.position = start.position;
+        var moveVelocity = _handController.velocity * 2;    // this is wrist velocity but just use first la
 
-                var timeElapsed = 0f;
-                var duration = (endPos - startPos).magnitude / moveVelocity;
-                while (timeElapsed < duration)
-                {
-                    timeElapsed += Time.deltaTime;
-                    pointTarget.position = Vector3.Lerp(startPos, endPos, timeElapsed / duration);
-                    _handController.SetWorldPointTo();
-                    yield return null;
-                }
-            }
-        }
-        else
+        var paths = clockwise ? new []{0, 9, 10, 11, 12, 13, 0} : new []{0, 13, 12, 11, 10, 9, 0};
+        for (int i = 0; i < paths.Length - 1; i++)
         {
-            var paths = new []{0, 12, 11, 10, 0};
-            for (int i = 0; i < paths.Length - 1; i++)
-            {
-                var start = refPointTargets[i];
-                var end = refPointTargets[i + 1];
-                var startPos = start.position;
-                var endPos = end.position;
-                pointTarget.position = start.position;
+            var start = refPointTargets[paths[i]];
+            var end = refPointTargets[paths[i+1]];
+            var startPos = start.position;
+            var endPos = end.position;
+            pointTarget.position = startPos;
 
-                var timeElapsed = 0f;
-                var duration = (endPos - startPos).magnitude / moveVelocity;
-                while (timeElapsed < duration)
-                {
-                    timeElapsed += Time.deltaTime;
-                    pointTarget.position = Vector3.Lerp(startPos, endPos, timeElapsed / duration);
-                    yield return null;
-                }
+            var timeElapsed = 0f;
+            var duration = (endPos - startPos).magnitude / moveVelocity;
+            while (timeElapsed < duration)
+            {
+                timeElapsed += Time.deltaTime;
+                pointTarget.position = Vector3.Lerp(startPos, endPos, timeElapsed / duration);
+                yield return null;
             }
         }
 
-        _handController.rotateToWorldPoint = initialPointToWorld;
         _inRotCor = false;
         if (debug) Debug.Log($"End rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
     }
@@ -163,70 +134,149 @@ public class BladeworkController : MonoBehaviour
         _inMoveCor = false;
         if (debug) Debug.Log($"End parry {parryNum}");
     }
+
+    
+    
+    // ----- below are the exposed functions ----- //
+    
+    public void DoWristTranslation(int forward, int rightward, int upward, bool extended)
+    {
+        if (_inMoveCor) return;
+        _handController.SetMoveToTargetPosition(forward, rightward, upward, extended);
+    }
+
+    public void DoWristRotation(int supIndex, int pointToIndex)
+    {
+        if (_inRotCor) return;
+
+        _handController.SetNextSuppination(supIndex);
+        if (pointToIndex > 0)
+        {
+            _handController.externalPointToTarget = worldPointToTargets[pointToIndex];
+        }
+        else
+        {
+            if (pointToIndex == 0)
+            {
+                // idle (point to center)
+                _handController.externalPointToTarget = _handController.pointToTargets[0];
+            } 
+            else if (pointToIndex == -1)
+            {
+                StartCoroutine(RotateWrist(true));
+                _inRotCor = true;
+            }
+            else if (pointToIndex == -2)
+            {
+                StartCoroutine(RotateWrist(false));
+                _inRotCor = true;
+            }
+        }
+    }
+
+    public void DoParry(int parryIndex)
+    {
+        if (_inMoveCor || _inRotCor) return;
+
+        switch (parryIndex)
+        {
+            case 0:
+                // do nothing
+                return;
+            case 1:
+                StartCoroutine(Parry(4));
+                break;
+            case 2:
+                StartCoroutine(Parry(6));
+                break;
+            case 3:
+                StartCoroutine(Parry(7));
+                break;
+            case 4:
+                StartCoroutine(Parry(8));
+                break;
+        }
+        _inMoveCor = true;
+        _inRotCor = true;
+    }
+
+    public bool CanTranslateWrist()
+    {
+        return _inMoveCor;
+    }
+
+    public bool CanRotateWrist()
+    {
+        return _inRotCor;
+    }
+
+    // ----- above are the exposed functions ----- //
+
+    
     
     // used for now only
-    public int forward;
-    public int rightward;
-    public int upward;
-    public bool extended;
-    public bool clockwise;
+    // public int forward;
+    // public int rightward;
+    // public int upward;
+    // public bool extended;
+    // public bool clockwise;
 
-    public int supIndex;
-    public int parry;
+    // public int supIndex;
+    // public int parry;
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.S))
-        {
-            _handController.SetMoveToTargetPosition(forward, rightward, upward, extended);
-        }
+        // if (Input.GetKeyUp(KeyCode.S))
+        // {
+        //     _handController.SetMoveToTargetPosition(forward, rightward, upward, extended);
+        // }
 
-        if (Input.GetKeyUp(KeyCode.R))
-        {
-            _handController.SetNextSuppination(supIndex);
-        }
+        // if (Input.GetKeyUp(KeyCode.R))
+        // {
+        //     _handController.SetNextSuppination(supIndex);
+        // }
 
-        if (!_inRotCor && Input.GetKeyUp(KeyCode.Space))
-        {
-            StartCoroutine(RotateWrist(clockwise));
-        }
-
-        KeyCode[] keyCodes = {KeyCode.Alpha4, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8};
-        foreach (var kc in keyCodes)
-        {
-            if (Input.GetKeyUp(kc))
-            {
-                parry = (int)kc - 48;
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.Backslash))
-        {
-            if (!_inMoveCor && !_inRotCor)
-            {
-                
-                if (parry == 4 || parry == 6 || parry == 7 || parry == 8)
-                {
-                    StartCoroutine(Parry(parry));
-                }
-            }
-            else if (debug) 
-            {
-                Debug.Log($"GetKeyUp(KeyCode.Backslash), do nothing as _inMoveCor is {_inMoveCor} and _inRotCor is {_inRotCor}");
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.Return))
-        {
-            if (!_inMoveCor && !_inRotCor)
-            {
-                StartCoroutine(Input.GetKey(KeyCode.LeftShift) ? BackToIdle() : ExtendArm());
-            }
-            else if (debug)
-            {
-                Debug.Log($"GetKeyUp(KeyCode.Return), do nothing as _inMoveCor is {_inMoveCor} and _inRotCor is {_inRotCor}");
-            }
-        }
+        // if (!_inRotCor && Input.GetKeyUp(KeyCode.Space))
+        // {
+        //     StartCoroutine(RotateWrist(clockwise));
+        // }
+        //
+        // KeyCode[] keyCodes = {KeyCode.Alpha4, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8};
+        // foreach (var kc in keyCodes)
+        // {
+        //     if (Input.GetKeyUp(kc))
+        //     {
+        //         parry = (int)kc - 48;
+        //     }
+        // }
+        //
+        // if (Input.GetKeyUp(KeyCode.Backslash))
+        // {
+        //     if (!_inMoveCor && !_inRotCor)
+        //     {
+        //         
+        //         if (parry == 4 || parry == 6 || parry == 7 || parry == 8)
+        //         {
+        //             StartCoroutine(Parry(parry));
+        //         }
+        //     }
+        //     else if (debug) 
+        //     {
+        //         Debug.Log($"GetKeyUp(KeyCode.Backslash), do nothing as _inMoveCor is {_inMoveCor} and _inRotCor is {_inRotCor}");
+        //     }
+        // }
+        //
+        // if (Input.GetKeyUp(KeyCode.Return))
+        // {
+        //     if (!_inMoveCor && !_inRotCor)
+        //     {
+        //         StartCoroutine(Input.GetKey(KeyCode.LeftShift) ? BackToIdle() : ExtendArm());
+        //     }
+        //     else if (debug)
+        //     {
+        //         Debug.Log($"GetKeyUp(KeyCode.Return), do nothing as _inMoveCor is {_inMoveCor} and _inRotCor is {_inRotCor}");
+        //     }
+        // }
 
     }
 }

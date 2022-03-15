@@ -13,10 +13,9 @@ public class EnergyController : MonoBehaviour
     // range: [0,1]
     public float value;
 
-    [Tooltip("How much energy to restore per second")]
     public float restorationRate = 0.2f;
-    [Tooltip("How much energy to use for one second of translation")]
     public float translationUsageRate;
+    public float forceMultiplierMinVal;
     // [Tooltip("How much energy to use for one second of rotation")]
     // public float rotationUsageRate;
 
@@ -31,7 +30,7 @@ public class EnergyController : MonoBehaviour
 
     public float ForceMultiplier()
     {
-        return value;
+        return Mathf.Max(value, forceMultiplierMinVal);
     }
     
     public void DoMove(float forceRatio)
