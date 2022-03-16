@@ -44,7 +44,7 @@ public class FinalHandController : MonoBehaviour
     private int _supIndex;
     private float _curRotationAngle;
     
-    private void Start()
+    private void Awake()
     {
         _prevEpeeTipPos = epeeTip.position;
         _rotating = false;

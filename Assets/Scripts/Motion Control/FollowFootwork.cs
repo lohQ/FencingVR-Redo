@@ -58,7 +58,7 @@ public class FollowFootwork : MonoBehaviour
     private bool _collided;
     private bool _bladeworkDisabled;
 
-    private void Start()
+    private void Awake()
     {
         var rigBuilder = GetComponent<RigBuilder>();
         _ikRig = rigBuilder.layers[0].rig;
@@ -259,9 +259,8 @@ public class FollowFootwork : MonoBehaviour
         var transitionName = $"{stateNamePrefix}{entry} -> {stateNamePrefix}{stateName}";
         while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
-        Debug.Log($"Enter transition {transitionName}");
 
         if (footworkType == FootworkType.Lunge)
         {
@@ -282,17 +281,17 @@ public class FollowFootwork : MonoBehaviour
             }
 
             transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
-                yield return new WaitWhile(
-                    () => !_animator.GetAnimatorTransitionInfo(0).IsName(transitionName));
-                Debug.Log($"Enter transition {transitionName}");
+            while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
+            {
+                yield return new WaitForFixedUpdate();
+            }
         }
 
         transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
         while (_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
-        Debug.Log($"Exit transition {transitionName}");
 
         Debug.Log("Exit DoFollowFootwork");
         _inCor = false;
@@ -308,13 +307,14 @@ public class FollowFootwork : MonoBehaviour
         _inCor = false;
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
         if (_inCor) return;
         
         var step = _animator.GetInteger(_animatorHashStep);
         if (step != 0)
         {
+            Debug.Log($"step is {step}");
             StartCoroutine(DoFollowFootwork(step));
         }
         
@@ -334,4 +334,10 @@ public class FollowFootwork : MonoBehaviour
     {
         return _bladeworkDisabled;
     }
+
+    public bool ReadyForNewFootwork()
+    {
+        return !_inCor;
+    }
+    
 }

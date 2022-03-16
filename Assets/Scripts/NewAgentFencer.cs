@@ -7,14 +7,21 @@ using UnityEngine;
 public class NewAgentFencer : Agent
 {
     public GameController gameController;
-    public BladeworkController bladeworkController;
-    public FollowFootwork followFootwork;
-    public Animator animator;
+    private BladeworkController _bladeworkController;
+    private FollowFootwork _followFootwork;
+    private Animator _animator;
 
     private int _stepHash;
 
     private void Start()
     {
+        _animator = GetComponent<Animator>();
+        _bladeworkController = GetComponent<BladeworkController>();
+        _followFootwork = GetComponent<FollowFootwork>();
+        Debug.Log($"_animator: {_animator}");
+        Debug.Log($"_bladeworkController: {_bladeworkController}");
+        Debug.Log($"_followFootwork: {_followFootwork}");
+        
         _stepHash = Animator.StringToHash("step");
     }
 
@@ -27,39 +34,6 @@ public class NewAgentFencer : Agent
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
 
-        if (followFootwork.BladeworkDisabled())
-        {
-            discreteActionsOut[0] = 1;
-            discreteActionsOut[1] = 1;
-            discreteActionsOut[2] = 1;
-            discreteActionsOut[3] = 0;
-            discreteActionsOut[4] = 1;
-            discreteActionsOut[5] = 2;
-            discreteActionsOut[6] = 0;
-        }
-        else
-        {
-            if (!bladeworkController.CanRotateWrist())
-            {
-                discreteActionsOut[4] = 1;
-                discreteActionsOut[5] = 2;
-                discreteActionsOut[6] = 0;
-            }
-            if (!bladeworkController.CanTranslateWrist())
-            {
-                discreteActionsOut[0] = 1;
-                discreteActionsOut[1] = 1;
-                discreteActionsOut[2] = 1;
-                discreteActionsOut[3] = 0;
-                discreteActionsOut[6] = 0;
-            }
-        }
-
-        if (!ReadyForFootwork())
-        {
-            discreteActionsOut[7] = 3;
-        }
-        
         discreteActionsOut[0] = Input.GetKey(KeyCode.F) ? 0 : 1;
         discreteActionsOut[1] = Input.GetKey(KeyCode.A) ? 2 : Input.GetKey(KeyCode.D) ? 0 : 1;
         discreteActionsOut[2] = Input.GetKey(KeyCode.W) ? 2 : Input.GetKey(KeyCode.S) ? 0 : 1;
@@ -186,11 +160,45 @@ public class NewAgentFencer : Agent
         {
             discreteActionsOut[7] = 3;
         }
+        
+        if (_followFootwork.BladeworkDisabled())
+        {
+            discreteActionsOut[0] = 1;
+            discreteActionsOut[1] = 1;
+            discreteActionsOut[2] = 1;
+            discreteActionsOut[3] = 0;
+            discreteActionsOut[4] = 1;
+            discreteActionsOut[5] = 2;
+            discreteActionsOut[6] = 0;
+        }
+        else
+        {
+            if (!_bladeworkController.CanRotateWrist())
+            {
+                discreteActionsOut[4] = 1;
+                discreteActionsOut[5] = 2;
+                discreteActionsOut[6] = 0;
+            }
+            if (!_bladeworkController.CanTranslateWrist())
+            {
+                discreteActionsOut[0] = 1;
+                discreteActionsOut[1] = 1;
+                discreteActionsOut[2] = 1;
+                discreteActionsOut[3] = 0;
+                discreteActionsOut[6] = 0;
+            }
+        }
+
+        if (!ReadyForFootwork())
+        {
+            discreteActionsOut[7] = 3;
+        }
     }
 
     private bool ReadyForFootwork()
     {
-        return animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde");
+        // return _animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde");
+        return _followFootwork.ReadyForNewFootwork();
     }
 
     private static void DisableWristRotation(IDiscreteActionMask actionMask)
@@ -240,18 +248,18 @@ public class NewAgentFencer : Agent
 
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        if (followFootwork.BladeworkDisabled())
+        if (_followFootwork.BladeworkDisabled())
         {
             DisableWristRotation(actionMask);
             DisableWristTranslation(actionMask);
         }
         else
         {
-            if (!bladeworkController.CanRotateWrist())
+            if (!_bladeworkController.CanRotateWrist())
             {
                 DisableWristRotation(actionMask);
             }
-            if (!bladeworkController.CanTranslateWrist())
+            if (!_bladeworkController.CanTranslateWrist())
             {
                 DisableWristTranslation(actionMask);
             }
@@ -266,13 +274,13 @@ public class NewAgentFencer : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var discreteActions = actionBuffers.DiscreteActions;
-        bladeworkController.DoWristTranslation(discreteActions[0], discreteActions[1] - 1, discreteActions[2] - 1, discreteActions[3] == 1);
-        bladeworkController.DoWristRotation(discreteActions[4] - 1, discreteActions[5] - 2);
-        bladeworkController.DoParry(discreteActions[6]);
+        _bladeworkController.DoWristTranslation(discreteActions[0], discreteActions[1] - 1, discreteActions[2] - 1, discreteActions[3] == 1);
+        _bladeworkController.DoWristRotation(discreteActions[4] - 1, discreteActions[5] - 2);
+        _bladeworkController.DoParry(discreteActions[6]);
 
         if (discreteActions[7] - 3 != 0)
         {
-            animator.SetInteger(_stepHash, discreteActions[7] - 3);
+            _animator.SetInteger(_stepHash, discreteActions[7] - 3);
         }
     }
     

@@ -10,7 +10,7 @@ public class UnsetIntParamBehaviour : StateMachineBehaviour
         _parameterHash = Animator.StringToHash(parameterName);
     }
     
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetInteger(_parameterHash, 0);
     }
