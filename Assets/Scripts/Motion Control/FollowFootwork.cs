@@ -267,7 +267,9 @@ public class FollowFootwork : MonoBehaviour
             // for now won't be able to move/rotate the wrist while lunging! At most react to collision
             _handController.DisableControl();
             _bladeworkDisabled = true;
+
             yield return StartCoroutine(FollowAnim());
+
             _handController.EnableControl();
             _bladeworkDisabled = false;
 

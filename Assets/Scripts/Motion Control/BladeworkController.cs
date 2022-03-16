@@ -33,6 +33,8 @@ public class BladeworkController : MonoBehaviour
     {
         _handController = GetComponent<FinalHandController>();
         worldPointToTargets = new List<Transform>();
+        _inMoveCor = false;
+        _inRotCor = false;
     }
     
     private IEnumerator BackToIdle()
@@ -74,7 +76,7 @@ public class BladeworkController : MonoBehaviour
         var refPointTargets = _handController.pointToTargets;
         var moveVelocity = _handController.velocity * 2;    // this is wrist velocity but just use first la
 
-        var paths = clockwise ? new []{0, 9, 10, 11, 12, 13, 0} : new []{0, 13, 12, 11, 10, 9, 0};
+        var paths = clockwise ? new []{0, 13, 12, 11, 10, 9, 0} : new []{0, 9, 10, 11, 12, 13, 0};
         for (int i = 0; i < paths.Length - 1; i++)
         {
             var start = refPointTargets[paths[i]];
@@ -150,16 +152,17 @@ public class BladeworkController : MonoBehaviour
         if (_inRotCor) return;
 
         _handController.SetNextSuppination(supIndex);
+
         if (pointToIndex > 0)
         {
-            _handController.externalPointToTarget = worldPointToTargets[pointToIndex];
+            _handController.externalPointToTarget.position = worldPointToTargets[pointToIndex - 1].position;
         }
         else
         {
             if (pointToIndex == 0)
             {
                 // idle (point to center)
-                _handController.externalPointToTarget = _handController.pointToTargets[0];
+                _handController.externalPointToTarget.position = _handController.pointToTargets[0].position;
             } 
             else if (pointToIndex == -1)
             {
@@ -202,12 +205,12 @@ public class BladeworkController : MonoBehaviour
 
     public bool CanTranslateWrist()
     {
-        return _inMoveCor;
+        return !_inMoveCor;
     }
 
     public bool CanRotateWrist()
     {
-        return _inRotCor;
+        return !_inRotCor;
     }
 
     // ----- above are the exposed functions ----- //

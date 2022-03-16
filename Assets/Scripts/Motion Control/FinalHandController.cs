@@ -221,7 +221,7 @@ public class FinalHandController : MonoBehaviour
             var angleToRotate = angularVelocity * Time.deltaTime;
             if (angleRotated + angleToRotate > angle)
             {
-                angleToRotate = angle - angleRotated;   // oscillate enough already. Don't over-rotate when can cap
+                angleToRotate = angle - angleRotated;
             }
             
             epeeTarget.RotateAround(targetWristOnEpeeAxes.position, axis, angleToRotate);
@@ -379,15 +379,17 @@ public class FinalHandController : MonoBehaviour
         var pointTo = externalPointToTarget.position;
 
         var centerFromRoot = pointToTargets[0].position - neutralAxes.position;
-        var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
         var pointToFromRoot = (pointTo - neutralAxes.position).normalized * centerFromRoot.magnitude;
-        if ((pointToFromRoot - centerFromRoot).magnitude > maxRadius)
+        if ((pointToFromRoot - centerFromRoot).magnitude > rotationRadius)
         {
-            pointTo = pointToTargets[0].position + (pointToFromRoot - centerFromRoot).normalized * maxRadius;
-            Debug.DrawLine(centerFromRoot, pointTo, Color.blue, 1f);
+            pointTo = pointToTargets[0].position + (pointToFromRoot - centerFromRoot).normalized * rotationRadius;
         }
-        Debug.DrawRay(neutralAxes.position, centerFromRoot, Color.yellow, 1f);
-        Debug.DrawRay(neutralAxes.position, pointTo, Color.green, 1f);
+        else
+        {
+            pointTo = neutralAxes.position + pointToFromRoot;
+        }
+        Debug.DrawLine(neutralAxes.position, externalPointToTarget.position, Color.white);
+        Debug.DrawLine(neutralAxes.position, pointTo, Color.green);
         internalPointToTarget.position = pointTo;
     }
 
