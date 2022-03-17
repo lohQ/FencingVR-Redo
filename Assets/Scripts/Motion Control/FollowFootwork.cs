@@ -135,7 +135,6 @@ public class FollowFootwork : MonoBehaviour
 
         var startMoveTargetRootPos = _moveTargetRoot.position;
         var startMoveTargetRootRot = _moveTargetRoot.rotation;
-        var startTransformRot = transform.rotation;
 
         _animator.SetInteger(_animatorHashStep, step);
         var entryTransitionName = $"{stateNamePrefix}{entry} -> {stateNamePrefix}{stateName}";
@@ -187,7 +186,7 @@ public class FollowFootwork : MonoBehaviour
 
             epeeTarget.position += diff.normalized * Mathf.Min(diff.magnitude, _handController.velocity);
             prevTargetPos = targetPos;
-
+            
             if (debug) Debug.Log($"following captured keyFrames, at {i} of {translationData.Count}");
             yield return new WaitForFixedUpdate();
         }
@@ -327,6 +326,8 @@ public class FollowFootwork : MonoBehaviour
         yield return StartCoroutine(SaveKeyFrames(-3));
         _inCor = false;
     }
+
+    public string logIdenfitier;
     
     private void FixedUpdate()
     {
@@ -335,8 +336,12 @@ public class FollowFootwork : MonoBehaviour
         var step = _animator.GetInteger(_animatorHashStep);
         if (step != 0)
         {
-            Debug.Log($"step is {step}");
             StartCoroutine(DoFollowFootwork(step));
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log($"[{logIdenfitier}] FollowFootwork in coroutine: {_inCor}");
         }
         
         // // use this to re-save the scriptableObjects

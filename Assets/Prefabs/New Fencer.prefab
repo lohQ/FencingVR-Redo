@@ -3498,12 +3498,6 @@ MonoBehaviour:
   followFootwork: {fileID: 1807238688123693622}
   impulseThreshold: 1
   hitAngleThreshold: 120
-  maxEpeeTipLocalDistance: 10
-  maxImpulseMagnitude: 0
-  minContactPoint: {x: -10, y: -65, z: -105}
-  maxContactPoint: {x: 30, y: 55, z: 35}
-  minImpulse: {x: -70, y: -70, z: -70}
-  maxImpulse: {x: 70, y: 70, z: 70}
 --- !u!1 &1807238687393158507
 GameObject:
   m_ObjectHideFlags: 0
@@ -5350,7 +5344,7 @@ MonoBehaviour:
     keyFrameData: {fileID: 11400000, guid: 8c692c708a55d467fb05b7afb5ce415b, type: 2}
   - footworkType: 7
     keyFrameData: {fileID: 11400000, guid: 0f46eb399c6ed422f8d055a8857a575c, type: 2}
-  keyFrameOffset: 100
+  keyFrameOffset: 10
   lungeRigWeight: 0.05
   lungeCollisionRigWeight: 0.95
   rigWeightIncreaseRate: 4
@@ -5359,6 +5353,7 @@ MonoBehaviour:
   entry: Entry Point
   exit: Exit
   debug: 0
+  logIdenfitier: T0F0
 --- !u!114 &1807238688123693624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5384,7 +5379,7 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: FencerBehavior
+  m_BehaviorName: AggressiveFencerBehavior
   TeamId: 0
   m_UseChildSensors: 0
   m_UseChildActuators: 1
@@ -5408,9 +5403,9 @@ MonoBehaviour:
   gameController: {fileID: 0}
   observer: {fileID: 0}
   timeStepReward: -1
-  closenessThreshold: 0.5
+  closenessThreshold: 50
   oppTipClosenessReward: -0.4
-  selfTipClosenessReward: 0.6
+  selfTipClosenessReward: 0.8
 --- !u!114 &1807238688123693627
 MonoBehaviour:
   m_ObjectHideFlags: 0

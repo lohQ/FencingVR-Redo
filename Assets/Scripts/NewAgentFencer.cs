@@ -60,14 +60,12 @@ public class NewAgentFencer : Agent
         observer.CollectObservations(sensor, _bufferSensor, _fencerNum);
 
         var selfTipToOppTarget = observer.SelfMinTipDistance(_fencerNum);
-        Debug.Log($"selfTipToOppTarget: {selfTipToOppTarget}");
         if (selfTipToOppTarget < closenessThreshold)
         {
             AddReward(((closenessThreshold - selfTipToOppTarget) / closenessThreshold) * selfTipClosenessReward);
         }
         
         var oppTipToSelfTarget = observer.OppMinTipDistance(_fencerNum);
-        Debug.Log($"oppTipToSelfTarget: {oppTipToSelfTarget}");
         if (oppTipToSelfTarget < closenessThreshold)
         {
             AddReward(((closenessThreshold - oppTipToSelfTarget) / closenessThreshold) * oppTipClosenessReward);

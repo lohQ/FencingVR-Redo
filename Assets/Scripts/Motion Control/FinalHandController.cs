@@ -450,11 +450,6 @@ public class FinalHandController : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            Debug.Log($"angle to rotate: {_curRotationAngle}, distance to move: {(epeeTarget.position - moveTarget.position).magnitude}");
-        }
-        
         if (!_enabled) return;
         
         SetWorldPointTo();

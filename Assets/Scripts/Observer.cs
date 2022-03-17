@@ -163,7 +163,7 @@ public class Observer : MonoBehaviour
 
     private float MinTipToTargetDistance(Vector3 tipPos, List<Transform> targets)
     {
-        var minDistance = maxTargetLocalDistance;
+        var minDistance = Mathf.Infinity;
         for (int i = 0; i < targets.Count; i++)
         {
             var distance = (tipPos - targets[i].position).magnitude;

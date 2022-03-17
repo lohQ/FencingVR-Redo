@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
@@ -38,7 +39,13 @@ public class TrainingEnv : NewGameController
     public Transform boundXNegative;
     public Transform boundZPositive;
     public Transform boundZNegative;
+    public MeshRenderer floorMesh;
+    public Material defaultColor;
+    public Material fencerOneColor;
+    public Material fencerTwoColor;
 
+    public float startWaitForTime;
+    
     private int _startCount;
     private bool _inGame;
     private bool _outOfBound;
@@ -78,13 +85,20 @@ public class TrainingEnv : NewGameController
             fencerTwo.epeeTargetTransform.position += rotationDiff * positionDiff;
             fencerTwo.fencerTransform.rotation = fencerTwo.startPoint.rotation;
 
-            _inGame = true;
+            StartCoroutine(StartCountDown());
             _startCount = 0;
         }
         else
         {
             _inGame = false;
         }
+    }
+
+    private IEnumerator StartCountDown()
+    {
+        yield return new WaitForSeconds(startWaitForTime);
+        floorMesh.material = defaultColor;
+        _inGame = true;
     }
 
     public override bool Started()
@@ -139,11 +153,13 @@ public class TrainingEnv : NewGameController
         {
             fencerOne.agent.SetReward(1);
             fencerTwo.agent.SetReward(-1);
+            floorMesh.material = fencerOneColor;
         }
         else
         {
             fencerTwo.agent.SetReward(1);
             fencerOne.agent.SetReward(-1);
+            floorMesh.material = fencerTwoColor;
         }
 
         _inGame = false;

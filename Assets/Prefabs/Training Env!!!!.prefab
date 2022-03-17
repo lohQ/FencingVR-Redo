@@ -79,6 +79,11 @@ MonoBehaviour:
   boundXNegative: {fileID: 7248291989163496398}
   boundZPositive: {fileID: 7248291990171057889}
   boundZNegative: {fileID: 7248291989291811953}
+  floorMesh: {fileID: 7248291989388389635}
+  defaultColor: {fileID: 2100000, guid: a66aa4d8bf4a040f1ac7a73fd54741bc, type: 2}
+  fencerOneColor: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
+  fencerTwoColor: {fileID: 2100000, guid: 07aa6dc1c00684bad9ee285b1d3db2d3, type: 2}
+  startWaitForTime: 3
 --- !u!114 &7248291988389734615
 MonoBehaviour:
   m_ObjectHideFlags: 0
