@@ -1,12 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class BladeworkController : MonoBehaviour
 {
-    public List<Transform> worldPointToTargets;     // maybe 5: hand, arm, chest, thigh, foot
+    public List<Transform> worldPointToTargets;     // 5: hand, arm, chest, thigh, foot
     public bool debug;
     private FinalHandController _handController;
     private bool _inRotCor;
@@ -32,7 +31,7 @@ public class BladeworkController : MonoBehaviour
     private void Start()
     {
         _handController = GetComponent<FinalHandController>();
-        worldPointToTargets = new List<Transform>();
+        // worldPointToTargets = new List<Transform>();
         _inMoveCor = false;
         _inRotCor = false;
     }
@@ -129,8 +128,12 @@ public class BladeworkController : MonoBehaviour
         }
         
         var rotationError = _handController.maxRotationError * 2;
-        yield return new WaitWhile(
-            () => !_handController.ReachedMoveTarget() || !_handController.ReachedRotationTarget(rotationError));
+        while (!_handController.ReachedMoveTarget() || !_handController.ReachedRotationTarget(rotationError))
+        {
+            yield return null;
+        }
+        // yield return new WaitWhile(
+        //     () => !_handController.ReachedMoveTarget() || !_handController.ReachedRotationTarget(rotationError));
 
         _inRotCor = false;
         _inMoveCor = false;
@@ -141,10 +144,11 @@ public class BladeworkController : MonoBehaviour
     
     // ----- below are the exposed functions ----- //
     
-    public void DoWristTranslation(int forward, int rightward, int upward, bool extended)
+    public void DoWristTranslation(int forward, int rightward, int upward, bool extended, int hintX)
     {
         if (_inMoveCor) return;
         _handController.SetMoveToTargetPosition(forward, rightward, upward, extended);
+        _handController.SetHintPosition(hintX);
     }
 
     public void DoWristRotation(int supIndex, int pointToIndex)
@@ -177,31 +181,31 @@ public class BladeworkController : MonoBehaviour
         }
     }
 
-    public void DoParry(int parryIndex)
-    {
-        if (_inMoveCor || _inRotCor) return;
-
-        switch (parryIndex)
-        {
-            case 0:
-                // do nothing
-                return;
-            case 1:
-                StartCoroutine(Parry(4));
-                break;
-            case 2:
-                StartCoroutine(Parry(6));
-                break;
-            case 3:
-                StartCoroutine(Parry(7));
-                break;
-            case 4:
-                StartCoroutine(Parry(8));
-                break;
-        }
-        _inMoveCor = true;
-        _inRotCor = true;
-    }
+    // public void DoParry(int parryIndex)
+    // {
+    //     if (_inMoveCor || _inRotCor) return;
+    //
+    //     switch (parryIndex)
+    //     {
+    //         case 0:
+    //             // do nothing
+    //             return;
+    //         case 1:
+    //             StartCoroutine(Parry(4));
+    //             break;
+    //         case 2:
+    //             StartCoroutine(Parry(6));
+    //             break;
+    //         case 3:
+    //             StartCoroutine(Parry(7));
+    //             break;
+    //         case 4:
+    //             StartCoroutine(Parry(8));
+    //             break;
+    //     }
+    //     _inMoveCor = true;
+    //     _inRotCor = true;
+    // }
 
     public bool CanTranslateWrist()
     {
@@ -211,6 +215,17 @@ public class BladeworkController : MonoBehaviour
     public bool CanRotateWrist()
     {
         return !_inRotCor;
+    }
+
+    public void ResetCoroutines()
+    {
+        StopAllCoroutines();
+
+        _inMoveCor = false;
+        _inRotCor = false;
+        
+        _handController.ResetCoroutines();
+        Debug.Log("BladeworkController reset done");
     }
 
     // ----- above are the exposed functions ----- //

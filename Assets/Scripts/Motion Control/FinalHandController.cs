@@ -14,10 +14,12 @@ public class FinalHandController : MonoBehaviour
     public Transform moveTargetRoot;
     public Transform moveTarget;
     public Transform internalPointToTarget;
+    public Transform shoulder;
 
     [Header("Control Target")]
     public Transform externalPointToTarget; // actually is controlled by BladeworkController
     public Transform epeeTarget;
+    public Transform handIkHint;
 
     [Header("Control Parameters")] 
     public float suppinationMax;
@@ -33,6 +35,8 @@ public class FinalHandController : MonoBehaviour
     public float maxTranslationError;
     public float moveTargetDistance;
     public Vector3 moveTargetDistanceOffset;
+    public float ikHintRadius;
+    public float ikHintVelocity;
 
     [Header("General")]
     public bool debug;
@@ -235,19 +239,7 @@ public class FinalHandController : MonoBehaviour
             yield return null;
         }
     }
-
-    // private void MaintainInternalPointTo()
-    // {
-    //     // internalPointToTarget will tend towards externalPointTo, while remaining inside the reach cone (the area circled by pointToTargets)
-    //     var maxRadius = (pointToTargets[1].position - pointToTargets[0].position).magnitude;
-    //     var centerToInternalPointTo = internalPointToTarget.position - pointToTargets[0].position;
-    //     if (centerToInternalPointTo.magnitude > maxRadius)
-    //     {
-    //         internalPointToTarget.position = pointToTargets[0].position + 
-    //                                          (externalPointToTarget.position - pointToTargets[0].position).normalized * maxRadius;
-    //     }
-    // }
-
+    
     private IEnumerator RotateToTarget()
     {
         _rotating = true;
@@ -288,8 +280,6 @@ public class FinalHandController : MonoBehaviour
 
         _rotating = false;
     }
-
-    // public float maxEpeeToSpineDistance;
     
     private IEnumerator MoveToTarget()
     {
@@ -340,26 +330,12 @@ public class FinalHandController : MonoBehaviour
             
             yield return null;
 
-            Debug.DrawLine(moveTargetRoot.position, moveTargetRoot.TransformPoint(localWristStartPos), Color.yellow);
-            Debug.DrawLine(moveTargetRoot.position, moveTargetRoot.TransformPoint(localTargetPos), Color.yellow);
-            Debug.DrawRay(moveTargetRoot.TransformPoint(localWristStartPos), moveTargetRoot.TransformVector(localMoveVector), Color.green);
-
-            // // MIGHT NOT NEED THIS. 
-            // // Update the targetPos so wristRotation induced epee-to-wrist offset change is taken into account 
-            // // Update the duration so the additional distance moved is taken into account
-            // var curEpeeToWristOffset = wristOnEpeeAxes.position - actualEpee.position;
-            // Debug.DrawRay(wristOnEpeeAxes.position, epeeToWristOffset, Color.blue);
-            // Debug.DrawLine(wristOnEpeeAxes.position, actualEpee.position, Color.red);
-            // var offsetDiff = curEpeeToWristOffset - epeeToWristOffset;
-            // if (offsetDiff.magnitude > 0.01f)
-            // {
-            //     var newLocalTargetPos = startLocalTargetPos + moveTargetRoot.InverseTransformVector(offsetDiff);
-            //     var originalRemainingVector = moveTargetRoot.TransformPoint(localTargetPos) - prevEpeeTargetPos;
-            //     var curRemainingVector = moveTargetRoot.TransformPoint(newLocalTargetPos) - prevEpeeTargetPos;
-            //     duration += (curRemainingVector - originalRemainingVector).magnitude / velocity;
-            //     Debug.DrawLine(moveTargetRoot.TransformPoint(localTargetPos), moveTargetRoot.TransformPoint(newLocalTargetPos), Color.magenta, 5f);
-            //     localTargetPos = newLocalTargetPos;
-            // }
+            if (debug)
+            {
+                Debug.DrawLine(moveTargetRoot.position, moveTargetRoot.TransformPoint(localWristStartPos), Color.yellow);
+                Debug.DrawLine(moveTargetRoot.position, moveTargetRoot.TransformPoint(localTargetPos), Color.yellow);
+                Debug.DrawRay(moveTargetRoot.TransformPoint(localWristStartPos), moveTargetRoot.TransformVector(localMoveVector), Color.green);
+            }
         }
 
         _moving = false;
@@ -388,8 +364,12 @@ public class FinalHandController : MonoBehaviour
         {
             pointTo = neutralAxes.position + pointToFromRoot;
         }
-        Debug.DrawLine(neutralAxes.position, externalPointToTarget.position, Color.white);
-        Debug.DrawLine(neutralAxes.position, pointTo, Color.green);
+
+        if (debug)
+        {
+            Debug.DrawLine(neutralAxes.position, externalPointToTarget.position, Color.white);
+            Debug.DrawLine(neutralAxes.position, pointTo, Color.green);
+        }
         internalPointToTarget.position = pointTo;
     }
 
@@ -402,8 +382,29 @@ public class FinalHandController : MonoBehaviour
             return;
         
         var distanceFromRoot = extended ? moveTargetDistance : moveTargetDistance / 4 * 3;
-        var moveToVector = new Vector3(rightward, upward, forward).normalized * distanceFromRoot + moveTargetDistanceOffset;
+        // var moveToVector = new Vector3(rightward, upward, forward).normalized * distanceFromRoot + moveTargetDistanceOffset;
+        var moveToVector =
+            (transform.right * rightward + transform.up * upward + transform.forward * forward).normalized 
+            * distanceFromRoot
+            + (moveTargetDistanceOffset.x * transform.right + moveTargetDistanceOffset.y * transform.up + moveTargetDistanceOffset.z * transform.forward);
         moveTarget.position = moveTargetRoot.position + moveToVector.normalized * distanceFromRoot;
+    }
+
+    public void SetHintPosition(int x)
+    {
+        // x can be -1, 0, 1 (left-below, below, right-below)
+        // is the lower half-circle of elbow
+        
+        var shoulderToMoveTarget = moveTarget.position - shoulder.position;
+        // var upDir = Vector3.Cross(shoulderToMoveTarget.normalized, transform.right);
+        var hintOffset = (x * transform.right - Vector3.up).normalized * ikHintRadius;
+        var hintRootPos = shoulder.position + shoulderToMoveTarget / 4;
+        var newHintPosition = hintRootPos + hintOffset;
+
+        newHintPosition = Vector3.MoveTowards(handIkHint.position, newHintPosition, ikHintVelocity * Time.fixedDeltaTime);
+        Debug.DrawLine(handIkHint.position, newHintPosition, Color.green, 0.1f);
+        
+        handIkHint.position = newHintPosition;
     }
     
     public bool ReachedRotationTarget(float errorTolerance)
@@ -414,6 +415,15 @@ public class FinalHandController : MonoBehaviour
     public bool ReachedMoveTarget()
     {
         return (epeeTarget.position - moveTarget.position).magnitude <= maxTranslationError;
+    }
+
+    public void ResetCoroutines()
+    {
+        StopAllCoroutines();
+        _moving = false;
+        _rotating = false;
+        _enabled = true;
+        Debug.Log("FinalHandController reset done");
     }
 
     // ----- above is exposed to BladeworkController ----- //
@@ -523,7 +533,7 @@ public class FinalHandController : MonoBehaviour
     {
         foreach (var pt in pointToTargets)
         {
-            Gizmos.DrawWireSphere(pt.position, 3f);
+            Gizmos.DrawWireSphere(pt.position, 2f);
         }
         
         Gizmos.DrawWireCube(moveTarget.position, Vector3.one * 3);

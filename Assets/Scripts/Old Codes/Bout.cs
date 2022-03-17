@@ -5,11 +5,6 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public enum FencerColor
-{
-    Green = 0,
-    Red = 1
-}
 
 public class Bout : MonoBehaviour
 {

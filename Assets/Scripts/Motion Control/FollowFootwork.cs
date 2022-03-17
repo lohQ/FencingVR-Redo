@@ -125,6 +125,7 @@ public class FollowFootwork : MonoBehaviour
     
     private IEnumerator SaveKeyFrames(int step)
     {
+        // TODO: make this independent of root rotation
         var stateName = StateNameFromStepValue(step);
         var footworkType = FootworkTypeFromStepValue(step);
 
@@ -134,12 +135,14 @@ public class FollowFootwork : MonoBehaviour
 
         var startMoveTargetRootPos = _moveTargetRoot.position;
         var startMoveTargetRootRot = _moveTargetRoot.rotation;
+        var startTransformRot = transform.rotation;
 
         _animator.SetInteger(_animatorHashStep, step);
         var entryTransitionName = $"{stateNamePrefix}{entry} -> {stateNamePrefix}{stateName}";
         while (!_animator.GetAnimatorTransitionInfo(0).IsName(entryTransitionName))
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
+            _animator.SetInteger(_animatorHashStep, step);
         }
 
         var exitTransitionName = $"{stateNamePrefix}{stateName} -> {exit}";
@@ -157,9 +160,10 @@ public class FollowFootwork : MonoBehaviour
             curState = _animator.GetCurrentAnimatorStateInfo(0);
         }
 
+        _animator.SetInteger(_animatorHashStep, 0);
         while (!_animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde"))
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
         
         Debug.Log($"{stateName} has {keyFrameSO.translationData.Count} keyframes");
@@ -183,6 +187,8 @@ public class FollowFootwork : MonoBehaviour
 
             epeeTarget.position += diff.normalized * Mathf.Min(diff.magnitude, _handController.velocity);
             prevTargetPos = targetPos;
+
+            if (debug) Debug.Log($"following captured keyFrames, at {i} of {translationData.Count}");
             yield return new WaitForFixedUpdate();
         }
     }
@@ -248,6 +254,8 @@ public class FollowFootwork : MonoBehaviour
         }
     }
 
+    public bool debug;
+    
     private IEnumerator DoFollowFootwork(int step)
     {
         _inCor = true;
@@ -257,8 +265,17 @@ public class FollowFootwork : MonoBehaviour
         var footworkType = FootworkTypeFromStepValue(step);
 
         var transitionName = $"{stateNamePrefix}{entry} -> {stateNamePrefix}{stateName}";
+        var exitTransitionName = $"{stateNamePrefix}{entry} -> {exit}";
         while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
+            if (_animator.GetAnimatorTransitionInfo(0).IsName(exitTransitionName))
+            {
+                Debug.Log("Entered DoFollowFootwork coroutine but the 'step' is now zero! Break");
+                _inCor = false;
+                yield break;
+            }
+            
+            if (debug) Debug.Log($"waiting to enter transition {transitionName}");
             yield return new WaitForFixedUpdate();
         }
 
@@ -285,6 +302,7 @@ public class FollowFootwork : MonoBehaviour
             transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
             while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
             {
+                if (debug) Debug.Log($"waiting to enter transition {transitionName}");
                 yield return new WaitForFixedUpdate();
             }
         }
@@ -292,6 +310,7 @@ public class FollowFootwork : MonoBehaviour
         transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
         while (_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
+            if (debug) Debug.Log($"waiting to end transition {transitionName}. step is {_animator.GetInteger(_animatorHashStep)}");
             yield return new WaitForFixedUpdate();
         }
 
@@ -320,11 +339,11 @@ public class FollowFootwork : MonoBehaviour
             StartCoroutine(DoFollowFootwork(step));
         }
         
-        // use this to re-save the scriptableObjects
-        if (Input.GetKeyUp(KeyCode.A))
-        {
-            StartCoroutine(SaveAllKeyFrames());
-        }
+        // // use this to re-save the scriptableObjects
+        // if (Input.GetKeyUp(KeyCode.X))
+        // {
+        //     StartCoroutine(SaveAllKeyFrames());
+        // }
     }
 
     public void RegisterCollision()
@@ -342,4 +361,14 @@ public class FollowFootwork : MonoBehaviour
         return !_inCor;
     }
     
+    public void ResetCoroutines()
+    {
+        StopAllCoroutines();
+        _inCor = false;
+        _animator.SetInteger(_animatorHashStep, 0);
+        _bladeworkDisabled = false;
+        _ikRig.weight = 1;
+        Debug.Log("FollowFootwork reset done");
+    }
+
 }

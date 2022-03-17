@@ -30,7 +30,7 @@ public class EnergyController : MonoBehaviour
 
     public float ForceMultiplier()
     {
-        return Mathf.Max(value, forceMultiplierMinVal);
+        return forceMultiplierMinVal + value * (1 - forceMultiplierMinVal);
     }
     
     public void DoMove(float forceRatio)
