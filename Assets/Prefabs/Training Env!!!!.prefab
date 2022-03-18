@@ -85,7 +85,7 @@ MonoBehaviour:
   defaultColor: {fileID: 2100000, guid: a66aa4d8bf4a040f1ac7a73fd54741bc, type: 2}
   fencerOneColor: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
   fencerTwoColor: {fileID: 2100000, guid: 07aa6dc1c00684bad9ee285b1d3db2d3, type: 2}
-  startWaitForTime: 3
+  startWaitForTime: 2
 --- !u!114 &7248291988389734615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1291,7 +1291,7 @@ PrefabInstance:
     - target: {fileID: 1807238688127139760, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: m_Name
-      value: New Fencer
+      value: Offensive Fencer
       objectReference: {fileID: 0}
     - target: {fileID: 1807238688127139763, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}

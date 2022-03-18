@@ -29,6 +29,10 @@ public class NewAgentFencer : Agent
     private EnvironmentParameters _resetParams;
     private BufferSensorComponent _bufferSensor;
     private int _fencerNum;
+    private float _prevSelfTipToOppTarget;
+    private float _prevOppTipToSelfTarget;
+    private float _distanceThreshold;
+
     
     private void Start()
     {
@@ -39,6 +43,10 @@ public class NewAgentFencer : Agent
 
         _resetParams = Academy.Instance.EnvironmentParameters;
         _bufferSensor = GetComponent<BufferSensorComponent>();
+
+        _distanceThreshold = observer.tipClosenessThreshold;
+        _prevSelfTipToOppTarget = _distanceThreshold;
+        _prevOppTipToSelfTarget = _distanceThreshold;
     }
 
     public void SetFencerNum(FencerColor color)
@@ -48,7 +56,7 @@ public class NewAgentFencer : Agent
 
     public override void OnEpisodeBegin()
     {
-        Debug.Log($"[Fencer {_fencerNum}] OnEpisodeBegin");
+        Debug.Log($"[{transform.parent.name}] OnEpisodeBegin, CompletedEpisodes: {CompletedEpisodes}");
         _followFootwork.ResetCoroutines();
         _bladeworkController.ResetCoroutines();
         gameController.StartGame();
@@ -59,16 +67,35 @@ public class NewAgentFencer : Agent
         observer.CollectObservations(sensor, _bufferSensor, _fencerNum);
 
         var selfTipToOppTarget = observer.SelfTipRaycastHitDistance(_fencerNum);
-        var distanceThreshold = observer.tipClosenessThreshold;
-        if (selfTipToOppTarget < distanceThreshold)
+        if (selfTipToOppTarget > 0 && selfTipToOppTarget < _distanceThreshold)
         {
-            AddReward(((distanceThreshold - selfTipToOppTarget) / distanceThreshold) * selfTipClosenessReward / MaxStep);
+            var advanced = _prevSelfTipToOppTarget - selfTipToOppTarget;
+            if (advanced > 0)
+            {
+                Debug.Log($"selfTipToOppTarget advanced: {advanced}");
+                AddReward((advanced/_distanceThreshold) * selfTipClosenessReward / MaxStep);
+            }
+            _prevSelfTipToOppTarget = selfTipToOppTarget;
+        }
+        else
+        {
+            _prevOppTipToSelfTarget = _distanceThreshold;
         }
 
         var oppTipToSelfTarget = observer.OppTipRaycastHitDistance(_fencerNum);
-        if (oppTipToSelfTarget < distanceThreshold)
+        if (oppTipToSelfTarget > 0 && oppTipToSelfTarget < _distanceThreshold)
         {
-            AddReward(((distanceThreshold - oppTipToSelfTarget) / distanceThreshold) * oppTipClosenessReward / MaxStep);
+            var advanced = _prevOppTipToSelfTarget - oppTipToSelfTarget;
+            if (advanced > 0)
+            {
+                Debug.Log($"oppTipToSelfTarget advanced: {advanced}");
+                AddReward((advanced/_distanceThreshold) * oppTipClosenessReward / MaxStep);
+            }
+            _prevOppTipToSelfTarget = oppTipToSelfTarget;
+        }
+        else
+        {
+            _prevOppTipToSelfTarget = _distanceThreshold;
         }
     }
 
@@ -187,7 +214,7 @@ public class NewAgentFencer : Agent
 
         if (!gameController.Started())
         {
-            Debug.Log("game not started yet.");
+            // Debug.Log("game not started yet.");
             discreteActionsOut[0] = 1;
             discreteActionsOut[1] = 1;
             discreteActionsOut[2] = 1;
@@ -197,32 +224,19 @@ public class NewAgentFencer : Agent
             discreteActionsOut[6] = 2;
             discreteActionsOut[7] = 3;
         }
-        
-        if (_followFootwork.BladeworkDisabled())
+
+        if (!_bladeworkController.CanRotateWrist())
+        {
+            discreteActionsOut[5] = 1;
+            discreteActionsOut[6] = 2;
+        }
+        if (!_bladeworkController.CanTranslateWrist())
         {
             discreteActionsOut[0] = 1;
             discreteActionsOut[1] = 1;
             discreteActionsOut[2] = 1;
             discreteActionsOut[3] = 0;
             discreteActionsOut[4] = 1;
-            discreteActionsOut[5] = 1;
-            discreteActionsOut[6] = 2;
-        }
-        else
-        {
-            if (!_bladeworkController.CanRotateWrist())
-            {
-                discreteActionsOut[5] = 1;
-                discreteActionsOut[6] = 2;
-            }
-            if (!_bladeworkController.CanTranslateWrist())
-            {
-                discreteActionsOut[0] = 1;
-                discreteActionsOut[1] = 1;
-                discreteActionsOut[2] = 1;
-                discreteActionsOut[3] = 0;
-                discreteActionsOut[4] = 1;
-            }
         }
 
         if (!ReadyForFootwork())
@@ -281,21 +295,13 @@ public class NewAgentFencer : Agent
             return;
         }
         
-        if (_followFootwork.BladeworkDisabled())
+        if (!_bladeworkController.CanRotateWrist())
         {
             DisableWristRotation(actionMask);
-            DisableWristTranslation(actionMask);
         }
-        else
+        if (!_bladeworkController.CanTranslateWrist())
         {
-            if (!_bladeworkController.CanRotateWrist())
-            {
-                DisableWristRotation(actionMask);
-            }
-            if (!_bladeworkController.CanTranslateWrist())
-            {
-                DisableWristTranslation(actionMask);
-            }
+            DisableWristTranslation(actionMask);
         }
 
         if (!ReadyForFootwork())

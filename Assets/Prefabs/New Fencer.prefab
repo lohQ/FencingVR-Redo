@@ -5396,14 +5396,16 @@ MonoBehaviour:
   wrist: {fileID: 1807238687507281666}
   wristOnEpee: {fileID: 1807238686253728669}
   footworkKeyFrames:
-  - footworkType: 3
+  - footworkType: 2
     keyFrameData: {fileID: 11400000, guid: 380dbb1a2a2d14e269440321e055a7f0, type: 2}
-  - footworkType: 6
+  - footworkType: 5
     keyFrameData: {fileID: 11400000, guid: a57149a27d44c4139b6b7baccd1520a3, type: 2}
-  - footworkType: 4
+  - footworkType: 3
     keyFrameData: {fileID: 11400000, guid: 8c692c708a55d467fb05b7afb5ce415b, type: 2}
-  - footworkType: 7
+  - footworkType: 6
     keyFrameData: {fileID: 11400000, guid: 0f46eb399c6ed422f8d055a8857a575c, type: 2}
+  - footworkType: 0
+    keyFrameData: {fileID: 11400000, guid: adc7c64329a1d49f5ae8af35af39362a, type: 2}
   keyFrameOffset: 10
   lungeRigWeight: 0.05
   lungeCollisionRigWeight: 0.95
@@ -5413,7 +5415,7 @@ MonoBehaviour:
   entry: Entry Point
   exit: Exit
   debug: 0
-  logIdenfitier: T0F0
+  logIdenfitier: T0F1
 --- !u!114 &1807238688123693624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5439,7 +5441,7 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: AggressiveFencerBehavior
+  m_BehaviorName: OffensiveFencerBehavior
   TeamId: 0
   m_UseChildSensors: 0
   m_UseChildActuators: 1

@@ -223,8 +223,6 @@ public class BladeworkController : MonoBehaviour
         _inMoveCor = false;
         _inRotCor = false;
         _handController.ResetCoroutines();
-        
-        Debug.Log("BladeworkController reset done");
     }
 
     // ----- above are the exposed functions ----- //

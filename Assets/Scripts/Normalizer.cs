@@ -18,20 +18,10 @@ public class Normalizer : MonoBehaviour
     public Vector3 minEpeeTipFromEpee;
     public Vector3 maxEpeeTipFromEpee;
 
-    // 2000
     public Vector3 minContactPoint;
     public Vector3 maxContactPoint;
-    // 1000
     public Vector3 minImpulse;
     public Vector3 maxImpulse;
-
-    private void Start()
-    {
-        minContactPoint = Vector3.positiveInfinity;
-        maxContactPoint = Vector3.negativeInfinity;
-        minImpulse = Vector3.positiveInfinity;
-        maxImpulse = Vector3.negativeInfinity;
-    }
 
     public void SaveMinMax(Vector3 newVal, int index)
     {

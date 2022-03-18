@@ -290,12 +290,6 @@ public class FinalHandController : MonoBehaviour
         
         // var actualEpee = wristOnEpeeAxes.parent.parent;
         var startEpeeTargetPos = epeeTarget.position;
-        var epeeToSpine = startEpeeTargetPos - moveTargetRoot.position; // by right should use wristToSpine but anyway this should work
-        if (epeeToSpine.magnitude > moveTargetDistance)
-        {
-            startEpeeTargetPos =
-                moveTargetRoot.position + epeeToSpine * (moveTargetDistance / epeeToSpine.magnitude);
-        }
         var epeeToWristOffset = targetWristOnEpeeAxes.position - epeeTarget.position;   // this will change when moving
 
         // first get localMoveVector (do Slerp in local space so won't change even if moved globally)
@@ -428,8 +422,6 @@ public class FinalHandController : MonoBehaviour
         SetHintPosition(0);
         SetNextSuppination(0);
         externalPointToTarget.position = pointToTargets[0].position;
-        
-        Debug.Log("FinalHandController reset done");
     }
 
     // ----- above is exposed to BladeworkController ----- //

@@ -120,6 +120,8 @@ public class TrainingEnv : NewGameController
         fencerTwo.agent.EndEpisode();
     }
 
+    public bool debug;
+    
     private void Update()
     {
         // fencer position is usually changed in Update

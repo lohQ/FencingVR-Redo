@@ -14,7 +14,6 @@ public class FollowFootwork : MonoBehaviour
     public enum FootworkType
     {
         Lunge,
-        LungeRecover,
         SmallStepForward,
         StepForward,
         LargeStepForward,
@@ -56,7 +55,6 @@ public class FollowFootwork : MonoBehaviour
     private int _animatorHashStep;
     private bool _inCor;
     private bool _collided;
-    private bool _bladeworkDisabled;
 
     private void Awake()
     {
@@ -68,7 +66,6 @@ public class FollowFootwork : MonoBehaviour
         _epee = wristOnEpee.parent;
         _animatorHashStep = Animator.StringToHash("step");
         _collided = false;
-        _bladeworkDisabled = false;
 
         _footworkKeyFrameDict = new Dictionary<FootworkType, MoveTargetRootKeyFrames>();
         foreach (var pair in footworkKeyFrames)
@@ -123,7 +120,7 @@ public class FollowFootwork : MonoBehaviour
         }
     }
     
-    private IEnumerator SaveKeyFrames(int step)
+    private IEnumerator SaveKeyFrames(int step, string recoverStateName = "")
     {
         // TODO: make this independent of root rotation
         var stateName = StateNameFromStepValue(step);
@@ -144,13 +141,22 @@ public class FollowFootwork : MonoBehaviour
             _animator.SetInteger(_animatorHashStep, step);
         }
 
+        var recoverTransitionName = $"{stateNamePrefix}{stateName} -> {stateNamePrefix}{recoverStateName}";
         var exitTransitionName = $"{stateNamePrefix}{stateName} -> {exit}";
+        if (recoverStateName != "")
+        {
+            exitTransitionName = $"{stateNamePrefix}{recoverStateName} -> {exit}";
+        }
+
         var curTransition = _animator.GetAnimatorTransitionInfo(0);
         var curState = _animator.GetCurrentAnimatorStateInfo(0);
         while (
             curTransition.IsName(entryTransitionName) 
+            || curState.IsName(stateName)
+            || curTransition.IsName(recoverTransitionName)
+            || curState.IsName(recoverStateName)
             || curTransition.IsName(exitTransitionName) 
-            || curState.IsName(stateName))
+            )
         {
             keyFrameSO.translationData.Add(_moveTargetRoot.position - startMoveTargetRootPos);
             keyFrameSO.rotationData.Add(Quaternion.Inverse(startMoveTargetRootRot) * _moveTargetRoot.rotation);
@@ -187,7 +193,7 @@ public class FollowFootwork : MonoBehaviour
             epeeTarget.position += diff.normalized * Mathf.Min(diff.magnitude, _handController.velocity);
             prevTargetPos = targetPos;
             
-            if (debug) Debug.Log($"following captured keyFrames, at {i} of {translationData.Count}");
+            if (debug) Debug.Log($"[{logIdenfitier}] following captured keyFrames, at {i} of {translationData.Count}");
             yield return new WaitForFixedUpdate();
         }
     }
@@ -208,6 +214,7 @@ public class FollowFootwork : MonoBehaviour
         epeeTarget.rotation = newRotation;
     }
     
+    // obsolete
     private IEnumerator FollowAnim()
     {
         var transitionDuration = _animator.GetAnimatorTransitionInfo(0).duration;
@@ -258,7 +265,6 @@ public class FollowFootwork : MonoBehaviour
     private IEnumerator DoFollowFootwork(int step)
     {
         _inCor = true;
-        Debug.Log("Enter DoFollowFootwork");
 
         var stateName = StateNameFromStepValue(step);
         var footworkType = FootworkTypeFromStepValue(step);
@@ -269,27 +275,18 @@ public class FollowFootwork : MonoBehaviour
         {
             if (_animator.GetAnimatorTransitionInfo(0).IsName(exitTransitionName))
             {
-                Debug.Log("Entered DoFollowFootwork coroutine but the 'step' is now zero! Break");
                 _inCor = false;
                 yield break;
             }
             
-            if (debug) Debug.Log($"waiting to enter transition {transitionName}");
+            if (debug) Debug.Log($"[{logIdenfitier}] waiting to enter transition {transitionName}");
             yield return new WaitForFixedUpdate();
         }
 
         if (footworkType == FootworkType.Lunge)
         {
-            // for now won't be able to move/rotate the wrist while lunging! At most react to collision
-            _handController.DisableControl();
-            _bladeworkDisabled = true;
-
-            yield return StartCoroutine(FollowAnim());
-
-            _handController.EnableControl();
-            _bladeworkDisabled = false;
-
-            stateName = "Lunge Recover";
+            yield return StartCoroutine(FollowKeyFrames(footworkType));
+            stateName = "Lunge Recover";    // exit transition should named lunge recover -> exit
         }
         else
         {
@@ -298,10 +295,11 @@ public class FollowFootwork : MonoBehaviour
                 yield return StartCoroutine(FollowKeyFrames(footworkType));
             }
 
+            // wait for small step forward / backward to end
             transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
             while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
             {
-                if (debug) Debug.Log($"waiting to enter transition {transitionName}");
+                if (debug) Debug.Log($"[{logIdenfitier}] waiting to enter transition {transitionName}");
                 yield return new WaitForFixedUpdate();
             }
         }
@@ -309,11 +307,10 @@ public class FollowFootwork : MonoBehaviour
         transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
         while (_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
-            if (debug) Debug.Log($"waiting to end transition {transitionName}. step is {_animator.GetInteger(_animatorHashStep)}");
+            if (debug) Debug.Log($"[{logIdenfitier}] waiting to end transition {transitionName}. step is {_animator.GetInteger(_animatorHashStep)}");
             yield return new WaitForFixedUpdate();
         }
 
-        Debug.Log("Exit DoFollowFootwork");
         _inCor = false;
     }
 
@@ -324,6 +321,13 @@ public class FollowFootwork : MonoBehaviour
         yield return StartCoroutine(SaveKeyFrames(-2));
         yield return StartCoroutine(SaveKeyFrames(3));
         yield return StartCoroutine(SaveKeyFrames(-3));
+        _inCor = false;
+    }
+    
+    private IEnumerator SaveLungeKeyFrames()
+    {
+        _inCor = true;
+        yield return StartCoroutine(SaveKeyFrames(4, "Lunge Recover"));
         _inCor = false;
     }
 
@@ -341,7 +345,7 @@ public class FollowFootwork : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            Debug.Log($"[{logIdenfitier}] FollowFootwork in coroutine: {_inCor}");
+            Debug.Log($"[{logIdenfitier}] FollowFootwork is in coroutine: {_inCor}");
         }
         
         // // use this to re-save the scriptableObjects
@@ -349,18 +353,18 @@ public class FollowFootwork : MonoBehaviour
         // {
         //     StartCoroutine(SaveAllKeyFrames());
         // }
+        //
+        // if (Input.GetKeyUp(KeyCode.Y))
+        // {
+        //     StartCoroutine(SaveLungeKeyFrames());
+        // }
     }
 
     public void RegisterCollision()
     {
         _collided = true;
     }
-
-    public bool BladeworkDisabled()
-    {
-        return _bladeworkDisabled;
-    }
-
+    
     public bool ReadyForNewFootwork()
     {
         return !_inCor;
@@ -371,9 +375,7 @@ public class FollowFootwork : MonoBehaviour
         StopAllCoroutines();
         _inCor = false;
         _animator.SetInteger(_animatorHashStep, 0);
-        _bladeworkDisabled = false;
         _ikRig.weight = 1;
-        Debug.Log("FollowFootwork reset done");
     }
 
 }

@@ -178,8 +178,6 @@ public class Observer : MonoBehaviour
         return fencerNum == 1 ? _tipRaycastHitDistanceTwo : _tipRaycastHitDistanceOne;
     }
 
-    public bool withNot;
-    
     private float TipRaycastHitDistance(Vector3 tipPos, Vector3 tipDir, FencerColor selfColor)
     {
         var ray = new Ray(tipPos, tipDir.normalized);
