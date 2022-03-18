@@ -1,5 +1,64 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &725481492580590702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5701605884455918187}
+  - component: {fileID: 8194585448812634049}
+  m_Layer: 0
+  m_Name: Epee Tip Ray Sensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5701605884455918187
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725481492580590702}
+  m_LocalRotation: {x: 0.004262984, y: 0.007325926, z: 0.13759446, w: 0.99045247}
+  m_LocalPosition: {x: 0.38794798, y: 0.86257774, z: 1.6108236}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1807238688123693616}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8194585448812634049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725481492580590702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: RayPerceptionSensor
+  m_DetectableTags:
+  - Target Area
+  m_RaysPerDirection: 0
+  m_MaxRayDegrees: 0
+  m_SphereCastRadius: 0.1
+  m_RayLength: 1
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294965888
+  m_ObservationStacks: 3
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0
+  m_EndVerticalOffset: 0
 --- !u!1 &1807238686053135992
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,14 +646,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1807238686291444921}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -0.078660525, y: -0.04874207, z: -101}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1807238687389958785}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!136 &3846940746535751156
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -608,7 +667,7 @@ CapsuleCollider:
   m_Radius: 0.7
   m_Height: 1
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 1.5}
+  m_Center: {x: 0, y: 0, z: -1.5}
 --- !u!1 &1807238686293102215
 GameObject:
   m_ObjectHideFlags: 0
@@ -3497,7 +3556,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   followFootwork: {fileID: 1807238688123693622}
   impulseThreshold: 1
-  hitAngleThreshold: 120
+  hitAngleThreshold: 45
 --- !u!1 &1807238687393158507
 GameObject:
   m_ObjectHideFlags: 0
@@ -5010,6 +5069,7 @@ Transform:
   - {fileID: 1807238686076353243}
   - {fileID: 1807238688044973019}
   - {fileID: 4357314031421667140}
+  - {fileID: 5701605884455918187}
   m_Father: {fileID: 1807238688127139763}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5024,7 +5084,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d9fbbe8bb462d486fb4cdefb4370be84, type: 3}
   m_Controller: {fileID: 9100000, guid: 022fbceae43d247e58c388bd2efaa1bd, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 1
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
@@ -5403,9 +5463,8 @@ MonoBehaviour:
   gameController: {fileID: 0}
   observer: {fileID: 0}
   timeStepReward: -1
-  closenessThreshold: 50
-  oppTipClosenessReward: -0.4
-  selfTipClosenessReward: 0.8
+  oppTipClosenessReward: -0.5
+  selfTipClosenessReward: 1
 --- !u!114 &1807238688123693627
 MonoBehaviour:
   m_ObjectHideFlags: 0

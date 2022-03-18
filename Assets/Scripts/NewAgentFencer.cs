@@ -18,7 +18,6 @@ public class NewAgentFencer : Agent
     // offensive fencer get punished every timestep, but get rewarded for tip's closeness to target
     // defensive fencer get reward every timestep, but get punished for opponent's tip's closeness to self 
     public float timeStepReward;
-    public float closenessThreshold;
     public float oppTipClosenessReward;
     public float selfTipClosenessReward;
     
@@ -59,16 +58,17 @@ public class NewAgentFencer : Agent
     {
         observer.CollectObservations(sensor, _bufferSensor, _fencerNum);
 
-        var selfTipToOppTarget = observer.SelfMinTipDistance(_fencerNum);
-        if (selfTipToOppTarget < closenessThreshold)
+        var selfTipToOppTarget = observer.SelfTipRaycastHitDistance(_fencerNum);
+        var distanceThreshold = observer.tipClosenessThreshold;
+        if (selfTipToOppTarget < distanceThreshold)
         {
-            AddReward(((closenessThreshold - selfTipToOppTarget) / closenessThreshold) * selfTipClosenessReward);
+            AddReward(((distanceThreshold - selfTipToOppTarget) / distanceThreshold) * selfTipClosenessReward / MaxStep);
         }
-        
-        var oppTipToSelfTarget = observer.OppMinTipDistance(_fencerNum);
-        if (oppTipToSelfTarget < closenessThreshold)
+
+        var oppTipToSelfTarget = observer.OppTipRaycastHitDistance(_fencerNum);
+        if (oppTipToSelfTarget < distanceThreshold)
         {
-            AddReward(((closenessThreshold - oppTipToSelfTarget) / closenessThreshold) * oppTipClosenessReward);
+            AddReward(((distanceThreshold - oppTipToSelfTarget) / distanceThreshold) * oppTipClosenessReward / MaxStep);
         }
     }
 

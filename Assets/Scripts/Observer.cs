@@ -15,14 +15,18 @@ public class Observer : MonoBehaviour
     public Transform wristTwo;
 
     // observation 2: tip distance from targets
-    public float maxTargetLocalDistance;
     public Transform epeeTipOne;
     public List<Transform> targetAreasOfOne;
     public Transform epeeTipTwo;
     public List<Transform> targetAreasOfTwo;
     // for reward calculation
-    private float _minDistanceTipOne;
-    private float _minDistanceTipTwo;
+    [HideInInspector]
+    public FencerColor colorOne;
+    [HideInInspector]
+    public FencerColor colorTwo;
+    public float tipClosenessThreshold = 50;
+    private float _tipRaycastHitDistanceOne;
+    private float _tipRaycastHitDistanceTwo;
     
     // observation 3: epee position and vector
     public Transform epeeOne;
@@ -36,6 +40,11 @@ public class Observer : MonoBehaviour
     public NewHitDetector hitDetectorOne;
     public NewHitDetector hitDetectorTwo;
 
+    // raycast observation
+    [HideInInspector]
+    public Transform raycastTransformOne;
+    [HideInInspector]
+    public Transform raycastTransformTwo;
 
     public void CollectObservations(VectorSensor sensor, BufferSensorComponent bufferSensor, int fencerNum)
     {
@@ -130,11 +139,9 @@ public class Observer : MonoBehaviour
             var midContact = collision.contacts[collision.contactCount / 2].point;
             var transformedContactPoint = selfEpee.InverseTransformPoint(midContact);
             var transformedImpulse = selfEpee.InverseTransformVector(collision.impulse);
-            normalizer.SaveMinMax(transformedContactPoint, 5);
-            normalizer.SaveMinMax(transformedContactPoint, 6);
 
-            var normalizedContactPoint = normalizer.GetNormalized(transformedContactPoint, 5);
-            var normalizedImpulse = normalizer.GetNormalized(transformedImpulse, 6);
+            var normalizedContactPoint = normalizer.GetNormalizedCapped(transformedContactPoint, 5);
+            var normalizedImpulse = normalizer.GetNormalizedCapped(transformedImpulse, 6);
 
             bufferSensor.AppendObservation(new []
             {
@@ -147,32 +154,54 @@ public class Observer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _minDistanceTipOne = MinTipToTargetDistance(epeeTipOne.position, targetAreasOfOne);
-        _minDistanceTipTwo = MinTipToTargetDistance(epeeTipTwo.position, targetAreasOfTwo);
+        var tipOnePos = epeeTipOne.position;
+        var tipTwoPos = epeeTipTwo.position;
+        
+        _tipRaycastHitDistanceOne = TipRaycastHitDistance(
+            tipOnePos, (tipOnePos - epeeOne.position), colorOne);
+        _tipRaycastHitDistanceTwo = TipRaycastHitDistance(
+            tipTwoPos, (tipTwoPos - epeeTwo.position), colorTwo);
+        
+        raycastTransformOne.position = tipOnePos;
+        raycastTransformOne.rotation = epeeTipOne.rotation;
+        raycastTransformTwo.position = tipTwoPos;
+        raycastTransformTwo.rotation = epeeTipTwo.rotation;
     }
 
-    public float SelfMinTipDistance(int fencerNum)
+    public float SelfTipRaycastHitDistance(int fencerNum)
     {
-        return fencerNum == 1 ? _minDistanceTipOne : _minDistanceTipTwo;
+        return fencerNum == 1 ? _tipRaycastHitDistanceOne : _tipRaycastHitDistanceTwo;
     }
 
-    public float OppMinTipDistance(int fencerNum)
+    public float OppTipRaycastHitDistance(int fencerNum)
     {
-        return fencerNum == 1 ? _minDistanceTipTwo : _minDistanceTipOne;
+        return fencerNum == 1 ? _tipRaycastHitDistanceTwo : _tipRaycastHitDistanceOne;
     }
 
-    private float MinTipToTargetDistance(Vector3 tipPos, List<Transform> targets)
+    public bool withNot;
+    
+    private float TipRaycastHitDistance(Vector3 tipPos, Vector3 tipDir, FencerColor selfColor)
     {
-        var minDistance = Mathf.Infinity;
-        for (int i = 0; i < targets.Count; i++)
+        var ray = new Ray(tipPos, tipDir.normalized);
+        var oppColor = PhysicsEnvSettings.GetOther(selfColor);
+        var layerMask = LayerMask.GetMask(PhysicsEnvSettings.GetFencerBodyLayer(oppColor)) 
+                        + LayerMask.GetMask(PhysicsEnvSettings.GetFencerWeaponLayer(oppColor));
+        
+        var hits = Physics.RaycastAll(ray, tipClosenessThreshold, layerMask);
+        Debug.DrawRay(tipPos, tipDir.normalized * tipClosenessThreshold, Color.green);
+        if (hits.Length != 0)
         {
-            var distance = (tipPos - targets[i].position).magnitude;
-            if (distance < minDistance)
+            foreach (var hit in hits)
             {
-                minDistance = distance;
+                if (hit.collider.CompareTag(PhysicsEnvSettings.TargetAreaTag))
+                {
+                    return hit.distance;
+                }
             }
-        }
 
-        return minDistance;
+            return -1;
+        }
+        return -1;
     }
+
 }

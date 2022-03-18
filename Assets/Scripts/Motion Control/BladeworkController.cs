@@ -223,9 +223,7 @@ public class BladeworkController : MonoBehaviour
         _inMoveCor = false;
         _inRotCor = false;
         _handController.ResetCoroutines();
-
-        DoWristTranslation(1, 0, 0, false, 0);
-        DoWristRotation(0, 0);
+        
         Debug.Log("BladeworkController reset done");
     }
 

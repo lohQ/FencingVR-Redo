@@ -19,6 +19,7 @@ public class TrainingEnv : NewGameController
         public Transform epeeTargetTransform;
         public List<Transform> selfTargetAreas;
         public Transform startPoint;
+        public Transform epeeTipRaycastTransform;
 
         // public float fencerStartZVariation;
         // public float fencerStartXVariation;
@@ -61,6 +62,12 @@ public class TrainingEnv : NewGameController
         
         fencerOne.agent.SetFencerNum(fencerOne.color);
         fencerTwo.agent.SetFencerNum(fencerTwo.color);
+
+        var observer = GetComponent<Observer>();
+        observer.colorOne = fencerOne.color;
+        observer.colorTwo = fencerTwo.color;
+        observer.raycastTransformOne = fencerOne.epeeTipRaycastTransform;
+        observer.raycastTransformTwo = fencerTwo.epeeTipRaycastTransform;
 
         _outOfBound = false;
     }
@@ -128,6 +135,19 @@ public class TrainingEnv : NewGameController
         {
             _outOfBound = true;
         } else if (fencerOnePosition.z < boundZNegative.position.z || fencerTwoPosition.z < boundZNegative.position.z)
+        {
+            _outOfBound = true;
+        }
+
+        // check if fencers still facing each other
+        var fencerOneStartPos = fencerOne.startPoint.position;
+        var fencerTwoStartPos = fencerTwo.startPoint.position;
+        var startPosZDiff = fencerTwoStartPos.z - fencerOneStartPos.z;
+        var curPosZDiff = fencerTwoPosition.z - fencerOnePosition.z;
+        if (startPosZDiff > 0 && curPosZDiff < 0)
+        {
+            _outOfBound = true;
+        } else if (startPosZDiff < 0 && curPosZDiff > 0)
         {
             _outOfBound = true;
         }

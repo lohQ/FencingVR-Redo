@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -17,10 +18,20 @@ public class Normalizer : MonoBehaviour
     public Vector3 minEpeeTipFromEpee;
     public Vector3 maxEpeeTipFromEpee;
 
+    // 2000
     public Vector3 minContactPoint;
     public Vector3 maxContactPoint;
+    // 1000
     public Vector3 minImpulse;
     public Vector3 maxImpulse;
+
+    private void Start()
+    {
+        minContactPoint = Vector3.positiveInfinity;
+        maxContactPoint = Vector3.negativeInfinity;
+        minImpulse = Vector3.positiveInfinity;
+        maxImpulse = Vector3.negativeInfinity;
+    }
 
     public void SaveMinMax(Vector3 newVal, int index)
     {
@@ -135,6 +146,21 @@ public class Normalizer : MonoBehaviour
         return (newVal - min) / (max - min);
     }
     
+    public float GetNormalizedCapped(float newVal, float min, float max)
+    {
+        if (newVal < min)
+        {
+            return min;
+        }
+
+        if (newVal > max)
+        {
+            return max;
+        }
+
+        return GetNormalized(newVal, min, max);
+    }
+    
     public Vector3 GetNormalized(Vector3 newVal, int index)
     {
         Vector3 min;
@@ -159,15 +185,7 @@ public class Normalizer : MonoBehaviour
         {
             min = minOppEpeeFromFencer;
             max = maxOppEpeeFromFencer;
-        } else if (index == 5)
-        {
-            min = minContactPoint;
-            max = maxContactPoint;
-        } else if (index == 6)
-        {
-            min = minImpulse;
-            max = maxImpulse;
-        }
+        } 
         else
         {
             return Vector3.zero;
@@ -176,6 +194,29 @@ public class Normalizer : MonoBehaviour
         var normX = GetNormalized(newVal.x, min.x, max.x);
         var normY = GetNormalized(newVal.y, min.y, max.y);
         var normZ = GetNormalized(newVal.z, min.z, max.z);
+        return new Vector3(normX, normY, normZ);
+    }
+
+    public Vector3 GetNormalizedCapped(Vector3 newVal, int index)
+    {
+        Vector3 min;
+        Vector3 max;
+        if (index == 5)
+        {
+            min = minContactPoint;
+            max = maxContactPoint;
+        } else if (index == 6)
+        {
+            min = minImpulse;
+            max = maxImpulse;
+        } else
+        {
+            return Vector3.zero;
+        }
+        
+        var normX = GetNormalizedCapped(newVal.x, min.x, max.x);
+        var normY = GetNormalizedCapped(newVal.y, min.y, max.y);
+        var normZ = GetNormalizedCapped(newVal.z, min.z, max.z);
         return new Vector3(normX, normY, normZ);
     }
 }

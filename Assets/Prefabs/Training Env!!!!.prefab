@@ -60,6 +60,7 @@ MonoBehaviour:
     - {fileID: 7248291989860418734}
     - {fileID: 7248291988714338452}
     startPoint: {fileID: 7248291989113656551}
+    epeeTipRaycastTransform: {fileID: 3648950872175557145}
   fencerTwo:
     color: 1
     agent: {fileID: 9044214501981550462}
@@ -75,6 +76,7 @@ MonoBehaviour:
     - {fileID: 9044214500582652315}
     - {fileID: 9044214502668256673}
     startPoint: {fileID: 7248291989835378072}
+    epeeTipRaycastTransform: {fileID: 3150047482344032044}
   boundXPositive: {fileID: 7248291989047808344}
   boundXNegative: {fileID: 7248291989163496398}
   boundZPositive: {fileID: 7248291990171057889}
@@ -101,7 +103,6 @@ MonoBehaviour:
   wristOne: {fileID: 7248291988512135024}
   fencerTwo: {fileID: 9044214501981550455}
   wristTwo: {fileID: 9044214502463744581}
-  maxTargetLocalDistance: 10
   epeeTipOne: {fileID: 7248291989695456458}
   targetAreasOfOne:
   - {fileID: 9044214501171969824}
@@ -116,12 +117,17 @@ MonoBehaviour:
   - {fileID: 7248291990018590111}
   - {fileID: 7248291989860418734}
   - {fileID: 7248291988714338452}
+  colorOne: 0
+  colorTwo: 0
+  tipClosenessThreshold: 50
   epeeOne: {fileID: 7248291988596679411}
   epeeTwo: {fileID: 9044214502547496902}
   energyControllerOne: {fileID: 7248291988596679410}
   energyControllerTwo: {fileID: 9044214502547496903}
   hitDetectorOne: {fileID: 7248291988596679413}
   hitDetectorTwo: {fileID: 9044214502547496896}
+  raycastTransformOne: {fileID: 0}
+  raycastTransformTwo: {fileID: 0}
 --- !u!1 &7248291989047808345
 GameObject:
   m_ObjectHideFlags: 0
@@ -1116,6 +1122,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6887a8bd00186452797bf2519951c38f, type: 3}
+--- !u!4 &3150047482344032044 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5701605884455918187, guid: 6887a8bd00186452797bf2519951c38f,
+    type: 3}
+  m_PrefabInstance: {fileID: 7248291988905090375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9044214500582652315 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1807238686703953116, guid: 6887a8bd00186452797bf2519951c38f,
@@ -1237,6 +1249,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5103489421279171067}
     m_Modifications:
+    - target: {fileID: 1807238688123693621, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1807238688123693622, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: footworkKeyFrames.Array.data[0].keyFrameData
@@ -1333,6 +1350,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6887a8bd00186452797bf2519951c38f, type: 3}
+--- !u!4 &3648950872175557145 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5701605884455918187, guid: 6887a8bd00186452797bf2519951c38f,
+    type: 3}
+  m_PrefabInstance: {fileID: 9044214501773516914}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7248291988512135024 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1807238687507281666, guid: 6887a8bd00186452797bf2519951c38f,

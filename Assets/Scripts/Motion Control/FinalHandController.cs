@@ -420,9 +420,15 @@ public class FinalHandController : MonoBehaviour
     public void ResetCoroutines()
     {
         StopAllCoroutines();
+
         _moving = false;
         _rotating = false;
         _enabled = true;
+        SetMoveToTargetPosition(1, 0, 0, false);
+        SetHintPosition(0);
+        SetNextSuppination(0);
+        externalPointToTarget.position = pointToTargets[0].position;
+        
         Debug.Log("FinalHandController reset done");
     }
 
