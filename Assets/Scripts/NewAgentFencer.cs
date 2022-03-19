@@ -33,6 +33,8 @@ public class NewAgentFencer : Agent
     private float _prevOppTipToSelfTarget;
     private float _distanceThreshold;
 
+    private StatsRecorder _statsRecorder;
+
     
     private void Start()
     {
@@ -43,6 +45,7 @@ public class NewAgentFencer : Agent
 
         _resetParams = Academy.Instance.EnvironmentParameters;
         _bufferSensor = GetComponent<BufferSensorComponent>();
+        _statsRecorder = Academy.Instance.StatsRecorder;
 
         _distanceThreshold = observer.tipClosenessThreshold;
         _prevSelfTipToOppTarget = _distanceThreshold;
@@ -72,7 +75,6 @@ public class NewAgentFencer : Agent
             var advanced = _prevSelfTipToOppTarget - selfTipToOppTarget;
             if (advanced > 0)
             {
-                Debug.Log($"selfTipToOppTarget advanced: {advanced}");
                 AddReward((advanced/_distanceThreshold) * selfTipClosenessReward / MaxStep);
             }
             _prevSelfTipToOppTarget = selfTipToOppTarget;
@@ -88,7 +90,6 @@ public class NewAgentFencer : Agent
             var advanced = _prevOppTipToSelfTarget - oppTipToSelfTarget;
             if (advanced > 0)
             {
-                Debug.Log($"oppTipToSelfTarget advanced: {advanced}");
                 AddReward((advanced/_distanceThreshold) * oppTipClosenessReward / MaxStep);
             }
             _prevOppTipToSelfTarget = oppTipToSelfTarget;
@@ -317,13 +318,16 @@ public class NewAgentFencer : Agent
             discreteActions[0], discreteActions[1] - 1, discreteActions[2] - 1, 
             discreteActions[3] == 1, discreteActions[4] - 1);
         _bladeworkController.DoWristRotation(discreteActions[5] - 1, discreteActions[6] - 2);
-
+        
         if (discreteActions[7] - 3 != 0)
         {
             _animator.SetInteger(_stepHash, discreteActions[7] - 3);
         }
-        
-        AddReward(timeStepReward / MaxStep);
+
+        if (gameController.Started())
+        {
+            AddReward(timeStepReward / MaxStep);
+        }
     }
     
 }

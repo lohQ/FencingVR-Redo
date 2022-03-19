@@ -89,7 +89,7 @@ public class BladeworkController : MonoBehaviour
             {
                 timeElapsed += Time.deltaTime;
                 pointTarget.position = Vector3.Lerp(startPos, endPos, timeElapsed / duration);
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
         }
 
@@ -129,7 +129,7 @@ public class BladeworkController : MonoBehaviour
         var rotationError = _handController.maxRotationError * 2;
         while (!_handController.ReachedMoveTarget() || !_handController.ReachedRotationTarget(rotationError))
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
         // yield return new WaitWhile(
         //     () => !_handController.ReachedMoveTarget() || !_handController.ReachedRotationTarget(rotationError));

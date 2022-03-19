@@ -14,7 +14,7 @@ public class Observer : MonoBehaviour
     public Transform fencerTwo;
     public Transform wristTwo;
 
-    // observation 2: tip distance from targets
+    // observation 2: fencer distance from targets
     public Transform epeeTipOne;
     public List<Transform> targetAreasOfOne;
     public Transform epeeTipTwo;
@@ -98,17 +98,21 @@ public class Observer : MonoBehaviour
 
         for (int i = 0; i < targetOfSelf.Count; i++)
         {
-            var targetFromTip = root.InverseTransformVector(selfEpeeTipPos - targetOfSelf[i].position);
-            normalizer.SaveMinMax(targetFromTip, 1);
-            sensor.AddObservation(normalizer.GetNormalized(targetFromTip, 1));
+            var targetsFromFencer = root.InverseTransformPoint(targetOfSelf[i].position);
+            normalizer.SaveMinMax(targetsFromFencer, 1);
+            sensor.AddObservation(normalizer.GetNormalized(targetsFromFencer, 1));
         }
 
-        for (int i = 0; i < targetOfOpp.Count; i++)
-        {
-            var targetFromTip = root.InverseTransformVector(oppEpeeTipPos - targetOfOpp[i].position);
-            normalizer.SaveMinMax(targetFromTip, 1);
-            sensor.AddObservation(normalizer.GetNormalized(targetFromTip, 1));
-        }
+        var selfFromTip = root.InverseTransformPoint(oppEpeeTipPos);
+        normalizer.SaveMinMax(selfFromTip, 1);
+        sensor.AddObservation(normalizer.GetNormalized(selfFromTip, 1));
+
+        // for (int i = 0; i < targetOfOpp.Count; i++)
+        // {
+        //     var targetFromTip = root.InverseTransformVector(oppEpeeTipPos - targetOfOpp[i].position);
+        //     normalizer.SaveMinMax(targetFromTip, 1);
+        //     sensor.AddObservation(normalizer.GetNormalized(targetFromTip, 1));
+        // }
 
         var selfEpeeFromFencer = root.InverseTransformPoint(selfEpeePos);
         normalizer.SaveMinMax(selfEpeeFromFencer, 2);
@@ -126,7 +130,7 @@ public class Observer : MonoBehaviour
         normalizer.SaveMinMax(epeeTipFromEpee, 3);
         sensor.AddObservation(normalizer.GetNormalized(epeeTipFromEpee, 3));
 
-        sensor.AddObservation(energyController.value);
+        // sensor.AddObservation(energyController.value);
 
         var collisions = hitDetector.GetCollisionObservations();
         var maxAppendCount = bufferSensor.ObservableSize;
@@ -186,7 +190,6 @@ public class Observer : MonoBehaviour
                         + LayerMask.GetMask(PhysicsEnvSettings.GetFencerWeaponLayer(oppColor));
         
         var hits = Physics.RaycastAll(ray, tipClosenessThreshold, layerMask);
-        Debug.DrawRay(tipPos, tipDir.normalized * tipClosenessThreshold, Color.green);
         if (hits.Length != 0)
         {
             foreach (var hit in hits)

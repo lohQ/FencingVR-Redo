@@ -86,6 +86,7 @@ MonoBehaviour:
   fencerOneColor: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
   fencerTwoColor: {fileID: 2100000, guid: 07aa6dc1c00684bad9ee285b1d3db2d3, type: 2}
   startWaitForTime: 2
+  debug: 0
 --- !u!114 &7248291988389734615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,6 +1046,21 @@ PrefabInstance:
       propertyPath: gameController
       value: 
       objectReference: {fileID: 7248291988389734609}
+    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: timeStepReward
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: oppTipClosenessReward
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: selfTipClosenessReward
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1807238688123693627, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: DecisionPeriod
@@ -1288,6 +1304,21 @@ PrefabInstance:
       propertyPath: gameController
       value: 
       objectReference: {fileID: 7248291988389734609}
+    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: timeStepReward
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: oppTipClosenessReward
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: selfTipClosenessReward
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1807238688127139760, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: m_Name

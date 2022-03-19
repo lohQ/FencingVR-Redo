@@ -1135,7 +1135,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1807238686463205050}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2694,7 +2694,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1807238687070407267}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -5464,7 +5464,7 @@ MonoBehaviour:
   MaxStep: 60000
   gameController: {fileID: 0}
   observer: {fileID: 0}
-  timeStepReward: -1
+  timeStepReward: -0.5
   oppTipClosenessReward: -0.5
   selfTipClosenessReward: 1
 --- !u!114 &1807238688123693627

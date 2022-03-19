@@ -33,7 +33,7 @@ public class TrainingEnv : NewGameController
         public float oppTipClosenessReward;
         public float selfTipClosenessReward;
     }
-
+    
     public Fencer fencerOne;
     public Fencer fencerTwo;
     public Transform boundXPositive;
@@ -157,7 +157,7 @@ public class TrainingEnv : NewGameController
 
     private void FixedUpdate()
     {
-        // place all agent-related functions should be in fixed update
+        // place all agent-related functions in fixed update
         if (_outOfBound)
         {
             fencerOne.agent.SetReward(0);

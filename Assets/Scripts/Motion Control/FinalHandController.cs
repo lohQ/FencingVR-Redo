@@ -236,7 +236,7 @@ public class FinalHandController : MonoBehaviour
             }
 
             angleRotated += angleToRotate;
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
     }
     
@@ -322,7 +322,7 @@ public class FinalHandController : MonoBehaviour
             epeeTarget.position += toMove;
             prevEpeeTargetPos += toMove;
             
-            yield return null;
+            yield return new WaitForFixedUpdate();
 
             if (debug)
             {
