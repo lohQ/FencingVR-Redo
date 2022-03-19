@@ -168,6 +168,8 @@ public class DummyTrainingEnv : NewGameController
     private int _wristX;
     private int _wristY;
     private int _wristZ;
+    private int _pointTo;
+    private bool _extended;
     
     private void FixedUpdate()
     {
@@ -179,6 +181,8 @@ public class DummyTrainingEnv : NewGameController
             _wristX = Mathf.RoundToInt(envParams.GetWithDefault("wrist_x", 0));
             _wristY = Mathf.RoundToInt(envParams.GetWithDefault("wrist_y", 0));
             _wristZ = Mathf.RoundToInt(envParams.GetWithDefault("wrist_z", 1));
+            _pointTo = Mathf.RoundToInt(envParams.GetWithDefault("point_to", 0));
+            _extended = Mathf.RoundToInt(envParams.GetWithDefault("extended", 0)) == 1;
             Debug.Log($"dummy action: {_wristX}, {_wristY}, {_wristZ}");
         }
 
@@ -188,14 +192,14 @@ public class DummyTrainingEnv : NewGameController
             _passedFrameCount = 0;
         }
 
-        dummyTwo.bladeworkController.DoWristTranslation(_wristZ, _wristX, _wristY, false, 0);
-        dummyTwo.bladeworkController.DoWristRotation(0, 0);
+        dummyTwo.bladeworkController.DoWristTranslation(_wristZ, _wristX, _wristY, _extended, 0);
+        dummyTwo.bladeworkController.DoWristRotation(0, _pointTo);
 
         
         // place all agent-related functions in fixed update
         if (_outOfBound)
         {
-            fencerOne.agent.SetReward(0);
+            fencerOne.agent.SetReward(-1);
             EndGame();
             _outOfBound = false;
         }

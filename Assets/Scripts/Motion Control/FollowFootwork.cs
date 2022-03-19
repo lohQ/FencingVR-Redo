@@ -294,7 +294,6 @@ public class FollowFootwork : MonoBehaviour
             {
                 yield return StartCoroutine(FollowKeyFrames(footworkType));
             }
-
             // wait for small step forward / backward to end
             transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
             while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))

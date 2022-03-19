@@ -265,7 +265,7 @@ public class NewAgentFencer : Agent
 
     private static void DisableWristTranslation(IDiscreteActionMask actionMask)
     {
-        actionMask.SetActionEnabled(0, 1, false);
+        actionMask.SetActionEnabled(0, 0, false);
         actionMask.SetActionEnabled(1, 0, false);
         actionMask.SetActionEnabled(1, 2, false);
         actionMask.SetActionEnabled(2, 0, false);
@@ -286,6 +286,18 @@ public class NewAgentFencer : Agent
         actionMask.SetActionEnabled(7, 7, false);
     }
 
+    private static void DisableLargeStep(IDiscreteActionMask actionMask)
+    {
+        actionMask.SetActionEnabled(7, 0, false);
+        actionMask.SetActionEnabled(7, 6, false);
+        actionMask.SetActionEnabled(7, 7, false);
+    }
+    
+    private static void DisablePullArmBack(IDiscreteActionMask actionMask)
+    {
+        actionMask.SetActionEnabled(0, 0, false);
+    }
+
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
         if (!gameController.Started())
@@ -303,11 +315,17 @@ public class NewAgentFencer : Agent
         if (!_bladeworkController.CanTranslateWrist())
         {
             DisableWristTranslation(actionMask);
+        } else if (_resetParams.GetWithDefault("wrist_z_enabled", 0) == 0)
+        {
+            DisablePullArmBack(actionMask);
         }
 
         if (!ReadyForFootwork())
         {
             DisableFootwork(actionMask);
+        } else if (_resetParams.GetWithDefault("lunge_enabled", 0) == 0)
+        {
+            DisableLargeStep(actionMask);
         }
     }
     

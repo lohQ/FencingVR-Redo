@@ -59,6 +59,15 @@ public class Observer : MonoBehaviour
         EnergyController energyController;
         NewHitDetector hitDetector;
         Transform selfEpee;
+        float oppTipRaycastHitDistance;
+        
+        // used by both observation and reward
+        var tipOnePos = epeeTipOne.position;
+        var tipTwoPos = epeeTipTwo.position;
+        _tipRaycastHitDistanceOne = TipRaycastHitDistance(
+            tipOnePos, (tipOnePos - epeeOne.position), colorOne);
+        _tipRaycastHitDistanceTwo = TipRaycastHitDistance(
+            tipTwoPos, (tipTwoPos - epeeTwo.position), colorTwo);
         
         if (fencerNum == 1)
         {
@@ -73,6 +82,7 @@ public class Observer : MonoBehaviour
             energyController = energyControllerOne;
             hitDetector = hitDetectorOne;
             selfEpee = epeeOne;
+            oppTipRaycastHitDistance = _tipRaycastHitDistanceTwo;
         }
         else
         {
@@ -87,6 +97,7 @@ public class Observer : MonoBehaviour
             energyController = energyControllerTwo;
             hitDetector = hitDetectorTwo;
             selfEpee = epeeTwo;
+            oppTipRaycastHitDistance = _tipRaycastHitDistanceOne;
         }
 
         var wristFromFencer = root.InverseTransformPoint(selfWrist.position);
@@ -130,6 +141,15 @@ public class Observer : MonoBehaviour
         normalizer.SaveMinMax(epeeTipFromEpee, 3);
         sensor.AddObservation(normalizer.GetNormalized(epeeTipFromEpee, 3));
 
+        if (oppTipRaycastHitDistance < 0)
+        {
+            sensor.AddObservation(-1);
+        }
+        else
+        {
+            sensor.AddObservation(oppTipRaycastHitDistance / tipClosenessThreshold);
+        }
+        
         // sensor.AddObservation(energyController.value);
 
         var collisions = hitDetector.GetCollisionObservations();
@@ -158,17 +178,9 @@ public class Observer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var tipOnePos = epeeTipOne.position;
-        var tipTwoPos = epeeTipTwo.position;
-        
-        _tipRaycastHitDistanceOne = TipRaycastHitDistance(
-            tipOnePos, (tipOnePos - epeeOne.position), colorOne);
-        _tipRaycastHitDistanceTwo = TipRaycastHitDistance(
-            tipTwoPos, (tipTwoPos - epeeTwo.position), colorTwo);
-        
-        raycastTransformOne.position = tipOnePos;
+        raycastTransformOne.position = epeeTipOne.position;
         raycastTransformOne.rotation = epeeTipOne.rotation;
-        raycastTransformTwo.position = tipTwoPos;
+        raycastTransformTwo.position = epeeTipTwo.position;
         raycastTransformTwo.rotation = epeeTipTwo.rotation;
     }
 

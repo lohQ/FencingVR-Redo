@@ -1265,6 +1265,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5103489421279171067}
     m_Modifications:
+    - target: {fileID: 1807238687389958791, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: hitAngleThreshold
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 1807238688123693621, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: m_CullingMode
@@ -1318,6 +1323,11 @@ PrefabInstance:
         type: 3}
       propertyPath: selfTipClosenessReward
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807238688123693627, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: DecisionPeriod
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1807238688127139760, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
