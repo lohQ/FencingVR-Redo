@@ -45,6 +45,16 @@ public class Observer : MonoBehaviour
     public Transform raycastTransformOne;
     [HideInInspector]
     public Transform raycastTransformTwo;
+    
+    // only used to get center moveTo position
+    private FinalHandController _handControllerOne;
+    private FinalHandController _handControllerTwo;
+
+    private void Start()
+    {
+        _handControllerOne = fencerOne.GetComponent<FinalHandController>();
+        _handControllerTwo = fencerTwo.GetComponent<FinalHandController>();
+    }
 
     public void CollectObservations(VectorSensor sensor, BufferSensorComponent bufferSensor, int fencerNum)
     {
@@ -53,13 +63,12 @@ public class Observer : MonoBehaviour
         Vector3 selfEpeeTipPos;
         List<Transform> targetOfSelf;
         Vector3 oppEpeeTipPos;
-        List<Transform> targetOfOpp;
         Vector3 selfEpeePos;
         Vector3 oppEpeePos;
-        EnergyController energyController;
         NewHitDetector hitDetector;
         Transform selfEpee;
         float oppTipRaycastHitDistance;
+        FinalHandController handController;
         
         // used by both observation and reward
         var tipOnePos = epeeTipOne.position;
@@ -76,13 +85,12 @@ public class Observer : MonoBehaviour
             selfEpeeTipPos = epeeTipOne.position;
             targetOfSelf = targetAreasOfOne;
             oppEpeeTipPos = epeeTipTwo.position;
-            targetOfOpp = targetAreasOfTwo;
             selfEpeePos = epeeOne.position;
             oppEpeePos = epeeTwo.position;
-            energyController = energyControllerOne;
             hitDetector = hitDetectorOne;
             selfEpee = epeeOne;
             oppTipRaycastHitDistance = _tipRaycastHitDistanceTwo;
+            handController = _handControllerOne;
         }
         else
         {
@@ -91,13 +99,12 @@ public class Observer : MonoBehaviour
             selfEpeeTipPos = epeeTipTwo.position;
             targetOfSelf = targetAreasOfTwo;
             oppEpeeTipPos = epeeTipOne.position;
-            targetOfOpp = targetAreasOfTwo;
             selfEpeePos = epeeTwo.position;
             oppEpeePos = epeeOne.position;
-            energyController = energyControllerTwo;
             hitDetector = hitDetectorTwo;
             selfEpee = epeeTwo;
             oppTipRaycastHitDistance = _tipRaycastHitDistanceOne;
+            handController = _handControllerTwo;
         }
 
         var wristFromFencer = root.InverseTransformPoint(selfWrist.position);
@@ -149,6 +156,12 @@ public class Observer : MonoBehaviour
         {
             sensor.AddObservation(oppTipRaycastHitDistance / tipClosenessThreshold);
         }
+
+        // (selfCenter - oppEpeeMid) should be bounded by (self - oppEpeeTip)
+        var parryVector = CenterMoveTargetToOppEpee(handController, oppEpeePos, oppEpeeTipPos);
+        var transformedParryVector = root.InverseTransformVector(parryVector);
+        normalizer.SaveMinMax(transformedParryVector, 1);
+        sensor.AddObservation(normalizer.GetNormalized(transformedParryVector, 1));
         
         // sensor.AddObservation(energyController.value);
 
@@ -170,10 +183,40 @@ public class Observer : MonoBehaviour
             bufferSensor.AppendObservation(new []
             {
                 normalizedContactPoint.x, normalizedContactPoint.y, normalizedContactPoint.z,
-                normalizedImpulse.x, normalizedImpulse.y, normalizedImpulse.z
+                normalizedImpulse.x, normalizedImpulse.y, normalizedImpulse.z,
+                ColliderTypeToFloat(collision.collider, hitDetector)
             });
             appendCount += 1;
         }
+    }
+
+    private float ColliderTypeToFloat(Collider otherCollider, NewHitDetector hitDetector)
+    {
+        if (otherCollider.CompareTag(PhysicsEnvSettings.TargetAreaTag))
+        {
+            return 1f;
+        }
+
+        if (otherCollider.gameObject.layer == hitDetector.GetOtherWeaponLayer())
+        {
+            return 0.5f;
+        }
+
+        // wait all oppBodyLayer should be targetArea no? FIX!
+        if (otherCollider.gameObject.layer == hitDetector.GetOtherBodyLayer())
+        {
+            return 0.3f;
+        }
+
+        return 0f;
+    }
+
+    private Vector3 CenterMoveTargetToOppEpee(FinalHandController handController, Vector3 oppEpeePos, Vector3 oppEpeeTipPos)
+    {
+        var centerMoveTo = handController.GetMoveToTargetPosition(1, 0, 0, false);
+        var oppEpee_2Over3 = oppEpeePos + (oppEpeeTipPos - oppEpeePos) * 2 / 3;
+        Debug.DrawLine(centerMoveTo, oppEpee_2Over3, Color.green);
+        return (oppEpee_2Over3 - centerMoveTo);
     }
 
     private void FixedUpdate()

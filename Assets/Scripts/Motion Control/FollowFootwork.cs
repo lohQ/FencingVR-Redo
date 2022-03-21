@@ -273,7 +273,9 @@ public class FollowFootwork : MonoBehaviour
         var exitTransitionName = $"{stateNamePrefix}{entry} -> {exit}";
         while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
-            if (_animator.GetAnimatorTransitionInfo(0).IsName(exitTransitionName))
+            if (_animator.GetAnimatorTransitionInfo(0).IsName(exitTransitionName) 
+                || _animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde")  // idk, maybe the state machine transition too fast?
+                )
             {
                 _inCor = false;
                 yield break;
@@ -345,7 +347,13 @@ public class FollowFootwork : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             Debug.Log($"[{logIdenfitier}] FollowFootwork is in coroutine: {_inCor}");
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                Debug.Log($"[{logIdenfitier}] Reset coroutines");
+                ResetCoroutines();
+            }
         }
+        
         
         // // use this to re-save the scriptableObjects
         // if (Input.GetKeyUp(KeyCode.X))

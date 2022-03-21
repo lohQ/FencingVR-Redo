@@ -1,0 +1,13 @@
+
+Observation:
+// Agent can't manage to learn parrying, suspect is due to a lack of information
+ - Added one more observation from centerMoveTo to oppEpee2/3. 
+ - Added collided collider type information in BufferSensor. 
+
+Training Configs:
+// policy is almost not converging, decrease beta.
+ - Decreased beta from 0.005 to 0.001. 
+// Time_horizon: This number should be large enough to capture all the important behavior within a sequence of an agent's actions.
+// as increased physics timestep from 0.001 to 0.002, plus the key moment is actually the last second's action, 1 sec about 500 so 512. 
+ - Reduced time_horizon back to 512. 
+

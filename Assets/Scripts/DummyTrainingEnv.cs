@@ -40,7 +40,8 @@ public class DummyTrainingEnv : NewGameController
     private bool _outOfBound;
     private bool _inGame;
     private Vector3 _initialEpeePosition;
-    
+    private float _dummyOffsetX;
+    private float _dummyOffsetZ;
     
     private void Start()
     {
@@ -77,6 +78,8 @@ public class DummyTrainingEnv : NewGameController
         var rand = UnityEngine.Random.insideUnitSphere;
         rand.x *= xRand;
         rand.z *= zRand;
+        _dummyOffsetX = rand.x;
+        _dummyOffsetZ = rand.z;
 
         positionDiff = dummyTwo.startPoint.position - dummyTwo.fencerTransform.position + rand;
         rotationDiff = Quaternion.Inverse(dummyTwo.fencerTransform.rotation) * dummyTwo.startPoint.rotation;
@@ -112,13 +115,18 @@ public class DummyTrainingEnv : NewGameController
     {
         if (!_inGame) return;
         
+        
         if (fencerColor == fencerOne.color)
         {
+            Academy.Instance.StatsRecorder.Add("DummyPositionResult/win_x", _dummyOffsetX, StatAggregationMethod.Histogram);
+            Academy.Instance.StatsRecorder.Add("DummyPositionResult/win_z", _dummyOffsetZ, StatAggregationMethod.Histogram);
             fencerOne.agent.SetReward(1);
             floorMesh.material = fencerOneColor;
         }
         else
         {
+            Academy.Instance.StatsRecorder.Add("DummyPositionResult/lose_x", _dummyOffsetX, StatAggregationMethod.Histogram);
+            Academy.Instance.StatsRecorder.Add("DummyPositionResult/lose_z", _dummyOffsetZ, StatAggregationMethod.Histogram);
             fencerOne.agent.SetReward(-1);
             floorMesh.material = dummyTwoColor;
         }
@@ -183,7 +191,6 @@ public class DummyTrainingEnv : NewGameController
             _wristZ = Mathf.RoundToInt(envParams.GetWithDefault("wrist_z", 1));
             _pointTo = Mathf.RoundToInt(envParams.GetWithDefault("point_to", 0));
             _extended = Mathf.RoundToInt(envParams.GetWithDefault("extended", 0)) == 1;
-            Debug.Log($"dummy action: {_wristX}, {_wristY}, {_wristZ}");
         }
 
         _passedFrameCount += 1;
@@ -199,6 +206,8 @@ public class DummyTrainingEnv : NewGameController
         // place all agent-related functions in fixed update
         if (_outOfBound)
         {
+            Academy.Instance.StatsRecorder.Add("DummyPositionResult/miss_x", _dummyOffsetX, StatAggregationMethod.Histogram);
+            Academy.Instance.StatsRecorder.Add("DummyPositionResult/miss_z", _dummyOffsetZ, StatAggregationMethod.Histogram);
             fencerOne.agent.SetReward(-1);
             EndGame();
             _outOfBound = false;

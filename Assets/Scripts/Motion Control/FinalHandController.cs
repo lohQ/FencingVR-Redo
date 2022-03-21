@@ -335,6 +335,18 @@ public class FinalHandController : MonoBehaviour
         _moving = false;
     }
 
+
+
+    public Vector3 GetMoveToTargetPosition(int forward, int rightward, int upward, bool extended)
+    {
+        var distanceFromRoot = extended ? moveTargetDistance : moveTargetDistance / 4 * 3;
+        // var moveToVector = new Vector3(rightward, upward, forward).normalized * distanceFromRoot + moveTargetDistanceOffset;
+        var moveToVector =
+            (transform.right * rightward + transform.up * upward + transform.forward * forward).normalized 
+            * distanceFromRoot
+            + (moveTargetDistanceOffset.x * transform.right + moveTargetDistanceOffset.y * transform.up + moveTargetDistanceOffset.z * transform.forward);
+        return moveTargetRoot.position + moveToVector.normalized * distanceFromRoot;
+    }
     
     
     // ----- below is exposed to BladeworkController ----- //
@@ -374,14 +386,8 @@ public class FinalHandController : MonoBehaviour
 
         if (forward == 0 && rightward == 0 && upward == 0)
             return;
-        
-        var distanceFromRoot = extended ? moveTargetDistance : moveTargetDistance / 4 * 3;
-        // var moveToVector = new Vector3(rightward, upward, forward).normalized * distanceFromRoot + moveTargetDistanceOffset;
-        var moveToVector =
-            (transform.right * rightward + transform.up * upward + transform.forward * forward).normalized 
-            * distanceFromRoot
-            + (moveTargetDistanceOffset.x * transform.right + moveTargetDistanceOffset.y * transform.up + moveTargetDistanceOffset.z * transform.forward);
-        moveTarget.position = moveTargetRoot.position + moveToVector.normalized * distanceFromRoot;
+
+        moveTarget.position = GetMoveToTargetPosition(forward, rightward, upward, extended);
     }
 
     public void SetHintPosition(int x)

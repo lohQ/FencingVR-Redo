@@ -62,6 +62,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6656816822082565114, guid: a573c08f7be7043dd930c673dd647ea6,
+        type: 3}
+      propertyPath: m_ObservableSize
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7248291988389734615, guid: a573c08f7be7043dd930c673dd647ea6,
         type: 3}
       propertyPath: normalizer
@@ -86,7 +91,7 @@ PrefabInstance:
     - target: {fileID: 7248291989111769674, guid: a573c08f7be7043dd930c673dd647ea6,
         type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 37
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 7248291989111769675, guid: a573c08f7be7043dd930c673dd647ea6,
         type: 3}

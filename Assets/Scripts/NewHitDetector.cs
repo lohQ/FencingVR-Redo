@@ -81,9 +81,17 @@ public class NewHitDetector : MonoBehaviour
 
     public List<Collision> GetCollisionObservations()
     {
-        // collision point relative to the epee pivot
-        // collision impulse
         return new List<Collision>(_collisions.Values);
+    }
+
+    public int GetOtherBodyLayer()
+    {
+        return _otherBodyLayer;
+    }
+
+    public int GetOtherWeaponLayer()
+    {
+        return _otherWeaponLayer;
     }
 
 }
