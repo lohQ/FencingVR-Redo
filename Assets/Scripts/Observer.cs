@@ -192,7 +192,8 @@ public class Observer : MonoBehaviour
 
     private float ColliderTypeToFloat(Collider otherCollider, NewHitDetector hitDetector)
     {
-        if (otherCollider.CompareTag(PhysicsEnvSettings.TargetAreaTag))
+        if (otherCollider.CompareTag(PhysicsEnvSettings.TargetAreaTag) 
+            && otherCollider.gameObject.layer == hitDetector.GetOtherBodyLayer())
         {
             return 1f;
         }
@@ -200,12 +201,6 @@ public class Observer : MonoBehaviour
         if (otherCollider.gameObject.layer == hitDetector.GetOtherWeaponLayer())
         {
             return 0.5f;
-        }
-
-        // wait all oppBodyLayer should be targetArea no? FIX!
-        if (otherCollider.gameObject.layer == hitDetector.GetOtherBodyLayer())
-        {
-            return 0.3f;
         }
 
         return 0f;
