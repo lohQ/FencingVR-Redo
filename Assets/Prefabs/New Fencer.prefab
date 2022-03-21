@@ -48,7 +48,7 @@ MonoBehaviour:
   m_SensorName: RayPerceptionSensor
   m_DetectableTags:
   - Target Area
-  m_RaysPerDirection: 1
+  m_RaysPerDirection: 0
   m_MaxRayDegrees: 10
   m_SphereCastRadius: 0.1
   m_RayLength: 1
@@ -5430,7 +5430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 49
+    VectorObservationSize: 37
     NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -5480,7 +5480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 10
+  DecisionPeriod: 20
   TakeActionsBetweenDecisions: 1
 --- !u!114 &2441587110972937096
 MonoBehaviour:
@@ -5495,7 +5495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: BufferSensor
-  m_ObservableSize: 6
+  m_ObservableSize: 7
   m_MaxNumObservables: 3
 --- !u!1 &1807238688127139760
 GameObject:
@@ -5655,7 +5655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2394479930192685888
 Transform:
   m_ObjectHideFlags: 0

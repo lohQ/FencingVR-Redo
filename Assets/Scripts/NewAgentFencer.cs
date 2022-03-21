@@ -315,17 +315,17 @@ public class NewAgentFencer : Agent
         if (!_bladeworkController.CanTranslateWrist())
         {
             DisableWristTranslation(actionMask);
-        } else if (_resetParams.GetWithDefault("wrist_z_enabled", 0) == 0)
-        {
-            DisablePullArmBack(actionMask);
+        // } else if (_resetParams.GetWithDefault("wrist_z_enabled", 0) == 0)
+        // {
+        //     DisablePullArmBack(actionMask);
         }
 
         if (!ReadyForFootwork())
         {
             DisableFootwork(actionMask);
-        } else if (_resetParams.GetWithDefault("lunge_enabled", 0) == 0)
-        {
-            DisableLargeStep(actionMask);
+        // } else if (_resetParams.GetWithDefault("lunge_enabled", 0) == 0)
+        // {
+        //     DisableLargeStep(actionMask);
         }
     }
     

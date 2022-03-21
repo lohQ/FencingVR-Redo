@@ -1061,11 +1061,6 @@ PrefabInstance:
       propertyPath: selfTipClosenessReward
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1807238688123693627, guid: 6887a8bd00186452797bf2519951c38f,
-        type: 3}
-      propertyPath: DecisionPeriod
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 1807238688127139760, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: m_Name
@@ -1135,6 +1130,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2441587110972937096, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: m_ObservableSize
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6887a8bd00186452797bf2519951c38f, type: 3}

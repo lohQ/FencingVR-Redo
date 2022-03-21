@@ -157,11 +157,12 @@ public class Observer : MonoBehaviour
             sensor.AddObservation(oppTipRaycastHitDistance / tipClosenessThreshold);
         }
 
-        // (selfCenter - oppEpeeMid) should be bounded by (self - oppEpeeTip)
-        var parryVector = CenterMoveTargetToOppEpee(handController, oppEpeePos, oppEpeeTipPos);
-        var transformedParryVector = root.InverseTransformVector(parryVector);
-        normalizer.SaveMinMax(transformedParryVector, 1);
-        sensor.AddObservation(normalizer.GetNormalized(transformedParryVector, 1));
+        // // commented out for self-play training rerun
+        // // (selfCenter - oppEpeeMid) should be bounded by (self - oppEpeeTip)
+        // var parryVector = CenterMoveTargetToOppEpee(handController, oppEpeePos, oppEpeeTipPos);
+        // var transformedParryVector = root.InverseTransformVector(parryVector);
+        // normalizer.SaveMinMax(transformedParryVector, 1);
+        // sensor.AddObservation(normalizer.GetNormalized(transformedParryVector, 1));
         
         // sensor.AddObservation(energyController.value);
 

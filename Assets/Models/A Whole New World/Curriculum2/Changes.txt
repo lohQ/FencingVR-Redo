@@ -11,3 +11,18 @@ Training Configs:
 // as increased physics timestep from 0.001 to 0.002, plus the key moment is actually the last second's action, 1 sec about 500 so 512. 
  - Reduced time_horizon back to 512. 
 
+
+rerun self-play:
+- remove from centerMoveTo to oppEpee2/3 observation and additional raycast observation
+- don't revert collision type observation (makes sense to have it from the start)
+- don't revert back to tip-to-target (so don't have to compare that much observation)
+- don't revert beta and time_horizon (so don't have to compare hyperparameters)
+- revert reward function. 
+
+from self-play, rerun curriculum_one:
+- modify reward function. 
+- use a more progressive curriculum
+
+rerun curriculum_two: 
+- use the same curriculum as curriculum_one, but add centerMoveTo to oppEpee2/3 observation and additional raycasts
+- add action here?
