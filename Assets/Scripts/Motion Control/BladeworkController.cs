@@ -72,9 +72,9 @@ public class BladeworkController : MonoBehaviour
 
         var pointTarget = _handController.externalPointToTarget;
         var refPointTargets = _handController.pointToTargets;
-        var moveVelocity = _handController.velocity * 2;    // this is wrist velocity but just use first la
+        var moveVelocity = _handController.velocity * 3;    // this is wrist velocity but just use first la
 
-        var paths = clockwise ? new []{0, 13, 12, 11, 10, 9, 0} : new []{0, 9, 10, 11, 12, 13, 0};
+        var paths = clockwise ? new []{0, 5, 4, 3, 2, 1, 0} : new []{0, 1, 2, 3, 4, 5, 0};
         for (int i = 0; i < paths.Length - 1; i++)
         {
             var start = refPointTargets[paths[i]];

@@ -19,6 +19,11 @@ rerun self-play:
 - don't revert beta and time_horizon (so don't have to compare hyperparameters)
 - revert reward function. 
 
+rerun self-play 2:
+- increased beta from 0.001 to 0.003 (converged too quickly?)
+- decrease MaxStep by a factor of 4 so the small rewards will become more significant, made them more desirable. 
+- increase save_steps and window
+
 from self-play, rerun curriculum_one:
 - modify reward function. 
 - use a more progressive curriculum

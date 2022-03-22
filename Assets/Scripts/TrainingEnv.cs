@@ -44,6 +44,7 @@ public class TrainingEnv : NewGameController
     public Material defaultColor;
     public Material fencerOneColor;
     public Material fencerTwoColor;
+    public Material outOfBoundColor;
 
     public float startWaitForTime;
     
@@ -164,6 +165,7 @@ public class TrainingEnv : NewGameController
             fencerTwo.agent.SetReward(0);
             EndGame();
             _outOfBound = false;
+            floorMesh.material = outOfBoundColor;
         }
     }
 

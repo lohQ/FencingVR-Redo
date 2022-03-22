@@ -45,6 +45,12 @@ public class FollowFootwork : MonoBehaviour
     public string entry = "Entry Point";
     public string exit = "Exit";
     
+    // debug
+    public bool debug;
+    public MeshRenderer footworkDisplay;
+    public Material enabledColor;
+    public Material disabledColor;
+    
     private Transform _moveTargetRoot;
     private Transform _epee;
     private Animator _animator;
@@ -72,6 +78,7 @@ public class FollowFootwork : MonoBehaviour
         {
             _footworkKeyFrameDict[pair.footworkType] = pair.keyFrameData;
         }
+        footworkDisplay.material = enabledColor;
     }
     
     private FootworkType FootworkTypeFromStepValue(int step)
@@ -188,7 +195,7 @@ public class FollowFootwork : MonoBehaviour
             var rootPos = startRootPos + translationData[i];
             var targetPos = rootPos + rotationData[i] * moveTargetFromRoot;
             var diff = targetPos - prevTargetPos;
-            Debug.DrawRay(epeeTarget.position, diff, Color.red, 5f);
+            if (debug) Debug.DrawRay(epeeTarget.position, diff, Color.red, 5f);
 
             epeeTarget.position += diff.normalized * Mathf.Min(diff.magnitude, _handController.velocity);
             prevTargetPos = targetPos;
@@ -207,7 +214,7 @@ public class FollowFootwork : MonoBehaviour
         var rotatedEpeeFromWrist = rotationDiff * curEpeeFromWrist;
         var translatedEpeeFromWrist = positionDiff + rotatedEpeeFromWrist;
         var newPosition = wristOnEpee.position + translatedEpeeFromWrist;
-        Debug.DrawLine(epeeTarget.position, newPosition, Color.red, 5f);
+        if (debug) Debug.DrawLine(epeeTarget.position, newPosition, Color.red, 5f);
 
         var newRotation = wrist.rotation * Quaternion.Inverse(wristOnEpee.localRotation);
         epeeTarget.position = newPosition;
@@ -260,11 +267,10 @@ public class FollowFootwork : MonoBehaviour
         }
     }
 
-    public bool debug;
-    
     private IEnumerator DoFollowFootwork(int step)
     {
         _inCor = true;
+        footworkDisplay.material = disabledColor;
 
         var stateName = StateNameFromStepValue(step);
         var footworkType = FootworkTypeFromStepValue(step);
@@ -313,6 +319,7 @@ public class FollowFootwork : MonoBehaviour
         }
 
         _inCor = false;
+        footworkDisplay.material = enabledColor;
     }
 
     private IEnumerator SaveAllKeyFrames()
@@ -353,7 +360,8 @@ public class FollowFootwork : MonoBehaviour
                 ResetCoroutines();
             }
         }
-        
+
+        footworkDisplay.enabled = debug;
         
         // // use this to re-save the scriptableObjects
         // if (Input.GetKeyUp(KeyCode.X))

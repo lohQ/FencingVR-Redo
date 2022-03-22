@@ -65,11 +65,11 @@ public class FinalHandController : MonoBehaviour
         var localMagnitude = centerLocalPos.magnitude;
         var localScale = pointTosParent.InverseTransformVector(Vector3.up).magnitude;
         var offsetAt45Deg = Mathf.Sqrt(rotationRadius * rotationRadius / 2);
-
-        var upVector = rotationRadius * localScale * pointTosParent.up;
-        var rightVector = rotationRadius * localScale * pointTosParent.right;
-        var halfUpVector = offsetAt45Deg * localScale * pointTosParent.up;
-        var halfRightVector = offsetAt45Deg * localScale * pointTosParent.right;
+        
+        var upVector = rotationRadius * localScale * Vector3.down;
+        var rightVector = rotationRadius * localScale * Vector3.right;
+        var halfUpVector = offsetAt45Deg * localScale * Vector3.down;
+        var halfRightVector = offsetAt45Deg * localScale * Vector3.right;
         pointToTargets[1].localPosition = (centerLocalPos + rightVector).normalized * localMagnitude;
         pointToTargets[2].localPosition = (centerLocalPos + halfRightVector - halfUpVector).normalized * localMagnitude;
         pointToTargets[3].localPosition = (centerLocalPos - upVector).normalized * localMagnitude;
@@ -78,20 +78,6 @@ public class FinalHandController : MonoBehaviour
         pointToTargets[6].localPosition = (centerLocalPos - halfRightVector + halfUpVector).normalized * localMagnitude;
         pointToTargets[7].localPosition = (centerLocalPos + upVector).normalized * localMagnitude;
         pointToTargets[8].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
-
-        // with this small radius will have less oscillation when doing wrist rotation
-        upVector /= 2;
-        rightVector /= 2;
-        halfUpVector /= 2;
-        halfRightVector /= 2;
-        pointToTargets[9].localPosition = (centerLocalPos + rightVector).normalized * localMagnitude;
-        pointToTargets[10].localPosition = (centerLocalPos + halfRightVector - halfUpVector).normalized * localMagnitude;
-        pointToTargets[11].localPosition = (centerLocalPos - upVector).normalized * localMagnitude;
-        pointToTargets[12].localPosition = (centerLocalPos - halfRightVector - halfUpVector).normalized * localMagnitude;
-        pointToTargets[13].localPosition = (centerLocalPos - rightVector).normalized * localMagnitude;
-        pointToTargets[14].localPosition = (centerLocalPos - halfRightVector + halfUpVector).normalized * localMagnitude;
-        pointToTargets[15].localPosition = (centerLocalPos + upVector).normalized * localMagnitude;
-        pointToTargets[16].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
     }
     
     private float GetNewSuppination(Quaternion newWristRotation)
@@ -222,7 +208,7 @@ public class FinalHandController : MonoBehaviour
             // time to refresh rotationToApply! 
             if (angleRotated > recheckPerDegrees) break;
 
-            var angleToRotate = angularVelocity * Time.deltaTime;
+            var angleToRotate = angularVelocity * Time.fixedDeltaTime;
             if (angleRotated + angleToRotate > angle)
             {
                 angleToRotate = angle - angleRotated;
@@ -306,7 +292,7 @@ public class FinalHandController : MonoBehaviour
         var timeElapsed = 0f;
         while (timeElapsed < duration / 2)
         {
-            timeElapsed += Time.deltaTime;
+            timeElapsed += Time.fixedDeltaTime;
             var t = timeElapsed / duration;
             var progress = Mathf.Sqrt(t) * 1.5f;    // will reach end position at t = 4/9, so 'timeElapsed < duration / 2'
 
@@ -319,9 +305,10 @@ public class FinalHandController : MonoBehaviour
             // Compare with the epee position of previous frame
             // Add the difference to epeeTarget (rotation may also move epee position so don't overwrite)
             var toMove = newEpeePosition - prevEpeeTargetPos;
+            
             epeeTarget.position += toMove;
             prevEpeeTargetPos += toMove;
-            
+
             yield return new WaitForFixedUpdate();
 
             if (debug)
@@ -450,13 +437,24 @@ public class FinalHandController : MonoBehaviour
     
     // ----- above is exposed to FollowFootwork ----- //
 
+
+    private void CapEpeeTargetPos()
+    {
+        // many things can update epeeTarget position together and there's no check done on whether the new position is valid
+        if ((epeeTarget.position - moveTargetRoot.position).magnitude > moveTargetDistance)
+        {
+            epeeTarget.position = moveTargetRoot.position +
+                                  (epeeTarget.position - moveTargetRoot.position).normalized * moveTargetDistance;
+        }
+    }
     
-    
-    private void Update()
+
+    private void FixedUpdate()
     {
         if (!_enabled) return;
         
         SetWorldPointTo();
+        CapEpeeTargetPos();
 
         # region direct input
         // float suppination = 0f;
@@ -515,7 +513,7 @@ public class FinalHandController : MonoBehaviour
             StartCoroutine(RotateToTarget());
         }
 
-        if (!_moving)
+        if (!_moving && !ReachedMoveTarget())
         {
             StartCoroutine(MoveToTarget());
         }
@@ -537,4 +535,5 @@ public class FinalHandController : MonoBehaviour
         
         Gizmos.DrawWireCube(moveTarget.position, Vector3.one * 3);
     }
+
 }
