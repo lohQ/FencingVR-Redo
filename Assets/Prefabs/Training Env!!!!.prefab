@@ -1027,15 +1027,16 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 1807238688123693622, guid: 6887a8bd00186452797bf2519951c38f,
+        type: 3}
+      propertyPath: footworkKeyFrames.Array.data[4].keyFrameData
+      value: 
+      objectReference: {fileID: 11400000, guid: adc7c64329a1d49f5ae8af35af39362a,
+        type: 2}
     - target: {fileID: 1807238688123693624, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: TeamId
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
-        type: 3}
-      propertyPath: MaxStep
-      value: 60000
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
@@ -1052,21 +1053,6 @@ PrefabInstance:
       propertyPath: gameController
       value: 
       objectReference: {fileID: 7248291988389734609}
-    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
-        type: 3}
-      propertyPath: timeStepReward
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
-        type: 3}
-      propertyPath: oppTipClosenessReward
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1807238688123693625, guid: 6887a8bd00186452797bf2519951c38f,
-        type: 3}
-      propertyPath: selfTipClosenessReward
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 1807238688123693627, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: DecisionPeriod
@@ -1075,7 +1061,7 @@ PrefabInstance:
     - target: {fileID: 1807238688127139760, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: m_Name
-      value: New Fencer (1)
+      value: Fencer 2
       objectReference: {fileID: 0}
     - target: {fileID: 1807238688127139763, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
@@ -1323,7 +1309,7 @@ PrefabInstance:
     - target: {fileID: 1807238688127139760, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}
       propertyPath: m_Name
-      value: Offensive Fencer
+      value: Fencer 1
       objectReference: {fileID: 0}
     - target: {fileID: 1807238688127139763, guid: 6887a8bd00186452797bf2519951c38f,
         type: 3}

@@ -5184,7 +5184,7 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: DefensiveFencerBehavior
+  m_BehaviorName: ControlFencerBehavior
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -5204,11 +5204,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 15000
+  MaxStep: 20000
   gameController: {fileID: 0}
   observer: {fileID: 0}
-  timeStepReward: -0.5
-  oppTipClosenessReward: -0.5
+  timeStepReward: 0
+  oppTipClosenessReward: -1
   selfTipClosenessReward: 1
 --- !u!114 &1807238688123693627
 MonoBehaviour:
