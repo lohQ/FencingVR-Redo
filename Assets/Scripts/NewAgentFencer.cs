@@ -29,8 +29,6 @@ public class NewAgentFencer : Agent
     private EnvironmentParameters _resetParams;
     private BufferSensorComponent _bufferSensor;
     private int _fencerNum;
-    private float _prevSelfTipToOppTarget;
-    private float _prevOppTipToSelfTarget;
     private float _distanceThreshold;
 
     private StatsRecorder _statsRecorder;
@@ -48,8 +46,6 @@ public class NewAgentFencer : Agent
         _statsRecorder = Academy.Instance.StatsRecorder;
 
         _distanceThreshold = observer.tipClosenessThreshold;
-        _prevSelfTipToOppTarget = _distanceThreshold;
-        _prevOppTipToSelfTarget = _distanceThreshold;
     }
 
     public void SetFencerNum(FencerColor color)
@@ -70,34 +66,10 @@ public class NewAgentFencer : Agent
         observer.CollectObservations(sensor, _bufferSensor, _fencerNum);
 
         var selfTipToOppTarget = observer.SelfTipRaycastHitDistance(_fencerNum);
-        if (selfTipToOppTarget > 0 && selfTipToOppTarget < _distanceThreshold)
-        {
-            var advanced = _prevSelfTipToOppTarget - selfTipToOppTarget;
-            if (advanced > 0)
-            {
-                AddReward((advanced/_distanceThreshold) * selfTipClosenessReward / MaxStep);
-            }
-            _prevSelfTipToOppTarget = selfTipToOppTarget;
-        }
-        else
-        {
-            _prevOppTipToSelfTarget = _distanceThreshold;
-        }
-
+        AddReward((1 - (selfTipToOppTarget / _distanceThreshold)) * selfTipClosenessReward / MaxStep);
+        
         var oppTipToSelfTarget = observer.OppTipRaycastHitDistance(_fencerNum);
-        if (oppTipToSelfTarget > 0 && oppTipToSelfTarget < _distanceThreshold)
-        {
-            var advanced = _prevOppTipToSelfTarget - oppTipToSelfTarget;
-            if (advanced > 0)
-            {
-                AddReward((advanced/_distanceThreshold) * oppTipClosenessReward / MaxStep);
-            }
-            _prevOppTipToSelfTarget = oppTipToSelfTarget;
-        }
-        else
-        {
-            _prevOppTipToSelfTarget = _distanceThreshold;
-        }
+        AddReward((1 - (oppTipToSelfTarget / _distanceThreshold)) * oppTipClosenessReward / MaxStep);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
