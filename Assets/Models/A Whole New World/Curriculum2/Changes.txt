@@ -45,6 +45,16 @@ rerun self-play 3:
  - same self-play settings as self-play 2
  - reduced hintX to left, and added pointTo actions
 
+control run:
+ - beta 0.003
+ - self-play settings with previous self-play settings divided by 2
+ - balanced reward
+
+non-control run:
+ - beta 0.003
+ - self-play settings with save_steps increased to 100000 (0.1M), window to 30 -> sigma = 0.5
+ - added time step reward (can't punish out of bound..)
+
 from self-play, rerun curriculum_one:
 - modify reward function. 
 - use a more progressive curriculum

@@ -5207,7 +5207,7 @@ MonoBehaviour:
   MaxStep: 20000
   gameController: {fileID: 0}
   observer: {fileID: 0}
-  timeStepReward: 0
+  timeStepReward: 1
   oppTipClosenessReward: -1
   selfTipClosenessReward: 1
 --- !u!114 &1807238688123693627
