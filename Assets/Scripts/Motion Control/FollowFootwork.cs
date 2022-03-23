@@ -306,6 +306,13 @@ public class FollowFootwork : MonoBehaviour
             transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
             while (!_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
             {
+                if (_animator.GetAnimatorTransitionInfo(0).IsName(exitTransitionName) 
+                    || _animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde")  // idk, maybe the state machine transition too fast?
+                   )
+                {
+                    _inCor = false;
+                    yield break;
+                }
                 if (debug) Debug.Log($"[{logIdenfitier}] waiting to enter transition {transitionName}");
                 yield return new WaitForFixedUpdate();
             }
@@ -314,6 +321,14 @@ public class FollowFootwork : MonoBehaviour
         transitionName = $"{stateNamePrefix}{stateName} -> {exit}";
         while (_animator.GetAnimatorTransitionInfo(0).IsName(transitionName))
         {
+            if (_animator.GetAnimatorTransitionInfo(0).IsName(exitTransitionName) 
+                || _animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde")  // idk, maybe the state machine transition too fast?
+               )
+            {
+                _inCor = false;
+                yield break;
+            }
+            
             if (debug) Debug.Log($"[{logIdenfitier}] waiting to end transition {transitionName}. step is {_animator.GetInteger(_animatorHashStep)}");
             yield return new WaitForFixedUpdate();
         }
