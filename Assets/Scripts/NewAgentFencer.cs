@@ -126,47 +126,55 @@ public class NewAgentFencer : Agent
                 discreteActionsOut[5] = 1;  // supp 0
             }
             
-            if (Input.GetKeyUp(KeyCode.Alpha3))
+            if (Input.GetKey(KeyCode.Alpha3))
             {
-                discreteActionsOut[6] = 0;      // rotate counterclockwise
+                discreteActionsOut[6] = 0;      // pointToTargets[8]
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha4))
+            else if (Input.GetKey(KeyCode.Alpha4))
             {
-                discreteActionsOut[6] = 1;      // rotate clockwise
+                discreteActionsOut[6] = 1;      // pointToTargets[6]
             }
             else if (Input.GetKey(KeyCode.Alpha5))
             {
-                discreteActionsOut[6] = 2;      // point to center
+                discreteActionsOut[6] = 2;      // pointToTargets[4]
             }
             else if (Input.GetKey(KeyCode.Alpha6))
             {
-                discreteActionsOut[6] = 3;      // world point to 0
+                discreteActionsOut[6] = 3;      // pointToTargets[2]
             }
             else if (Input.GetKey(KeyCode.Alpha7))
             {
-                discreteActionsOut[6] = 4;      // world point to 1
+                discreteActionsOut[6] = 4;      // pointToTargets[0]
             }
             else if (Input.GetKey(KeyCode.Alpha8))
             {
-                discreteActionsOut[6] = 5;      // world point to 2
+                discreteActionsOut[6] = 5;      // worldPointToTargets[0]
             }
             else if (Input.GetKey(KeyCode.Alpha9))
             {
-                discreteActionsOut[6] = 6;      // world point to 3
+                discreteActionsOut[6] = 6;      // worldPointToTargets[1]
             }
             else if (Input.GetKey(KeyCode.Alpha0))
             {
-                discreteActionsOut[6] = 7;      // world point to 4
+                discreteActionsOut[6] = 7;      // worldPointToTargets[2]
+            }
+            else if (Input.GetKey(KeyCode.O))
+            {
+                discreteActionsOut[6] = 8;      // worldPointToTargets[3]
+            }
+            else if (Input.GetKey(KeyCode.I))
+            {
+                discreteActionsOut[6] = 9;      // worldPointToTargets[4]
             }
             else
             {
-                discreteActionsOut[6] = 2;      // point to center
+                discreteActionsOut[6] = 4;      // pointToTargets[0]
             }
         }
         else
         {
             discreteActionsOut[5] = 1;  // supp 0
-            discreteActionsOut[6] = 2;  // point to center
+            discreteActionsOut[6] = 4;  // point to center
         }
 
         if (Input.GetKeyUp(KeyCode.UpArrow))
@@ -222,14 +230,14 @@ public class NewAgentFencer : Agent
             discreteActionsOut[3] = 0;
             discreteActionsOut[4] = 1;
             discreteActionsOut[5] = 1;
-            discreteActionsOut[6] = 2;
+            discreteActionsOut[6] = 4;
             discreteActionsOut[7] = 3;
         }
 
         if (!_bladeworkController.CanRotateWrist())
         {
             discreteActionsOut[5] = 1;
-            discreteActionsOut[6] = 2;
+            discreteActionsOut[6] = 4;
         }
         if (!_bladeworkController.CanTranslateWrist())
         {
@@ -257,10 +265,16 @@ public class NewAgentFencer : Agent
         actionMask.SetActionEnabled(5, 2, false);
             
         // depends on how many worldPointToTargets are there
+        actionMask.SetActionEnabled(6, 0, false);
         actionMask.SetActionEnabled(6, 1, false);
         actionMask.SetActionEnabled(6, 2, false);
         actionMask.SetActionEnabled(6, 3, false);
-        actionMask.SetActionEnabled(6, 4, false);
+        // actionMask.SetActionEnabled(6, 4, false);
+        actionMask.SetActionEnabled(6, 5, false);
+        actionMask.SetActionEnabled(6, 6, false);
+        actionMask.SetActionEnabled(6, 7, false);
+        actionMask.SetActionEnabled(6, 8, false);
+        actionMask.SetActionEnabled(6, 9, false);
     }
 
     private static void DisableWristTranslation(IDiscreteActionMask actionMask)
@@ -335,7 +349,7 @@ public class NewAgentFencer : Agent
         _bladeworkController.DoWristTranslation(
             discreteActions[0], discreteActions[1] - 1, discreteActions[2] - 1, 
             discreteActions[3] == 1, discreteActions[4] - 1);
-        _bladeworkController.DoWristRotation(discreteActions[5] - 1, discreteActions[6] - 2);
+        _bladeworkController.DoWristRotation(discreteActions[5] - 1, discreteActions[6] - 4);
         
         if (discreteActions[7] - 3 != 0)
         {

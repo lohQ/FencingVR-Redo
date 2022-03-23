@@ -158,25 +158,34 @@ public class BladeworkController : MonoBehaviour
 
         if (pointToIndex > 0)
         {
+            // got 5
             _handController.externalPointToTarget.position = worldPointToTargets[pointToIndex - 1].position;
         }
         else
         {
-            if (pointToIndex == 0)
-            {
-                // idle (point to center)
-                _handController.externalPointToTarget.position = _handController.pointToTargets[0].position;
-            } 
-            else if (pointToIndex == -1)
-            {
-                StartCoroutine(RotateWrist(true));
-                _inRotCor = true;
-            }
-            else if (pointToIndex == -2)
-            {
-                StartCoroutine(RotateWrist(false));
-                _inRotCor = true;
-            }
+            // got 5
+            // 0 * 2 = 0
+            // 1 * 2 = 2
+            // 2 * 2 = 4
+            // 3 * 2 = 6
+            // 4 * 2 = 8
+            _handController.externalPointToTarget.position = _handController.pointToTargets[(-pointToIndex) * 2].position;
+
+            // if (pointToIndex == 0)
+            // {
+            //     // idle (point to center)
+            //     _handController.externalPointToTarget.position = _handController.pointToTargets[0].position;
+            // }
+            // else if (pointToIndex == -1)
+            // {
+            //     StartCoroutine(RotateWrist(true));
+            //     _inRotCor = true;
+            // }
+            // else if (pointToIndex == -2)
+            // {
+            //     StartCoroutine(RotateWrist(false));
+            //     _inRotCor = true;
+            // }
         }
     }
 

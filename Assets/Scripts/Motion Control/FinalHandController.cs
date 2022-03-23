@@ -383,13 +383,19 @@ public class FinalHandController : MonoBehaviour
         // is the lower half-circle of elbow
         
         var shoulderToMoveTarget = moveTarget.position - shoulder.position;
-        // var upDir = Vector3.Cross(shoulderToMoveTarget.normalized, transform.right);
-        var hintOffset = (x * transform.right - Vector3.up).normalized * ikHintRadius;
+        var xDir = Vector3.Cross(shoulderToMoveTarget.normalized, Vector3.up);
+        if (x > 0)
+        {
+            xDir *= 0.4f;   // coz is right arm, shouldn't be able to twist left that much
+        }
+        var hintOffset = (x * xDir - Vector3.up).normalized * ikHintRadius;
         var hintRootPos = shoulder.position + shoulderToMoveTarget / 4;
+        Debug.DrawRay(hintRootPos, xDir * 10, Color.red);
+        Debug.DrawRay(hintRootPos, hintOffset, Color.red);
         var newHintPosition = hintRootPos + hintOffset;
 
         newHintPosition = Vector3.MoveTowards(handIkHint.position, newHintPosition, ikHintVelocity * Time.fixedDeltaTime);
-        Debug.DrawLine(handIkHint.position, newHintPosition, Color.green, 0.1f);
+        Debug.DrawLine(handIkHint.position, newHintPosition, Color.green, 0.5f);
         
         handIkHint.position = newHintPosition;
     }

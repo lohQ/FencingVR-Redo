@@ -5,7 +5,7 @@ behaviors:
       batch_size: 512
       buffer_size: 10240
       learning_rate: 0.0003
-      beta: 0.005
+      beta: 0.001
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 3
@@ -29,19 +29,20 @@ behaviors:
     time_horizon: 1024
     summary_freq: 6000
     self_play:
-      save_steps: 15000
-      team_change: 75000
-      swap_steps: 15000
-      window: 10
+      save_steps: 60000
+      team_change: 240000
+      swap_steps: 24000
+      window: 20
       play_against_latest_model_ratio: 0.5
       initial_elo: 1200.0
+
   DefensiveFencerBehavior:
     trainer_type: ppo
     hyperparameters:
       batch_size: 512
       buffer_size: 10240
       learning_rate: 0.0003
-      beta: 0.005
+      beta: 0.001
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 3

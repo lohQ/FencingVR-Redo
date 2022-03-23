@@ -47,7 +47,8 @@ public class TrainingEnv : NewGameController
     public Material outOfBoundColor;
 
     public float startWaitForTime;
-    
+
+    private Observer _observer;
     private int _startCount;
     private bool _inGame;
     private bool _outOfBound;
@@ -64,11 +65,11 @@ public class TrainingEnv : NewGameController
         fencerOne.agent.SetFencerNum(fencerOne.color);
         fencerTwo.agent.SetFencerNum(fencerTwo.color);
 
-        var observer = GetComponent<Observer>();
-        observer.colorOne = fencerOne.color;
-        observer.colorTwo = fencerTwo.color;
-        observer.raycastTransformOne = fencerOne.epeeTipRaycastTransform;
-        observer.raycastTransformTwo = fencerTwo.epeeTipRaycastTransform;
+        _observer = GetComponent<Observer>();
+        _observer.colorOne = fencerOne.color;
+        _observer.colorTwo = fencerTwo.color;
+        _observer.raycastTransformOne = fencerOne.epeeTipRaycastTransform;
+        _observer.raycastTransformTwo = fencerTwo.epeeTipRaycastTransform;
 
         _outOfBound = false;
     }

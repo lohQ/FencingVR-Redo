@@ -5097,7 +5097,7 @@ MonoBehaviour:
   angularVelocity: 360
   recheckPerDegrees: 3
   maxRotationError: 3
-  velocity: 60
+  velocity: 40
   maxTranslationError: 5
   moveTargetDistance: 52
   moveTargetDistanceOffset: {x: -5, y: -30, z: 20}
@@ -5154,10 +5154,10 @@ MonoBehaviour:
   stateNamePrefix: Base Layer.Step.
   entry: Entry Point
   exit: Exit
+  debug: 0
   footworkDisplay: {fileID: 4477703765910431305}
   enabledColor: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
   disabledColor: {fileID: 2100000, guid: 07aa6dc1c00684bad9ee285b1d3db2d3, type: 2}
-  debug: 0
   logIdenfitier: T0F0
 --- !u!114 &1807238688123693624
 MonoBehaviour:
@@ -5176,17 +5176,17 @@ MonoBehaviour:
     NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 0200000003000000030000000200000003000000030000000800000008000000
-    VectorActionSize: 0200000003000000030000000200000003000000030000000800000008000000
+      BranchSizes: 0200000003000000030000000200000003000000030000000a00000008000000
+    VectorActionSize: 0200000003000000030000000200000003000000030000000a00000008000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: OffensiveFencerBehavior
+  m_BehaviorName: DefensiveFencerBehavior
   TeamId: 0
-  m_UseChildSensors: 0
+  m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
 --- !u!114 &1807238688123693625

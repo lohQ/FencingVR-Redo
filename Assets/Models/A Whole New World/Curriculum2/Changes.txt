@@ -19,10 +19,31 @@ rerun self-play:
 - don't revert beta and time_horizon (so don't have to compare hyperparameters)
 - revert reward function. 
 
-rerun self-play 2:
+rerun self-play 2 [setup incorrect & halted]
 - increased beta from 0.001 to 0.003 (converged too quickly?)
-- decrease MaxStep by a factor of 4 so the small rewards will become more significant, made them more desirable. 
+- decrease MaxStep by a factor of 4 + increased weight of small reward by 2 => small rewards become more significant & more desirable. 
 - increase save_steps and window
+    - from - 
+    self_play:
+      save_steps: 15000
+      team_change: 75000
+      swap_steps: 15000
+      window: 10
+      play_against_latest_model_ratio: 0.5
+      initial_elo: 1200.0
+    - to -
+    self_play:
+      save_steps: 60000     // more style as there's a longer training duration in between
+      team_change: 240000   // according to ML agents docs, 4 * save_steps
+      swap_steps: 24000     // according to ML agent docs, team_change / swap_num
+      window: 20            // save more snapshots
+      play_against_latest_model_ratio: 0.5
+      initial_elo: 1200.0
+
+rerun self-play 3:
+ - decreased beta back to 0.001
+ - same self-play settings as self-play 2
+ - reduced hintX to left, and added pointTo actions
 
 from self-play, rerun curriculum_one:
 - modify reward function. 
