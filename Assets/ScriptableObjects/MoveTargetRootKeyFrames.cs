@@ -10,15 +10,6 @@ public class MoveTargetRootKeyFrames : ScriptableObject
     private List<Vector3> _translationData;
     private List<Quaternion> _rotationData;
 
-    public int SavedFrameCount
-    {
-        get => _translationData.Count;
-        set
-        {
-            
-        }
-    }
-    
     public List<Vector3> cloneTranslationData;
     public List<Quaternion> cloneRotationData;
 

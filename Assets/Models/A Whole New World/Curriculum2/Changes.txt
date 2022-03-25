@@ -80,6 +80,11 @@ half-sigma-tenth-latest-curriculum-run:
 - stuck in Phase1 coz can't get enough reward. 
 - 
 
+- updated some values in FinalHandController (suppination min/max, move target z offset)
+- run self-play without curriculum with 30000 save_steps and 15 window and 0.5 against latest model, timestep reward 1
+- then run self-play without curriculum with 60000 save_steps and 30 window and 0.2 against latest model, timestep reward 1
+- then run self-play with curriculum (time penalty reduced to -0.5, lock suppination at the start)
+
 from self-play, rerun curriculum_one:
 - modify reward function. 
 - use a more progressive curriculum

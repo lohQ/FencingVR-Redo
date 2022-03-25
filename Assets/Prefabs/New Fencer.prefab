@@ -5090,8 +5090,8 @@ MonoBehaviour:
   externalPointToTarget: {fileID: 1807238686463205053}
   epeeTarget: {fileID: 1807238687746706333}
   handIkHint: {fileID: 4357314031421667140}
-  suppinationMax: 30
-  suppinationMin: -35
+  suppinationMax: 35
+  suppinationMin: -25
   rotationRadius: 40
   maxIteration: 15
   angularVelocity: 360
@@ -5100,7 +5100,7 @@ MonoBehaviour:
   velocity: 40
   maxTranslationError: 5
   moveTargetDistance: 52
-  moveTargetDistanceOffset: {x: -5, y: -30, z: 20}
+  moveTargetDistanceOffset: {x: -5, y: -30, z: 25}
   ikHintRadius: 40
   ikHintVelocity: 50
   debug: 0
@@ -5184,7 +5184,7 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: CurriculumSPFencerBehavior
+  m_BehaviorName: SPFencerBehavior
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -5204,7 +5204,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 20000
+  MaxStep: 30000
   gameController: {fileID: 0}
   observer: {fileID: 0}
   timeStepReward: 1

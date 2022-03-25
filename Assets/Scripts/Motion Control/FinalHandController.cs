@@ -390,12 +390,12 @@ public class FinalHandController : MonoBehaviour
         }
         var hintOffset = (x * xDir - Vector3.up).normalized * ikHintRadius;
         var hintRootPos = shoulder.position + shoulderToMoveTarget / 4;
-        Debug.DrawRay(hintRootPos, xDir * 10, Color.red);
-        Debug.DrawRay(hintRootPos, hintOffset, Color.red);
+        // Debug.DrawRay(hintRootPos, xDir * 10, Color.red);
+        // Debug.DrawRay(hintRootPos, hintOffset, Color.red);
         var newHintPosition = hintRootPos + hintOffset;
 
         newHintPosition = Vector3.MoveTowards(handIkHint.position, newHintPosition, ikHintVelocity * Time.fixedDeltaTime);
-        Debug.DrawLine(handIkHint.position, newHintPosition, Color.green, 0.5f);
+        Debug.DrawLine(handIkHint.position, newHintPosition, Color.yellow, 10f);
         
         handIkHint.position = newHintPosition;
     }
@@ -539,7 +539,21 @@ public class FinalHandController : MonoBehaviour
             Gizmos.DrawWireSphere(pt.position, 2f);
         }
         
-        Gizmos.DrawWireCube(moveTarget.position, Vector3.one * 3);
+        // Gizmos.DrawWireCube(moveTarget.position, Vector3.one * 3);
+
+        // for (int i = 0; i < 2; i++)
+        // {
+        //     for (int j = -1; j < 2; j++)
+        //     {
+        //         for (int k = -1; k < 2; k++)
+        //         {
+        //             for (int l = 0; l < 2; l++)
+        //             {
+        //                 Gizmos.DrawWireCube(GetMoveToTargetPosition(i, j, k, l == 1), Vector3.one * 3);
+        //             }
+        //         }
+        //     }
+        // }
     }
 
 }
