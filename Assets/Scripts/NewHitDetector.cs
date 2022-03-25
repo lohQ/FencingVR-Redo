@@ -54,8 +54,8 @@ public class NewHitDetector : MonoBehaviour
                 && (contact.otherCollider.gameObject.layer == _otherBodyLayer
                     || contact.otherCollider.gameObject.layer == _otherWeaponLayer))
             {
-                var hitAngle = Vector3.Angle(transform.forward, contact.normal);
-                if (hitAngle < hitAngleThreshold)
+                var hitAngle = Vector3.SignedAngle(transform.forward, contact.normal, transform.right);
+                if (hitAngle < hitAngleThreshold && hitAngle > -hitAngleThreshold)
                 {
                     _gameController.RegisterHit(_fencerColor);
                 }

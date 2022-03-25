@@ -50,10 +50,35 @@ control run:
  - self-play settings with previous self-play settings divided by 2
  - balanced reward
 
-non-control run:
+half-sigma run:
  - beta 0.003
  - self-play settings with save_steps increased to 100000 (0.1M), window to 30 -> sigma = 0.5
  - added time step reward (can't punish out of bound..)
+
+half-sigma-tenth-latest-model run:
+ - beta 0.003
+ - self-play settings with save_steps increased to 100000 (0.1M), window to 30 -> sigma = 0.5 + latest_model_ration to 0.1
+ - added time step reward (can't punish out of bound..)
+
+half-sigma-tenth-latest-model-rerun:
+ - fixed observation normalization
+ - added velocity observation
+ - increased raycast reward threshold from 50 to 70. 
+
+half-sigma-tenth-latest-curriculum-run:
+ - purpose: whacking all the things together in an attempt to make it work
+ - with velocity observation
+// - remove pointTo action
+ - fix reward function
+ - have curriculum changing: footwork_enabled, start_point_x_rand_coef, start_point_z_rand_coef, tip_raycast_reward_threshold.
+ - Phase1: footwork disabled, start_point_x_rand_coef = start_point_z_rand_coef = 0, tip_raycast_reward_threshold = 100, timestep_reward = -1.0
+ - Phase2: footwork disabled, start_point_x_rand_coef = start_point_z_rand_coef = 0.5, tip_raycast_reward_threshold = 70, timestep_reward = -1.0
+ - Phase3: footwork enabled, start_point_x_rand_coef = start_point_z_rand_coef = 0.1, tip_raycast_reward_threshold = 70, timestep_reward = 1.0
+ - Phase3Half: footwork enabled, start_point_x_rand_coef = start_point_z_rand_coef = 0.1, tip_raycast_reward_threshold = 50, timestep_reward = 1.0
+ - PhaseFinal: footwork enabled, start_point_x_rand_coef = start_point_z_rand_coef = 1.0, tip_raycast_reward_threshold = 30, timestep_reward = 1.0
+
+- stuck in Phase1 coz can't get enough reward. 
+- 
 
 from self-play, rerun curriculum_one:
 - modify reward function. 

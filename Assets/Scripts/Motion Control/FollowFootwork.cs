@@ -134,8 +134,8 @@ public class FollowFootwork : MonoBehaviour
         var footworkType = FootworkTypeFromStepValue(step);
 
         var keyFrameSO = _footworkKeyFrameDict[footworkType];
-        keyFrameSO.translationData = new List<Vector3>();
-        keyFrameSO.rotationData = new List<Quaternion>();
+        var newTranslationData = new List<Vector3>();
+        var newRotationData = new List<Quaternion>();
 
         var startMoveTargetRootPos = _moveTargetRoot.position;
         var startMoveTargetRootRot = _moveTargetRoot.rotation;
@@ -165,20 +165,21 @@ public class FollowFootwork : MonoBehaviour
             || curTransition.IsName(exitTransitionName) 
             )
         {
-            keyFrameSO.translationData.Add(_moveTargetRoot.position - startMoveTargetRootPos);
-            keyFrameSO.rotationData.Add(Quaternion.Inverse(startMoveTargetRootRot) * _moveTargetRoot.rotation);
+            newTranslationData.Add(_moveTargetRoot.position - startMoveTargetRootPos);
+            newRotationData.Add(Quaternion.Inverse(startMoveTargetRootRot) * _moveTargetRoot.rotation);
             yield return new WaitForFixedUpdate();
             curTransition = _animator.GetAnimatorTransitionInfo(0);
             curState = _animator.GetCurrentAnimatorStateInfo(0);
         }
+        
+        keyFrameSO.WriteTranslationData(newTranslationData);
+        keyFrameSO.WriteRotationData(newRotationData);
 
         _animator.SetInteger(_animatorHashStep, 0);
         while (!_animator.GetCurrentAnimatorStateInfo(0).IsName("En Garde"))
         {
             yield return new WaitForFixedUpdate();
         }
-        
-        Debug.Log($"{stateName} has {keyFrameSO.translationData.Count} keyframes");
     }
     
     private IEnumerator FollowKeyFrames(FootworkType footworkType)
@@ -186,8 +187,8 @@ public class FollowFootwork : MonoBehaviour
         // operations on epeeTarget should be increment and not assignment so they can stack on top of one another!
         var startRootPos = _moveTargetRoot.position;
         var moveTargetFromRoot = moveTarget.position - startRootPos;
-        var translationData = _footworkKeyFrameDict[footworkType].translationData;
-        var rotationData = _footworkKeyFrameDict[footworkType].rotationData;
+        var translationData = _footworkKeyFrameDict[footworkType].cloneTranslationData;
+        var rotationData = _footworkKeyFrameDict[footworkType].cloneRotationData;
 
         var prevTargetPos = epeeTarget.position;
         for (int i = keyFrameOffset; i < translationData.Count - keyFrameOffset; i++)

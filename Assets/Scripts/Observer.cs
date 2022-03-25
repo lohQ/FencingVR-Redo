@@ -50,10 +50,15 @@ public class Observer : MonoBehaviour
     private FinalHandController _handControllerOne;
     private FinalHandController _handControllerTwo;
 
+    private Rigidbody _epeeOneRb;
+    private Rigidbody _epeeTwoRb;
+
     private void Start()
     {
         _handControllerOne = fencerOne.GetComponent<FinalHandController>();
         _handControllerTwo = fencerTwo.GetComponent<FinalHandController>();
+        _epeeOneRb = epeeOne.GetComponent<Rigidbody>();
+        _epeeTwoRb = epeeTwo.GetComponent<Rigidbody>();
     }
 
     public void CollectObservations(VectorSensor sensor, BufferSensorComponent bufferSensor, int fencerNum)
@@ -64,7 +69,9 @@ public class Observer : MonoBehaviour
         List<Transform> targetOfSelf;
         Vector3 oppEpeeTipPos;
         Vector3 selfEpeePos;
+        Vector3 selfEpeeVel;
         Vector3 oppEpeePos;
+        Vector3 oppEpeeVel;
         NewHitDetector hitDetector;
         Transform selfEpee;
         float oppTipRaycastHitDistance;
@@ -86,7 +93,9 @@ public class Observer : MonoBehaviour
             targetOfSelf = targetAreasOfOne;
             oppEpeeTipPos = epeeTipTwo.position;
             selfEpeePos = epeeOne.position;
+            selfEpeeVel = _epeeOneRb.velocity;
             oppEpeePos = epeeTwo.position;
+            oppEpeeVel = _epeeTwoRb.velocity;
             hitDetector = hitDetectorOne;
             selfEpee = epeeOne;
             oppTipRaycastHitDistance = _tipRaycastHitDistanceTwo;
@@ -100,7 +109,9 @@ public class Observer : MonoBehaviour
             targetOfSelf = targetAreasOfTwo;
             oppEpeeTipPos = epeeTipOne.position;
             selfEpeePos = epeeTwo.position;
+            selfEpeeVel = _epeeTwoRb.velocity;
             oppEpeePos = epeeOne.position;
+            oppEpeeVel = _epeeOneRb.velocity;
             hitDetector = hitDetectorTwo;
             selfEpee = epeeTwo;
             oppTipRaycastHitDistance = _tipRaycastHitDistanceOne;
@@ -108,7 +119,6 @@ public class Observer : MonoBehaviour
         }
 
         var wristFromFencer = root.InverseTransformPoint(selfWrist.position);
-        normalizer.SaveMinMax(wristFromFencer, 0);
         sensor.AddObservation(normalizer.GetNormalized(wristFromFencer, 0));
 
         var normalizedWristRot = selfWrist.localRotation.eulerAngles / 180.0f - Vector3.one;  // [-1,1]
@@ -117,36 +127,25 @@ public class Observer : MonoBehaviour
         for (int i = 0; i < targetOfSelf.Count; i++)
         {
             var targetsFromFencer = root.InverseTransformPoint(targetOfSelf[i].position);
-            normalizer.SaveMinMax(targetsFromFencer, 1);
             sensor.AddObservation(normalizer.GetNormalized(targetsFromFencer, 1));
         }
 
         var selfFromTip = root.InverseTransformPoint(oppEpeeTipPos);
-        normalizer.SaveMinMax(selfFromTip, 1);
         sensor.AddObservation(normalizer.GetNormalized(selfFromTip, 1));
 
-        // for (int i = 0; i < targetOfOpp.Count; i++)
-        // {
-        //     var targetFromTip = root.InverseTransformVector(oppEpeeTipPos - targetOfOpp[i].position);
-        //     normalizer.SaveMinMax(targetFromTip, 1);
-        //     sensor.AddObservation(normalizer.GetNormalized(targetFromTip, 1));
-        // }
-
         var selfEpeeFromFencer = root.InverseTransformPoint(selfEpeePos);
-        normalizer.SaveMinMax(selfEpeeFromFencer, 2);
         sensor.AddObservation(normalizer.GetNormalized(selfEpeeFromFencer, 2));
-
         var epeeTipFromEpee = root.InverseTransformVector(selfEpeeTipPos - selfEpeePos);
-        normalizer.SaveMinMax(epeeTipFromEpee, 3);
         sensor.AddObservation(normalizer.GetNormalized(epeeTipFromEpee, 3));
+        var selfEpeeVelocity = root.InverseTransformVector(selfEpeeVel);
+        sensor.AddObservation(normalizer.GetNormalized(selfEpeeVelocity, 7));
 
         var oppEpeeFromFencer = root.InverseTransformPoint(oppEpeePos);
-        normalizer.SaveMinMax(oppEpeeFromFencer, 4);
         sensor.AddObservation(normalizer.GetNormalized(oppEpeeFromFencer,4));
-
         epeeTipFromEpee = root.InverseTransformVector(oppEpeeTipPos - oppEpeePos);
-        normalizer.SaveMinMax(epeeTipFromEpee, 3);
         sensor.AddObservation(normalizer.GetNormalized(epeeTipFromEpee, 3));
+        var oppEpeeVelocity = root.InverseTransformVector(oppEpeeVel);
+        sensor.AddObservation(normalizer.GetNormalized(oppEpeeVelocity, 7));
 
         if (oppTipRaycastHitDistance < 0)
         {
@@ -180,7 +179,7 @@ public class Observer : MonoBehaviour
 
             var normalizedContactPoint = normalizer.GetNormalizedCapped(transformedContactPoint, 5);
             var normalizedImpulse = normalizer.GetNormalizedCapped(transformedImpulse, 6);
-
+            
             bufferSensor.AppendObservation(new []
             {
                 normalizedContactPoint.x, normalizedContactPoint.y, normalizedContactPoint.z,

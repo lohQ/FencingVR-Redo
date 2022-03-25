@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -20,6 +21,7 @@ public class TrainingEnv : NewGameController
         public List<Transform> selfTargetAreas;
         public Transform startPoint;
         public Transform epeeTipRaycastTransform;
+        public Transform nearerStartPoint;
 
         // public float fencerStartZVariation;
         // public float fencerStartXVariation;
@@ -47,6 +49,8 @@ public class TrainingEnv : NewGameController
     public Material outOfBoundColor;
 
     public float startWaitForTime;
+    public float xRand;
+    public float zRand;
 
     private Observer _observer;
     private int _startCount;
@@ -80,19 +84,33 @@ public class TrainingEnv : NewGameController
         _startCount += 1;
         if (_startCount >= 2)
         {
-            var positionDiff = fencerOne.startPoint.position - fencerOne.fencerTransform.position;
+            var xRandCoef = Academy.Instance.EnvironmentParameters.GetWithDefault("start_point_x_rand_coef", 0);
+            var zRandCoef = Academy.Instance.EnvironmentParameters.GetWithDefault("start_point_z_rand_coef", 0);
+            var footworkEnabled = Academy.Instance.EnvironmentParameters.GetWithDefault("footwork_enabled", 0) > 0;
+            
+            var rand = UnityEngine.Random.insideUnitSphere;
+            rand.x *= xRand * xRandCoef;
+            rand.z *= zRand * zRandCoef;
+            var startPoint = footworkEnabled ? fencerOne.startPoint.position : fencerOne.nearerStartPoint.position;
+            var positionDiff = startPoint - fencerOne.fencerTransform.position + rand;
             var rotationDiff = Quaternion.Inverse(fencerOne.fencerTransform.rotation) * fencerOne.startPoint.rotation;
             fencerOne.fencerTransform.position += positionDiff;
             fencerOne.epeeTransform.position += rotationDiff * positionDiff;
             fencerOne.epeeTargetTransform.position += rotationDiff * positionDiff;
             fencerOne.fencerTransform.rotation = fencerOne.startPoint.rotation;
 
-            positionDiff = fencerTwo.startPoint.position - fencerTwo.fencerTransform.position;
+            rand = UnityEngine.Random.insideUnitSphere;
+            rand.x *= xRand * xRandCoef;
+            rand.z *= zRand * zRandCoef;
+            startPoint = footworkEnabled ? fencerTwo.startPoint.position : fencerTwo.nearerStartPoint.position;
+            positionDiff = startPoint - fencerTwo.fencerTransform.position + rand;
             rotationDiff = Quaternion.Inverse(fencerTwo.fencerTransform.rotation) * fencerTwo.startPoint.rotation;
             fencerTwo.fencerTransform.position += positionDiff;
             fencerTwo.epeeTransform.position += rotationDiff * positionDiff;
             fencerTwo.epeeTargetTransform.position += rotationDiff * positionDiff;
             fencerTwo.fencerTransform.rotation = fencerTwo.startPoint.rotation;
+
+            Academy.Instance.StatsRecorder.Add("Environment/WinLoseCount", 1, StatAggregationMethod.Sum);
 
             StartCoroutine(StartCountDown());
             _startCount = 0;
@@ -117,9 +135,9 @@ public class TrainingEnv : NewGameController
 
     public override void EndGame()
     {
-        _inGame = false;
         fencerOne.agent.EndEpisode();
         fencerTwo.agent.EndEpisode();
+        _inGame = false;
     }
 
     public bool debug;
@@ -164,12 +182,14 @@ public class TrainingEnv : NewGameController
         {
             fencerOne.agent.SetReward(0);
             fencerTwo.agent.SetReward(0);
+            Academy.Instance.StatsRecorder.Add("Environment/OutOfBoundCount", 1, StatAggregationMethod.Sum);
             EndGame();
             _outOfBound = false;
             floorMesh.material = outOfBoundColor;
         }
     }
 
+    
     public override void RegisterHit(FencerColor fencerColor)
     {
         if (!_inGame) return;
@@ -186,9 +206,10 @@ public class TrainingEnv : NewGameController
             fencerOne.agent.SetReward(-1);
             floorMesh.material = fencerTwoColor;
         }
+        Academy.Instance.StatsRecorder.Add("Environment/WinLoseCount", 1, StatAggregationMethod.Sum);
 
-        _inGame = false;
         fencerOne.agent.EndEpisode();
         fencerTwo.agent.EndEpisode();
+        _inGame = false;
     }
 }

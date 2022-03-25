@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
@@ -55,7 +56,8 @@ public class NewAgentFencer : Agent
 
     public override void OnEpisodeBegin()
     {
-        Debug.Log($"[{transform.parent.name}] OnEpisodeBegin, CompletedEpisodes: {CompletedEpisodes}");
+        timeStepReward = _resetParams.GetWithDefault("timestep_reward", timeStepReward);
+        _distanceThreshold = _resetParams.GetWithDefault("tip_raycast_reward_threshold", _distanceThreshold);
         _followFootwork.ResetCoroutines();
         _bladeworkController.ResetCoroutines();
         gameController.StartGame();
@@ -66,10 +68,16 @@ public class NewAgentFencer : Agent
         observer.CollectObservations(sensor, _bufferSensor, _fencerNum);
 
         var selfTipToOppTarget = observer.SelfTipRaycastHitDistance(_fencerNum);
-        AddReward((1 - (selfTipToOppTarget / _distanceThreshold)) * selfTipClosenessReward / MaxStep);
+        if (selfTipToOppTarget > 0)
+        {
+            AddReward((1 - (selfTipToOppTarget / _distanceThreshold)) * selfTipClosenessReward / MaxStep);
+        }
         
         var oppTipToSelfTarget = observer.OppTipRaycastHitDistance(_fencerNum);
-        AddReward((1 - (oppTipToSelfTarget / _distanceThreshold)) * oppTipClosenessReward / MaxStep);
+        if (selfTipToOppTarget > 0)
+        {
+            AddReward((1 - (oppTipToSelfTarget / _distanceThreshold)) * oppTipClosenessReward / MaxStep);
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -309,6 +317,9 @@ public class NewAgentFencer : Agent
         if (!ReadyForFootwork())
         {
             DisableFootwork(actionMask);
+        } else if (_resetParams.GetWithDefault("footwork_enabled", 1) == 0)
+        {
+            DisableFootwork(actionMask);
         // } else if (_resetParams.GetWithDefault("lunge_enabled", 0) == 0)
         // {
         //     DisableLargeStep(actionMask);
@@ -325,9 +336,13 @@ public class NewAgentFencer : Agent
         
         if (discreteActions[7] - 3 != 0)
         {
-            _animator.SetInteger(_stepHash, discreteActions[7] - 3);
+            // double layer of check!!! 
+            if (_resetParams.GetWithDefault("footwork_enabled", 1) > 0)
+            {
+                _animator.SetInteger(_stepHash, discreteActions[7] - 3);
+            } 
         }
-
+        
         if (gameController.Started())
         {
             AddReward(timeStepReward / MaxStep);

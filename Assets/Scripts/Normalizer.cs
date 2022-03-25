@@ -17,11 +17,36 @@ public class Normalizer : MonoBehaviour
     public Vector3 maxOppEpeeFromFencer;
     public Vector3 minEpeeTipFromEpee;
     public Vector3 maxEpeeTipFromEpee;
+    public Vector3 minEpeeVelocity;
+    public Vector3 maxEpeeVelocity;
 
     public Vector3 minContactPoint;
     public Vector3 maxContactPoint;
     public Vector3 minImpulse;
     public Vector3 maxImpulse;
+
+    private void Start()
+    {
+        // minWristFromFencer = Vector3.positiveInfinity;
+        // maxWristFromFencer = Vector3.negativeInfinity;
+        //
+        // minTargetFromTip = Vector3.positiveInfinity;
+        // maxTargetFromTip = Vector3.negativeInfinity;
+        //
+        // minSelfEpeeFromFencer = Vector3.positiveInfinity;
+        // maxSelfEpeeFromFencer = Vector3.negativeInfinity;
+        // minOppEpeeFromFencer = Vector3.positiveInfinity;
+        // maxOppEpeeFromFencer = Vector3.negativeInfinity;
+        // minEpeeTipFromEpee = Vector3.positiveInfinity;
+        // maxEpeeTipFromEpee = Vector3.negativeInfinity;
+        // minEpeeVelocity = Vector3.positiveInfinity;
+        // maxEpeeVelocity = Vector3.negativeInfinity;
+        //
+        // minContactPoint = Vector3.positiveInfinity;
+        // minImpulse = Vector3.negativeInfinity;
+        // minImpulse = Vector3.positiveInfinity;
+        // maxImpulse = Vector3.negativeInfinity;
+    }
 
     public void SaveMinMax(Vector3 newVal, int index)
     {
@@ -61,6 +86,10 @@ public class Normalizer : MonoBehaviour
         {
             min = minImpulse;
             max = maxImpulse;
+        } else if (index == 7)
+        {
+            min = minEpeeVelocity;
+            max = maxEpeeVelocity;
         }
         else
         {
@@ -128,6 +157,10 @@ public class Normalizer : MonoBehaviour
         {
             minImpulse = min;
             maxImpulse = max;
+        } else if (index == 7)
+        {
+            minEpeeVelocity = min;
+            maxEpeeVelocity = max;
         }
     }
 
@@ -136,13 +169,13 @@ public class Normalizer : MonoBehaviour
         return (newVal - min) / (max - min);
     }
     
-    public float GetNormalizedCapped(float newVal, float min, float max)
+    private float GetNormalizedCapped(float newVal, float min, float max)
     {
         if (newVal < min)
         {
             return min;
         }
-
+        
         if (newVal > max)
         {
             return max;
@@ -153,6 +186,7 @@ public class Normalizer : MonoBehaviour
     
     public Vector3 GetNormalized(Vector3 newVal, int index)
     {
+        SaveMinMax(newVal, index);
         Vector3 min;
         Vector3 max;
         if (index == 0)
@@ -175,6 +209,10 @@ public class Normalizer : MonoBehaviour
         {
             min = minOppEpeeFromFencer;
             max = maxOppEpeeFromFencer;
+        } else if (index == 7)
+        {
+            min = minEpeeVelocity;
+            max = maxEpeeVelocity;
         } 
         else
         {

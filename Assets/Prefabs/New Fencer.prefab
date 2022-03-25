@@ -3424,8 +3424,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   followFootwork: {fileID: 1807238688123693622}
-  impulseThreshold: 1
-  hitAngleThreshold: 45
+  impulseThreshold: 5
+  hitAngleThreshold: 25
 --- !u!1 &1807238687393158507
 GameObject:
   m_ObjectHideFlags: 0
@@ -5104,7 +5104,7 @@ MonoBehaviour:
   ikHintRadius: 40
   ikHintVelocity: 50
   debug: 0
-  showEpeePath: 1
+  showEpeePath: 0
 --- !u!114 &1807238688123693623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5146,7 +5146,7 @@ MonoBehaviour:
     keyFrameData: {fileID: 11400000, guid: 0f46eb399c6ed422f8d055a8857a575c, type: 2}
   - footworkType: 0
     keyFrameData: {fileID: 11400000, guid: 8009a4bcaf2a44a8e9470f8254775c49, type: 2}
-  keyFrameOffset: 10
+  keyFrameOffset: 1
   lungeRigWeight: 0.05
   lungeCollisionRigWeight: 0.95
   rigWeightIncreaseRate: 4
@@ -5172,7 +5172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 37
+    VectorObservationSize: 43
     NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -5184,7 +5184,7 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: ControlFencerBehavior
+  m_BehaviorName: CurriculumSPFencerBehavior
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
