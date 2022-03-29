@@ -1,5 +1,0 @@
-Updated reward function:
-- stop fencers from stepping out of piste, removed the punishment part
-- add negative reward for being pointed at, removed the 'block & not pointed' reward
-
-Fixed EnterEnGarde weirdly not checking curState is "En Garde" issue.

@@ -1,9 +1,0 @@
-
-var tipDistanceFromOpp = ikTargetController.TipDistanceFromOpponent();
-if (tipDistanceFromOpp > 0)
-{
-    var reward = Math.Max(1 - tipDistanceFromOpp, 0) * Math.Max(1 - tipDistanceFromOpp, 0) * 0.01f;
-    AddReward(reward);
-}
-
-scaled up by 100

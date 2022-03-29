@@ -1,8 +1,0 @@
-- Allowed headIK
-- Added head downward raycast
-- Made hand IK speed continuous? yep
-- Phsyics time decreased from 0.01 to 0.0002 (100 per second to 500 per second)
-- Fixed fencer position
-- double the step count, decision requestor per 5 step
-- removed pointing reward/penalty
-- randomize position x

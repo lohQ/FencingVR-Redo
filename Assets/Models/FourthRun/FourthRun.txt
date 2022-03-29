@@ -1,3 +1,0 @@
-Changes:
- - Modified physics settings: increased MaxDepenetrationVelocity from 10 to 20, increased solverIteration from 6 to 8. 
- 

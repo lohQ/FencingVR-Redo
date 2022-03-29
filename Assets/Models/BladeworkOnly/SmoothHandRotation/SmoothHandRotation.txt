@@ -1,2 +1,0 @@
-Changes to Learning Env
-- Smooth hand rotation

@@ -31,6 +31,7 @@ public class FinalHandController : MonoBehaviour
     public float angularVelocity;
     public float recheckPerDegrees;
     public float maxRotationError;
+    public float maxSuppinationError = 0.01f;
     public float velocity;
     public float maxTranslationError;
     public float moveTargetDistance;
@@ -55,7 +56,6 @@ public class FinalHandController : MonoBehaviour
         _moving = false;
         _supIndex = 0;
         InitializeRotationRadius();
-        _enabled = true;
     }
 
     private void InitializeRotationRadius()
@@ -80,68 +80,38 @@ public class FinalHandController : MonoBehaviour
         pointToTargets[8].localPosition = (centerLocalPos + halfRightVector + halfUpVector).normalized * localMagnitude;
     }
     
-    private float GetNewSuppination(Quaternion newWristRotation)
+    private float GetSuppinationOfRotation(Quaternion wristRotation)
     {
         var neutralRotation = neutralAxes.rotation;
 
         var aligningRotation = Quaternion.FromToRotation(
-            newWristRotation * Vector3.forward, 
+            wristRotation * Vector3.forward, 
             neutralRotation * Vector3.forward);
-        var alignedNewRotation = aligningRotation * newWristRotation;
+        var alignedNewRotation = aligningRotation * wristRotation;
         var angle = Vector3.SignedAngle(
             neutralRotation * Vector3.right, 
             alignedNewRotation * Vector3.right, 
             neutralAxes.forward);
-
-        if (debug)
-        {
-            Debug.DrawRay(neutralAxes.position, neutralRotation * Vector3.right * 50, Color.red, 1f);
-            Debug.DrawRay(neutralAxes.position, alignedNewRotation * Vector3.right * 50, Color.magenta, 1f);
-        }
 
         return angle;
     }
 
     private Quaternion GetSuppinationRotation(float newSuppinationValue)
     {
-        var neutralRotation = neutralAxes.rotation;
-        var currentRotation = targetWristOnEpeeAxes.rotation;
+        var suppinationAngle = GetSuppinationOfRotation(targetWristOnEpeeAxes.rotation);
 
-        // align neutral axes on actual axes, get suppination angle
-        var aligningRotation = Quaternion.FromToRotation(
-            neutralRotation * Vector3.forward, 
-            currentRotation * Vector3.forward);
-        var alignedNeutralRotation = aligningRotation * neutralRotation;
-        var suppinationAngle = Vector3.SignedAngle(
-            alignedNeutralRotation * Vector3.right, 
-            currentRotation * Vector3.right, 
-            targetWristOnEpeeAxes.forward);
-        
-        if (newSuppinationValue - suppinationAngle < 0.01f && newSuppinationValue - suppinationAngle > -0.01f)
+        if (newSuppinationValue - suppinationAngle < maxSuppinationError 
+            && newSuppinationValue - suppinationAngle > -maxSuppinationError)
         {
             return Quaternion.identity;
         }
+
         // not sure why but apparantly it only rotates half of the angle now...
         // will result in some errors in final result but still acceptable
         var suppinationRotation = Quaternion.AngleAxis(
             (newSuppinationValue - suppinationAngle) * 2,
             targetWristOnEpeeAxes.forward);
         
-        if (debug)
-        {
-            var neutralAxesPos = neutralAxes.position;
-            Debug.DrawRay(neutralAxesPos, neutralRotation * Vector3.right * 50, Color.red);
-            Debug.DrawRay(neutralAxesPos, currentRotation * Vector3.right * 50, Color.red);
-            Debug.DrawRay(neutralAxesPos, alignedNeutralRotation * Vector3.right * 50, Color.magenta);
-            Debug.DrawRay(neutralAxesPos, suppinationRotation * currentRotation * Vector3.right * 50, Color.green);
-
-            // var newSuppinationAngle = Vector3.SignedAngle(
-            //     alignedNeutralRotation * Vector3.right, 
-            //     suppinationRotation * actualRotation * Vector3.right, 
-            //     wristOnEpeeAxes.forward);
-            // Debug.Log($"suppinationAngle: {suppinationAngle}, newSuppinationAngle: {newSuppinationAngle}");
-        }
-
         return suppinationRotation;
     }
     
@@ -171,25 +141,6 @@ public class FinalHandController : MonoBehaviour
         var pointToRotation = Quaternion.FromToRotation(
             suppinationRotation * targetWristOnEpeeAxes.rotation * Vector3.forward, 
             afterPointToRotation * Vector3.forward);
-
-        if (debug)
-        {
-            // wrist forward
-            Debug.DrawLine(wristPos, closestPointToEpeeTipFromZ, Color.blue, 5f);
-            // rotated epee tip -> wrist forward
-            Debug.DrawLine(closestPointToEpeeTipFromZ, wristPos + rotatedEpeeTipVector, Color.red, 5f);
-            // wrist -> new epee tip
-            Debug.DrawRay(wristPos, pointToRotation * rotatedEpeeTipVector, Color.green, 5f);
-            // target -> new wrist forward
-            Debug.DrawLine(targetPos, offsetTargetPos, Color.magenta, 5f);
-
-            debug = false;
-            // ideally shouldn't have too big difference in suppination...
-            var curSuppination = GetNewSuppination(suppinationRotation * targetWristOnEpeeAxes.rotation);
-            var newSuppination = GetNewSuppination(pointToRotation * suppinationRotation * targetWristOnEpeeAxes.rotation);
-            Debug.Log($"curSuppination: {curSuppination}, newSuppination: {newSuppination}");
-            debug = true;
-        }
 
         return pointToRotation;
     }
@@ -230,39 +181,23 @@ public class FinalHandController : MonoBehaviour
     {
         _rotating = true;
 
-        float suppination;
-        if (_supIndex == 1)
-        {
-            suppination = suppinationMax;
-        } 
-        else if (_supIndex == -1)
-        {
-            suppination = suppinationMin;
-        }
-        else
-        {
-            suppination = 0;
-        }
+        var suppination = _supIndex == 1 ? suppinationMax : _supIndex == -1 ? suppinationMin : 0;
 
+        // So can rotate to another target even still haven't managed to reach this one
         var iteration = 0;
-        var angle = 0f;
         do
         {
-            // So can rotate to another target even still haven't managed to reach this one
-            if (iteration == maxIteration) break;
-
             var supRot = GetSuppinationRotation(suppination);
             Quaternion lookRot = GetLookAtRotation(internalPointToTarget.position, supRot);
             var rotationToApply = lookRot * supRot;
 
-            rotationToApply.ToAngleAxis(out angle, out _);
-            _curRotationAngle = angle;      // later used to check if reached rotation target
-            if (angle < maxRotationError) break;
+            rotationToApply.ToAngleAxis(out _curRotationAngle, out _);
+            if (_curRotationAngle < maxRotationError) break;
 
             yield return StartCoroutine(ApplyWristRotation(rotationToApply));
             iteration += 1;
         } 
-        while (true);
+        while (iteration < maxIteration);
 
         _rotating = false;
     }
@@ -395,7 +330,7 @@ public class FinalHandController : MonoBehaviour
         var newHintPosition = hintRootPos + hintOffset;
 
         newHintPosition = Vector3.MoveTowards(handIkHint.position, newHintPosition, ikHintVelocity * Time.fixedDeltaTime);
-        Debug.DrawLine(handIkHint.position, newHintPosition, Color.yellow, 10f);
+        Debug.DrawLine(handIkHint.position, newHintPosition, Color.yellow, 0.5f);
         
         handIkHint.position = newHintPosition;
     }
@@ -416,7 +351,6 @@ public class FinalHandController : MonoBehaviour
 
         _moving = false;
         _rotating = false;
-        _enabled = true;
         SetMoveToTargetPosition(1, 0, 0, false);
         SetHintPosition(0);
         SetNextSuppination(0);
@@ -424,25 +358,7 @@ public class FinalHandController : MonoBehaviour
     }
 
     // ----- above is exposed to BladeworkController ----- //
-
     
-    
-    // ----- below is exposed to FollowFootwork ----- //
-    
-    private bool _enabled;
-    
-    public void DisableControl()
-    {
-        _enabled = false;
-    }
-
-    public void EnableControl()
-    {
-        _enabled = true;
-    }
-    
-    // ----- above is exposed to FollowFootwork ----- //
-
 
     private void CapEpeeTargetPos()
     {
@@ -457,64 +373,10 @@ public class FinalHandController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!_enabled) return;
-        
         SetWorldPointTo();
-        CapEpeeTargetPos();
-
-        # region direct input
-        // float suppination = 0f;
-        // if (Input.GetKey(KeyCode.Alpha2))
-        // {
-        //     suppination = suppinationMin;
-        // }
-        // else if (Input.GetKey(KeyCode.Alpha3))
-        // {
-        //     suppination = suppinationMax;
-        // }
-        //
-        // int pointToIndex = 0;
-        // if (Input.GetKey(KeyCode.Alpha4))
-        // {
-        //     pointToIndex = 1;
-        // }
-        // else if (Input.GetKey(KeyCode.Alpha5))
-        // {
-        //     pointToIndex = 2;
-        // }
-        // else if (Input.GetKey(KeyCode.Alpha6))
-        // {
-        //     pointToIndex = 3;
-        // }
-        // else if (Input.GetKey(KeyCode.Alpha7))
-        // {
-        //     pointToIndex = 4;
-        // }
+        CapEpeeTargetPos(); // to solve epee flying out of hand issue
         
-        // var moveToIndex = 0;
-        // if (Input.GetKey(KeyCode.Q))
-        // {
-        //     moveToIndex = 1;
-        // } 
-        // else if (Input.GetKey(KeyCode.W))
-        // {
-        //     moveToIndex = 2;
-        // }
-        // else if (Input.GetKey(KeyCode.E))
-        // {
-        //     moveToIndex = 3;
-        // }
-        // else if (Input.GetKey(KeyCode.R))
-        // {
-        //     moveToIndex = 4;
-        // }
-        // else if (Input.GetKey(KeyCode.T))
-        // {
-        //     moveToIndex = 5;
-        // }
-        # endregion
-
-        if (!_rotating)
+        if (!_rotating && !ReachedRotationTarget(maxRotationError))
         {
             StartCoroutine(RotateToTarget());
         }
@@ -541,7 +403,7 @@ public class FinalHandController : MonoBehaviour
         
         // Gizmos.DrawWireCube(moveTarget.position, Vector3.one * 3);
 
-        // for (int i = 0; i < 2; i++)
+        // for (int i = -1; i < 2; i++)
         // {
         //     for (int j = -1; j < 2; j++)
         //     {
