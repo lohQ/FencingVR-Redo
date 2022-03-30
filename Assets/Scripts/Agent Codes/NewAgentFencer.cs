@@ -17,11 +17,12 @@ public class NewAgentFencer : Agent
     public Observer observer;
     public int decisionPeriod;
 
-    // offensive fencer get punished every timestep, but get rewarded for tip's closeness to target
-    // defensive fencer get reward every timestep, but get punished for opponent's tip's closeness to self 
     public float timeStepReward;
     public float oppTipClosenessReward;
     public float selfTipClosenessReward;
+
+    public bool debug;
+    public string logIdentifier;
     
     private BladeworkController _bladeworkController;
     private Animator _animator;
@@ -33,7 +34,6 @@ public class NewAgentFencer : Agent
     private int _fencerNum;
     private float _distanceThreshold;
 
-    private StatsRecorder _statsRecorder;
     private int _frameElapsed;
 
 
@@ -42,11 +42,11 @@ public class NewAgentFencer : Agent
         _animator = GetComponentInChildren<Animator>();
         _bladeworkController = GetComponentInChildren<BladeworkController>();
         _followFootwork = GetComponentInChildren<FollowFootwork>();
+        _followFootwork.logIdentifier = logIdentifier;  // so on...
         _stepHash = Animator.StringToHash("step");
 
         _resetParams = Academy.Instance.EnvironmentParameters;
         _bufferSensor = GetComponent<BufferSensorComponent>();
-        _statsRecorder = Academy.Instance.StatsRecorder;
         _frameElapsed = 0;
 
         _distanceThreshold = observer.tipClosenessThreshold;
@@ -306,19 +306,7 @@ public class NewAgentFencer : Agent
         actionMask.SetActionEnabled(7, 6, false);
         actionMask.SetActionEnabled(7, 7, false);
     }
-
-    private static void DisableLargeStep(IDiscreteActionMask actionMask)
-    {
-        actionMask.SetActionEnabled(7, 0, false);
-        actionMask.SetActionEnabled(7, 6, false);
-        actionMask.SetActionEnabled(7, 7, false);
-    }
     
-    private static void DisablePullArmBack(IDiscreteActionMask actionMask)
-    {
-        actionMask.SetActionEnabled(0, 0, false);
-    }
-
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
         if (!gameController.Started())
@@ -361,7 +349,7 @@ public class NewAgentFencer : Agent
         
         if (discreteActions[7] - 3 != 0)
         {
-            // double layer of check!!! 
+            // double layer of check :) 
             if (_resetParams.GetWithDefault("footwork_enabled", 1) > 0)
             {
                 _animator.SetInteger(_stepHash, discreteActions[7] - 3);

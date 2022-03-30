@@ -38,11 +38,13 @@ public class FollowFootwork : MonoBehaviour
     public string entry = "Entry Point";
     public string exit = "Exit";
     
-    // debug
-    public bool debug;
     public MeshRenderer footworkDisplay;
     public Material enabledColor;
     public Material disabledColor;
+    
+    public bool debug;
+    [HideInInspector]
+    public string logIdentifier;
     
     private Transform _moveTargetRoot;
     private Animator _animator;
@@ -286,8 +288,6 @@ public class FollowFootwork : MonoBehaviour
         footworkDisplay.material = enabledColor;
     }
 
-    public string logIdentifier;
-    
     private void FixedUpdate()
     {
         if (_inCor) return;

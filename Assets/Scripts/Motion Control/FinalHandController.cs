@@ -351,6 +351,7 @@ public class FinalHandController : MonoBehaviour
 
         _moving = false;
         _rotating = false;
+
         SetMoveToTargetPosition(1, 0, 0, false);
         SetHintPosition(0);
         SetNextSuppination(0);
@@ -376,7 +377,7 @@ public class FinalHandController : MonoBehaviour
         SetWorldPointTo();
         CapEpeeTargetPos(); // to solve epee flying out of hand issue
         
-        if (!_rotating && !ReachedRotationTarget(maxRotationError))
+        if (!_rotating)
         {
             StartCoroutine(RotateToTarget());
         }

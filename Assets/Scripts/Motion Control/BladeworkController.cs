@@ -7,7 +7,7 @@ public class BladeworkController : MonoBehaviour
 {
     [HideInInspector]
     public List<Transform> worldPointToTargets;     // Set by GameController
-    public bool debug;
+
     private FinalHandController _handController;
     private bool _inRotCor;
     private bool _inMoveCor;
@@ -21,7 +21,6 @@ public class BladeworkController : MonoBehaviour
     
     private IEnumerator RotateWrist(bool clockwise)
     {
-        if (debug) Debug.Log($"Start rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
         _inRotCor = true;
 
         var pointTarget = _handController.externalPointToTarget;
@@ -48,12 +47,10 @@ public class BladeworkController : MonoBehaviour
         }
 
         _inRotCor = false;
-        if (debug) Debug.Log($"End rotate wrist {new String(clockwise ? "" : "anti")}clockwise");
     }
 
     private IEnumerator Parry(int parryNum)
     {
-        if (debug) Debug.Log($"Start parry {parryNum}");
         _inRotCor = true;
         _inMoveCor = true;
 
@@ -75,9 +72,6 @@ public class BladeworkController : MonoBehaviour
                 _handController.SetMoveToTargetPosition(1, 1, -1, true);
                 _handController.SetNextSuppination(1);
                 break;
-            default:
-                Debug.Log($"haven't implemented parry {parryNum} yet, do nothing.");
-                break;
         }
         
         var rotationError = _handController.maxRotationError * 2;
@@ -85,12 +79,9 @@ public class BladeworkController : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
         }
-        // yield return new WaitWhile(
-        //     () => !_handController.ReachedMoveTarget() || !_handController.ReachedRotationTarget(rotationError));
 
         _inRotCor = false;
         _inMoveCor = false;
-        if (debug) Debug.Log($"End parry {parryNum}");
     }
 
     

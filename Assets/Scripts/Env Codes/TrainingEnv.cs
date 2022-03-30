@@ -19,7 +19,6 @@ public class TrainingEnv : NewGameController
         public Transform epeeTargetTransform;
         public List<Transform> selfTargetAreas;
         public Transform startPoint;
-        public Transform epeeTipRaycastTransform;
         public Transform nearerStartPoint;
 
         // public float fencerStartZVariation;
@@ -170,7 +169,6 @@ public class TrainingEnv : NewGameController
         {
             fencerOne.agent.AddReward(-0.5f);
             fencerTwo.agent.AddReward(-0.5f);
-            Academy.Instance.StatsRecorder.Add("Environment/OutOfBoundCount", 1, StatAggregationMethod.Sum);
             floorMesh.material = outOfBoundColor;
             _outOfBound = false;
             StartCoroutine(ResetFencersPosition());
@@ -194,7 +192,6 @@ public class TrainingEnv : NewGameController
             fencerOne.agent.SetReward(-1);
             floorMesh.material = fencerTwoColor;
         }
-        Academy.Instance.StatsRecorder.Add("Environment/WinLoseCount", 1, StatAggregationMethod.Sum);
 
         fencerOne.agent.EndEpisode();
         fencerTwo.agent.EndEpisode();

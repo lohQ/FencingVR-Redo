@@ -48,7 +48,7 @@ MonoBehaviour:
   m_SensorName: RayPerceptionSensor
   m_DetectableTags:
   - Target Area
-  m_RaysPerDirection: 0
+  m_RaysPerDirection: 1
   m_MaxRayDegrees: 10
   m_SphereCastRadius: 0.1
   m_RayLength: 1
@@ -1621,7 +1621,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1807238686772646644}
   m_Layer: 6
-  m_Name: Skeleton
+  m_Name: Game_engine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4722,12 +4722,12 @@ Transform:
   m_GameObject: {fileID: 1807238688044973016}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.010000001, y: 0.010000001, z: 0.010000001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1807238686416133706}
   m_Father: {fileID: 1807238688123693616}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1807238688044973018
 MonoBehaviour:
@@ -4810,9 +4810,9 @@ Transform:
   m_Children:
   - {fileID: 1807238686772646644}
   - {fileID: 1807238686076353243}
-  - {fileID: 1807238688044973019}
   - {fileID: 4357314031421667140}
   - {fileID: 1738412654583836266}
+  - {fileID: 1807238688044973019}
   m_Father: {fileID: 1807238688127139763}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5091,7 +5091,7 @@ MonoBehaviour:
   maxIteration: 15
   angularVelocity: 360
   recheckPerDegrees: 3
-  maxRotationError: 3
+  maxRotationError: 1
   maxSuppinationError: 0.01
   velocity: 40
   maxTranslationError: 5
@@ -5114,7 +5114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldPointToTargets: []
-  debug: 0
 --- !u!114 &1807238688123693622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5144,10 +5143,10 @@ MonoBehaviour:
   stateNamePrefix: Base Layer.Step.
   entry: Entry Point
   exit: Exit
-  debug: 0
   footworkDisplay: {fileID: 4477703765910431305}
   enabledColor: {fileID: 2100000, guid: fbf1699ad5a8d4fc2a654e62e8f072d6, type: 2}
   disabledColor: {fileID: 2100000, guid: 07aa6dc1c00684bad9ee285b1d3db2d3, type: 2}
+  debug: 0
   logIdentifier: 
 --- !u!1 &1807238688127139760
 GameObject:
@@ -5239,6 +5238,8 @@ MonoBehaviour:
   timeStepReward: 1
   oppTipClosenessReward: -1
   selfTipClosenessReward: 1
+  debug: 0
+  logIdentifier: 
 --- !u!114 &8551930030555075182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5347,7 +5348,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1807238688123693616}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7645066424239595280
 MonoBehaviour:
@@ -5558,7 +5559,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1807238688123693616}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5913101368640650955
 MeshFilter:
@@ -5626,7 +5627,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2394479930192685888
 Transform:
   m_ObjectHideFlags: 0
