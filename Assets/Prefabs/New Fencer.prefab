@@ -5208,7 +5208,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: d320a9172e8704a2cbb448eb5a700f4f, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 05aee3fc8bfe444acbe19809a44c836f, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: CurriculumSPFencerBehavior
@@ -5462,7 +5462,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1399200279990754538
 Transform:
   m_ObjectHideFlags: 0

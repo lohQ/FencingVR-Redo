@@ -341,6 +341,13 @@ public class NewAgentFencer : Agent
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        if (!gameController.Started())
+        {
+            _bladeworkController.DoWristTranslation(1, 0, 0, false, 0);
+            _bladeworkController.DoWristRotation(0, 0);
+            return;
+        }
+        
         var discreteActions = actionBuffers.DiscreteActions;
         _bladeworkController.DoWristTranslation(
             discreteActions[0], discreteActions[1] - 1, discreteActions[2] - 1, 
@@ -356,10 +363,7 @@ public class NewAgentFencer : Agent
             } 
         }
         
-        if (gameController.Started())
-        {
-            AddReward(timeStepReward / MaxStep);
-        }
+        AddReward(timeStepReward / MaxStep);
     }
     
 }

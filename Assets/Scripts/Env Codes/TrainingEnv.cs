@@ -63,6 +63,7 @@ public class TrainingEnv : NewGameController
     private IEnumerator ResetFencersPosition()
     {
         _inGame = false;
+        yield return StartCountDown();
         var xRandCoef = Academy.Instance.EnvironmentParameters.GetWithDefault("start_point_x_rand_coef", 0);
         var zRandCoef = Academy.Instance.EnvironmentParameters.GetWithDefault("start_point_z_rand_coef", 0);
         var footworkEnabled = Academy.Instance.EnvironmentParameters.GetWithDefault("footwork_enabled", 1) > 0;

@@ -23,11 +23,13 @@ public class MoveTargetRootKeyFrames : ScriptableObject
     public void WriteTranslationData(List<Vector3> newData){
         Debug.Log($"newData of length {newData.Count} written to _translationData");
         _translationData = new List<Vector3>(newData);
+        cloneTranslationData = new List<Vector3>(_translationData);
     }
 
     public void WriteRotationData(List<Quaternion> newData)
     {
         Debug.Log($"newData of length {newData.Count} written to _rotationData");
         _rotationData = new List<Quaternion>(newData);
+        cloneRotationData = new List<Quaternion>(_rotationData);
     }
 }
