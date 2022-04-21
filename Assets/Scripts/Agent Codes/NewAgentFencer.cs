@@ -5,12 +5,6 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 
-public enum FencerColor
-{
-    Green = 0,
-    Red = 1
-}
-
 public class NewAgentFencer : Agent
 {
     public NewGameController gameController;
@@ -60,8 +54,7 @@ public class NewAgentFencer : Agent
             return;
         }
         
-        _frameElapsed += 1;
-        if (_frameElapsed == decisionPeriod)
+        if (_frameElapsed % decisionPeriod == 0)
         {
             RequestDecision();
             _frameElapsed = 0;
@@ -70,6 +63,7 @@ public class NewAgentFencer : Agent
         {
             RequestAction();
         }
+        _frameElapsed += 1;
     }
 
     public void SetFencerNum(int fencerNum)
@@ -220,20 +214,6 @@ public class NewAgentFencer : Agent
         }
         else
         {
-            // Debug.Log("No up nor down arrow, no step");
-            discreteActionsOut[7] = 3;
-        }
-
-        if (!gameController.Started())
-        {
-            // Debug.Log("game not started yet.");
-            discreteActionsOut[0] = 1;
-            discreteActionsOut[1] = 1;
-            discreteActionsOut[2] = 1;
-            discreteActionsOut[3] = 0;
-            discreteActionsOut[4] = 1;
-            discreteActionsOut[5] = 1;
-            discreteActionsOut[6] = 4;
             discreteActionsOut[7] = 3;
         }
 
@@ -309,14 +289,6 @@ public class NewAgentFencer : Agent
     
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
-        if (!gameController.Started())
-        {
-            DisableFootwork(actionMask);
-            DisableWristRotation(actionMask);
-            DisableWristTranslation(actionMask);
-            return;
-        }
-        
         if (!_bladeworkController.CanRotateWrist())
         {
             DisableWristRotation(actionMask);
@@ -345,6 +317,7 @@ public class NewAgentFencer : Agent
         {
             _bladeworkController.DoWristTranslation(1, 0, 0, false, 0);
             _bladeworkController.DoWristRotation(0, 0);
+            _animator.SetInteger(_stepHash, 0);
             return;
         }
         
@@ -356,7 +329,7 @@ public class NewAgentFencer : Agent
         
         if (discreteActions[7] - 3 != 0)
         {
-            // double layer of check :) 
+            // not sure why but adding one more check here solves the issue
             if (_resetParams.GetWithDefault("footwork_enabled", 1) > 0)
             {
                 _animator.SetInteger(_stepHash, discreteActions[7] - 3);

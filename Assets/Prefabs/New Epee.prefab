@@ -583,7 +583,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2100420378798483533}
   - component: {fileID: 2100420378798483528}
-  - component: {fileID: 2100420378798483531}
   - component: {fileID: 2100420378798483530}
   - component: {fileID: 2100420378798483529}
   m_Layer: 8
@@ -631,36 +630,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &2100420378798483531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2100420378798483532}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae6e945a8c014523b28316935255ea5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jointRoot: {fileID: 2100420378550114726}
-  epeeRoot: {fileID: 2100420378798483533}
-  epeeTip: {fileID: 2100420379621067634}
-  blockage: {fileID: 0}
-  _jointFromX: 20
-  _jointToX: -20
-  _jointFromY: 40
-  _jointToY: -40
-  _jointFromZ: -20
-  _jointToZ: -70
-  _jointXStep: -5
-  _jointYStep: -10
-  _jointZStep: -5
-  excessAngle: 5
-  maxRotationAngle: 270
-  debug: 1
-  loop: 0
-  onAllGizmos: 1
 --- !u!114 &2100420378798483530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,7 +669,6 @@ MonoBehaviour:
       forceMode: 5
       followStyle: 1
       alignAxis: 1
-      energyController: {fileID: 0}
       deltaAngle: 0
     secondRotation:
       rb: {fileID: 2100420378798483528}
@@ -710,7 +678,6 @@ MonoBehaviour:
       forceMode: 5
       followStyle: 1
       alignAxis: 0
-      energyController: {fileID: 0}
       deltaAngle: 0
     energyController: {fileID: 0}
 --- !u!114 &2100420378798483529
@@ -728,7 +695,7 @@ MonoBehaviour:
   value: 1
   restorationRate: 0.4
   translationUsageRate: 1
-  rotationUsageRate: 0.1
+  forceMultiplierMinVal: 0
   greenCircle: {fileID: 2100420379879243778}
   startFilling: 0.075
   endFilling: 0.935

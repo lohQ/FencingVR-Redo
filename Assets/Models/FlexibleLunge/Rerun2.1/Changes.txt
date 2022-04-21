@@ -1,1 +1,0 @@
-entropy doesn't decrease... change beta back to 0.001. 

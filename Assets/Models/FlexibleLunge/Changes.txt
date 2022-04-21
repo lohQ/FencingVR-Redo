@@ -1,4 +1,0 @@
-- lunge now follow keyframe, so still can control hand when lunge
-- reward tip advancement instead of tip closeness
-- reduce timestep penalty/reward to encourage more actions from the fencer
-- change on top of TwoBehaviorsLongerHorizon, same behavior.yaml file

@@ -1,2 +1,0 @@
-Changes:
-- Disable lunge first. Train with lunging action after able to do some bladework. 

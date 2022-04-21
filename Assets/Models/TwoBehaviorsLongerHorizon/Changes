@@ -1,4 +1,0 @@
-- Increased time horizon from 1000 to 2048
-- Adjusted tip closeness reward value so it is of similar size with the timestep reward
-- Added raycast perception sensor on epee tip, and changed to use 'isPointingAt' as the reward condition, instead of 'isCloseToTarget'.
-- Added min and max cap to collision contact point's and impulse's value

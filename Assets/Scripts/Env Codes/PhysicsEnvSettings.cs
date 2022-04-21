@@ -10,28 +10,6 @@ public class PhysicsEnvSettings : MonoBehaviour
     public const string FencerTwoWeaponLayer = "Player 2 Weapon Layer";
     public const int ScaleFactor = 100;
     public const string EnvironmentLayer = "Environment";
-
-    
-    // old
-
-    public static string GetFencerBodyLayer(FencerColor fencerColor)
-    {
-        return fencerColor == FencerColor.Green ? FencerOneBodyLayer : FencerTwoBodyLayer;
-    }
-    
-    public static string GetFencerWeaponLayer(FencerColor fencerColor)
-    {
-        return fencerColor == FencerColor.Green ? FencerOneWeaponLayer : FencerTwoWeaponLayer;
-    }
-
-    public static FencerColor GetOther(FencerColor fencerColor)
-    {
-        return fencerColor == FencerColor.Green ? FencerColor.Red : FencerColor.Green;
-    }
-
-    
-    
-    // new
     
     public static string GetFencerBodyLayer(int fencerNum)
     {

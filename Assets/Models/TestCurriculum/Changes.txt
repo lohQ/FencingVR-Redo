@@ -1,5 +1,0 @@
-changed to yield return new WaitForFixedUpdate for all coroutines in FinalHandController and BladeworkController. 
-changed from observation 'selfTip - selfTarget' to 'self - selfTargets', and 'oppTip - oppTarget' to 'oppTip -. self'. removed energyController observation. 
-Added dummyTrainingEnv that takes dummy wrist position from curriculum. 
-Added "gameController.Started()" check before adding time penalty. 
-As susepct the agent easily associate lunge with positive reward, making wrist rotation become less significant, disable lunge for min 100 episodes
