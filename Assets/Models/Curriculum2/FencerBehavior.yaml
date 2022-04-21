@@ -1,0 +1,138 @@
+behaviors:
+  CurriculumFencerBehavior:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 512
+      buffer_size: 10240
+      learning_rate: 0.0003
+      beta: 0.001
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 512
+      num_layers: 2
+      vis_encode_type: simple
+      memory:
+        memory_size: 128
+        sequence_length: 64
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+    keep_checkpoints: 5
+    checkpoint_interval: 150000
+    max_steps: 9600000
+    time_horizon: 1024
+    summary_freq: 15000
+environment_parameters:
+  lunge_enabled:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 100
+          threshold: 0.4
+        value: 0.0
+      - name: Lesson1
+        value: 1.0
+  wrist_z_enabled:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 100
+          threshold: 0.5
+        value: 0.0
+      - name: Lesson1
+        value: 1.0
+  wrist_x:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 30
+          threshold: 0.3
+        value: 0.0
+      - name: Lesson1
+        value:
+          sampler_type: uniform
+          sampler_parameters:
+            min_value: -1.0
+            max_value: 1.0
+  wrist_y:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 30
+          threshold: 0.4
+        value: 0.0
+      - name: Lesson1
+        value:
+          sampler_type: uniform
+          sampler_parameters:
+            min_value: -1.0
+            max_value: 1.0
+  wrist_z:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 30
+          threshold: 0.5
+        value: 1.0
+      - name: Lesson1
+        value:
+          sampler_type: uniform
+          sampler_parameters:
+            min_value: 0.0
+            max_value: 1.0
+  point_to:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 30
+          threshold: 0.5
+        value: 0.0
+      - name: Lesson1
+        value:
+          sampler_type: uniform
+          sampler_parameters:
+            min_value: 0.0
+            max_value: 4.0
+  extended:
+    curriculum:
+      - name: Lesson0
+        completion_criteria:
+          measure: reward
+          behavior: CurriculumFencerBehavior
+          signal_smoothing: true
+          min_lesson_length: 30
+          threshold: 0.6
+        value:
+          sampler_type: uniform
+          sampler_parameters:
+            min_value: 0.0
+            max_value: 0.0
+      - name: Lesson1
+        value:
+          sampler_type: uniform
+          sampler_parameters:
+            min_value: 0.0
+            max_value: 1.0

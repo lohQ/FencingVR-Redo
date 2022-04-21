@@ -163,9 +163,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   follow: {fileID: 0}
-  frequency: 50
+  frequency: 100
   damping: 1
-  shouldFollow: 1
+  torqueFrequency: 100
+  torqueDamping: 1
 --- !u!114 &4688600074151865621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,15 +179,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ecaf7a417474a16aecc9543a81a4a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  epeeTipTag: Epee Tip
-  targetAreaTag: Target Area
-  otherFencerBodyLayer: Player 1 Body Layer
-  otherFencerWeaponLayer: Player 1 Weapon Layer
+  bout: {fileID: 0}
+  agentFencer: {fileID: 0}
   impulseThreshold: 0.001
   hitAngleThreshold: 35
-  agentFencer: {fileID: 0}
-  fencerColor: 1
-  bout: {fileID: 0}
   log: 0
 --- !u!1 &4688600074212730896
 GameObject:

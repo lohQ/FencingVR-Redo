@@ -1,0 +1,37 @@
+behaviors:
+  HalfSigmaFencerBehavior:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 512
+      buffer_size: 10240
+      learning_rate: 0.0003
+      beta: 0.003
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 512
+      num_layers: 2
+      vis_encode_type: simple
+      memory:
+        memory_size: 128
+        sequence_length: 64
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+    threaded: false
+    keep_checkpoints: 5
+    checkpoint_interval: 150000
+    max_steps: 9600000
+    time_horizon: 1024
+    summary_freq: 6000
+    self_play:
+      save_steps: 100000
+      team_change: 400000
+      swap_steps: 20000
+      window: 30
+      play_against_latest_model_ratio: 0.1
+      initial_elo: 1200.0
