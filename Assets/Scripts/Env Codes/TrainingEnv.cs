@@ -125,13 +125,15 @@ public class TrainingEnv : NewGameController
 
     public override void EndGame()
     {
+        _inGame = false;
         fencerOne.agent.EndEpisode();
         fencerTwo.agent.EndEpisode();
-        _inGame = false;
     }
 
     private void Update()
     {
+        if (!_inGame) return;
+        
         // fencer position is usually changed in Update
         var fencerOnePosition = fencerOne.fencerTransform.position;
         var fencerTwoPosition = fencerTwo.fencerTransform.position;
@@ -168,11 +170,14 @@ public class TrainingEnv : NewGameController
         // place all agent-related functions in fixed update
         if (_outOfBound)
         {
-            fencerOne.agent.AddReward(-0.5f);
-            fencerTwo.agent.AddReward(-0.5f);
+            fencerOne.agent.SetReward(0);
+            fencerTwo.agent.SetReward(0);
+            // fencerOne.agent.AddReward(-0.5f);
+            // fencerTwo.agent.AddReward(-0.5f);
             floorMesh.material = outOfBoundColor;
             _outOfBound = false;
-            StartCoroutine(ResetFencersPosition());
+            EndGame();
+            // StartCoroutine(ResetFencersPosition());
         }
     }
 
