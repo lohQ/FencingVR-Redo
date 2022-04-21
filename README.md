@@ -1,6 +1,6 @@
 # FencingVR-Redo
 
-## Current capabilities
+## Intro to Project
 Some vids here: https://youtube.com/playlist?list=PLg18vY_ub_zdp3iNF64-XTIYhi7Nt22nW
 
 Not much, but it's honest work...
